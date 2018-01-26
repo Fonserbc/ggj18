@@ -2,5 +2,5 @@
 
 [CreateAssetMenu(fileName = "Constantes", menuName = "Constantes de juego")]
 public class Constants : ScriptableObject {
-    public float caca = 0;
+    public int numPlayers = 2;
 }
