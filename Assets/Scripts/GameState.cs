@@ -5,7 +5,7 @@ public struct GameState
     public struct PlayerInfo
     {
         public bool connected;
-        public Vector3 position;
+        public Vector2 position;
         public Quaternion rotation;
         public int stunned;
     }
@@ -13,13 +13,13 @@ public struct GameState
     {
         public enum AntenaState {
             Off,
-            Color1,
-            Color2,
-            Color3,
-            Color4
+            ColorUp,
+            ColorDown,
+            ColorLeft,
+            ColorRight
         }
         public AntenaState state;
-        public Vector3 position;
+        public Vector2 position;
         public Quaternion rotation;
     }
 
