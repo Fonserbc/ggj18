@@ -17,6 +17,6 @@ MonoBehaviour:
   antenaCollisionRadius: 0.5
   antenaLinkMaxRadius: 10
   playerCollisionRadius: 0.5
-  playerSpeed: 2
+  playerSpeed: 15
   stunnedtime: 1
   invincibilityTime: 2
