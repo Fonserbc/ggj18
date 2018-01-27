@@ -35,14 +35,14 @@ public class Visuals : MonoBehaviour {
 
             players[i].position = new Vector3(state.players[i].position.x, players[i].position.y, state.players[i].position.y);
             players[i].rotation = Quaternion.AngleAxis(state.players[i].rotation, Vector3.down);
+            playerAnimators[i].SetBool("Moving", state.players[i].moving);
             playerAnimators[i].SetBool("Stunned", state.players[i].stunnedTime > 0);
-
-
+            playerAnimators[i].SetBool("Invincible", state.players[i].invincibleTime > 0);
         }
         //End Player Visuals
 
         //Antenna Visuals
-        for(int i = 0; i < antenas.Length; ++i)
+        for (int i = 0; i < antenas.Length; ++i)
         {
             antenas[i].isConnected = myLogic.IsAntenaLinking(i);
         }
