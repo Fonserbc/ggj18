@@ -6,7 +6,7 @@ public struct GameState
     {
         public bool connected;
         public Vector2 position;
-        public Quaternion rotation;
+        public float rotation;
         public int stunned;
     }
     public struct AntenaInfo
@@ -20,7 +20,7 @@ public struct GameState
         }
         public AntenaState state;
         public Vector2 position;
-        public Quaternion rotation;
+        public float rotation;
     }
 
     //
