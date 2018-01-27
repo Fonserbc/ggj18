@@ -74,6 +74,9 @@ public class Logic
         UpdateAntennaConnections();
 
         // Physics Collisions
+        bool[] playerWasCorrected = new bool[c.numPlayers];
+        Utilities.InitializeArray(ref playerWasCorrected, false);
+
         for (int i = 0; i < c.numPlayers; ++i)
         {
             // Against static world
@@ -82,6 +85,7 @@ public class Logic
                 if (CircleAABBCollides(newState.players[i].position, c.playerCollisionRadius, staticWorld[j]))
                 {
                     newState.players[i].position = CircleAABBCorrect(newState.players[i].position, c.playerCollisionRadius, staticWorld[j]);
+                    playerWasCorrected[i] = true;
                 }
             }
 
@@ -96,6 +100,8 @@ public class Logic
                     {
                         StunPlayer(i);
                     }
+
+                    playerWasCorrected[i] = true;
                 }
             }
 
@@ -104,7 +110,14 @@ public class Logic
             {
                 if (i != j && CircleCircleCollides(newState.players[i].position, c.playerCollisionRadius, newState.players[j].position, c.playerCollisionRadius))
                 {
-                    newState.players[i].position = CircleCircleCorrect(newState.players[i].position, c.playerCollisionRadius, newState.players[j].position, c.playerCollisionRadius);
+                    if (newState.players[i].moving && !playerWasCorrected[i]) {
+                        newState.players[i].position = CircleCircleCorrect(newState.players[i].position, c.playerCollisionRadius, newState.players[j].position, c.playerCollisionRadius);
+                        playerWasCorrected[i] = true;
+                    }
+                    if (newState.players[j].moving && !playerWasCorrected[i]) {
+                        newState.players[j].position = CircleCircleCorrect(newState.players[j].position, c.playerCollisionRadius, newState.players[i].position, c.playerCollisionRadius);
+                        playerWasCorrected[j] = true;
+                    }
                 }
             }
         }
