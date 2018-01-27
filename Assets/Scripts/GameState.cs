@@ -2,6 +2,13 @@
 
 public struct GameState
 {
+    public enum ColorState {
+        Off = 0,
+        ColorUp = 1,
+        ColorDown = 2,
+        ColorLeft = 3,
+        ColorRight = 4
+    }
     public struct PlayerInfo
     {
         public bool connected;
@@ -11,24 +18,28 @@ public struct GameState
         public float invincibleTime;
         public bool moving;
         public int antenaInRadius;
+        public int points;
     }
     public struct AntenaInfo
     {
-        public enum AntenaState {
-            Off = 0,
-            ColorUp = 1,
-            ColorDown = 2,
-            ColorLeft = 3,
-            ColorRight = 4
-        }
-        public AntenaState state;
+        public ColorState state;
         public Vector2 position;
         public float rotation;
+    }
+    public struct MessageInfo
+    {
+        public ColorState color;
+        public int currentAntena;
+        public int nextAntena;
+        public int lastAntena;
+        public float transmissionTime;
+        public bool onScene;
     }
 
     //
     public PlayerInfo[] players;
     public AntenaInfo[] antenas;
+    public MessageInfo[] messages;
 
     public GameState(GameState from) {
         players = null;
@@ -43,6 +54,13 @@ public struct GameState
         {
             antenas = new AntenaInfo[from.antenas.Length];
             from.antenas.CopyTo(antenas, 0);
+        }
+
+        messages = null;
+        if (from.messages != null)
+        {
+            messages = new MessageInfo[from.messages.Length];
+            from.messages.CopyTo(messages, 0);
         }
     }
 
@@ -59,6 +77,13 @@ public struct GameState
         {
             antenas = new AntenaInfo[from.antenas.Length];
             from.antenas.CopyTo(antenas, 0);
+        }
+
+        messages = null;
+        if (from.messages != null)
+        {
+            messages = new MessageInfo[from.messages.Length];
+            from.messages.CopyTo(messages, 0);
         }
     }
 }

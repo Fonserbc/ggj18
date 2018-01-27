@@ -6,6 +6,8 @@ public class Visuals : MonoBehaviour {
 
     public GameObject BoltPrefab;
     public AntennaScript[] antenas;
+    public AntennaScript[] recieverAntenas;
+    public AntennaScript[] baseAntenas;
     public PlayerScript[] players;
     Animator[] playerAnimators;
 	List<DigitalRuby.LightningBolt.LightningBoltScript> bolts = new List<DigitalRuby.LightningBolt.LightningBoltScript>();

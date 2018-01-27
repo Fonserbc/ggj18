@@ -20,6 +20,9 @@ MonoBehaviour:
   playerSpeed: 15
   stunnedtime: 1
   invincibilityTime: 2
+  messageTransmissionTime: 2
+  timeBetweenMessages: 10
+  numMessages: 16
   antennaColors:
   - {r: 0.71323526, g: 0.71323526, b: 0.71323526, a: 1}
   - {r: 1, g: 0.772, b: 0.015686275, a: 1}
