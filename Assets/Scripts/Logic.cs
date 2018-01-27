@@ -178,6 +178,6 @@ public class Logic : MonoBehaviour
     }
 
     public List<Vector2i> GetCurrentAntenasConnections() {
-        
+        return null;
     }
 }
