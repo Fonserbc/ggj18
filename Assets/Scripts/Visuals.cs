@@ -39,7 +39,9 @@ public class Visuals : MonoBehaviour {
                 players[i].gameObject.SetActive(state.players[i].connected);
             }
 
-            players[i].transform.position = new Vector3(state.players[i].position.x, players[i].transform.position.y, state.players[i].position.y);
+            Vector3 newPos = new Vector3(state.players[i].position.x, players[i].transform.position.y, state.players[i].position.y);
+            players[i].moving = players[i].transform.position != newPos;
+            players[i].transform.position = newPos;
             players[i].transform.rotation = Quaternion.AngleAxis(state.players[i].rotation, Vector3.down);
 
             SetPlayerWave(i, (i==0) ? frame.input_player1 : frame.input_player2);
