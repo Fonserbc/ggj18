@@ -4,16 +4,16 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
-public class TitleMenuPlayController : MonoBehaviour
+public class TitleMenuMainMenuController : MonoBehaviour
 {
 	public TitleMenuController MenuController;
 	public GameObject OptionContainer;
 	public GameObject OptionPrefab;
 
-	private Button buttonLocal;
-	private Button buttonConnect;
-	private Button buttonHost;
-	private Button buttonBack;
+	private Button buttonPlay;
+	private Button buttonHowToPlay;
+	private Button buttonCredits;
+	private Button buttonExit;
 
 	Button AddOption(string text, UnityAction action)
 	{
@@ -32,40 +32,40 @@ public class TitleMenuPlayController : MonoBehaviour
 
 	void Awake ()
 	{
-		buttonLocal = AddOption("Local game", OnLocalSelected);
-		buttonConnect = AddOption("Connect host", OnConnectSelected);
-		buttonHost = AddOption("Host Game", OnHostSelected);
-		buttonBack = AddOption("Back", OnBackSelected);
+		buttonPlay = AddOption("Play", OnPlaySelected);
+		buttonHowToPlay = AddOption("How to play", OnHowToPlaySelected);
+		buttonCredits = AddOption("Credits", OnCreditsSelected);
+		buttonExit = AddOption("Exit", OnExitSelected);
 	}
 
 	public void OnEnable()
 	{
-		buttonLocal.Select();
+		buttonPlay.Select();
 	}
 
 
-	void OnLocalSelected()
+	void OnPlaySelected()
 	{
-		Debug.Log("OnLocalSelected");
+		MenuController.GoToPlayMenu();
 	}
 
-	void OnConnectSelected()
+	void OnHowToPlaySelected()
 	{
-		MenuController.GoToEnterIP();
+		Debug.Log("OnConnectSelected");
 	}
 
-	void OnHostSelected()
+	void OnCreditsSelected()
 	{
 		Debug.Log("OnHostSelected");
 	}
 
-	void OnBackSelected()
+	void OnExitSelected()
 	{
-		MenuController.GoToMainMenu();
+		Application.Quit();
 	}
 
 	void OnCancel()
 	{
-		OnBackSelected();
+		MenuController.GoToEngagement();
 	}
 }

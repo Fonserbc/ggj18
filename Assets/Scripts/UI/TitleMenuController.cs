@@ -2,15 +2,60 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TitleMenuController : MonoBehaviour {
+public class TitleMenuController : MonoBehaviour
+{
+	public TitleMenuEngagement Engagement;
+	public TitleMenuMainMenuController MainMenuController;
+	public TitleMenuPlayController PlayController;
+	public TitleMenuEnterIP EnterIP;
+	private GameObject currentlyFocus;
 
-	// Use this for initialization
-	void Start () {
-		
+	private List<GameObject> screens = new List<GameObject>();
+
+	private void Start()
+	{
+		screens.Add(Engagement.gameObject);
+		screens.Add(MainMenuController.gameObject);
+		screens.Add(PlayController.gameObject);
+		screens.Add(EnterIP.gameObject);
+
+		Engagement.MenuController = this;
+		MainMenuController.MenuController = this;
+		PlayController.MenuController = this;
+		EnterIP.MenuController = this;
+
+		GoToEngagement();
 	}
-	
-	// Update is called once per frame
-	void Update () {
-		
+
+	public void GoToEngagement()
+	{
+		foreach (GameObject screen in screens)
+			screen.SetActive(false);
+
+		Engagement.gameObject.SetActive(true);
+	}
+
+	public void GoToMainMenu()
+	{
+		foreach (GameObject screen in screens)
+			screen.SetActive(false);
+
+		MainMenuController.gameObject.SetActive(true);
+	}
+
+	public void GoToPlayMenu()
+	{
+		foreach (GameObject screen in screens)
+			screen.SetActive(false);
+
+		PlayController.gameObject.SetActive(true);
+	}
+
+	public void GoToEnterIP()
+	{
+		foreach (GameObject screen in screens)
+			screen.SetActive(false);
+
+		EnterIP.gameObject.SetActive(true);
 	}
 }
