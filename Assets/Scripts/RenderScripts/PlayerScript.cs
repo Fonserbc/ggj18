@@ -9,6 +9,6 @@ public class PlayerScript : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         if (!waving) return;
-        waveRenderer.transform.Rotate(-Vector3.up*5);
+        waveRenderer.transform.Rotate(Vector3.up*5);
 	}
 }
