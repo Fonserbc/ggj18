@@ -9,7 +9,7 @@ public class Logic
 
     GameState newState;
 
-    BoxCollider2D[] staticWorld;
+    Bounds[] staticWorld;
 
     List<int>[] antenaConnections;
     List<Vector2i> antenaLinks;
@@ -17,7 +17,14 @@ public class Logic
     public GameState InitFirstState (Visuals v)
     {
         int antenaCount = v.antenas.Length;
-        staticWorld = v.levelTransform.gameObject.GetComponentsInChildren<BoxCollider2D>();
+        Collider[] staticColliders = v.levelTransform.gameObject.GetComponentsInChildren<Collider>();
+        staticWorld = new Bounds[staticColliders.Length];
+
+        for (int i = 0; i < staticColliders.Length; ++i) {
+            Bounds b = staticColliders[i].bounds;
+
+            staticWorld[i] = new Bounds(new Vector2(b.center.x, b.center.z), new Vector2(b.size.x, b.size.z));
+        }
 
         antenaConnections = new List<int>[antenaCount];
         antenaLinks = new List<Vector2i>(antenaCount * (antenaCount - 1));
@@ -70,9 +77,9 @@ public class Logic
             // Against static world
             for (int j = 0; j < staticWorld.Length; ++j)
             {
-                if (CircleAABBCollides(newState.players[i].position, c.playerCollisionRadius, staticWorld[j].bounds))
+                if (CircleAABBCollides(newState.players[i].position, c.playerCollisionRadius, staticWorld[j]))
                 {
-                    newState.players[i].position = CircleAABBCorrect(previousState.players[i].position, newState.players[i].position, c.playerCollisionRadius, staticWorld[j].bounds);
+                    newState.players[i].position = CircleAABBCorrect(previousState.players[i].position, newState.players[i].position, c.playerCollisionRadius, staticWorld[j]);
                 }
             }
 
