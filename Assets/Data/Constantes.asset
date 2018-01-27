@@ -11,4 +11,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6cf57f13ef7424a7790d8cc423e1ecb2, type: 3}
   m_Name: Constantes
   m_EditorClassIdentifier: 
-  caca: 0
+  fixedDeltaTime: 0.016
+  numPlayers: 2
+  antenaActivationRadius: 1
+  antenaCollisionRadius: 0.5
+  antenaLinkMaxRadius: 10
+  playerCollisionRadius: 0.5
+  playerSpeed: 2
+  stunnedFrames: 32
+  invincibilityFrames: 46
