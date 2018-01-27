@@ -39,6 +39,7 @@ public class Logic
             newState.players[i].position = new Vector2(v.players[i].transform.position.x, v.players[i].transform.position.z);
             newState.players[i].rotation = v.players[i].transform.eulerAngles.y;
             newState.players[i].connected = true;
+            newState.players[i].moving = false;
         }
         newState.antenas = new GameState.AntenaInfo[antenaCount];
         for (int i = 0; i < antenaCount; ++i)
@@ -59,9 +60,9 @@ public class Logic
         GameState previousState = previousFrame.state;
 
         // PlayerInput
-        UpdatePlayerPos(0, frame.input_player1);
+        newState.players[0].moving = UpdatePlayerPos(0, frame.input_player1);
         UpdatePlayerActions(0, previousFrame.input_player1, frame.input_player1);
-        UpdatePlayerPos(1, frame.input_player2);
+        newState.players[1].moving = UpdatePlayerPos(1, frame.input_player2);
         UpdatePlayerActions(1, previousFrame.input_player1, frame.input_player2);
 
         //for (int i = 0; i < c.numPlayers; ++i)
@@ -129,12 +130,12 @@ public class Logic
         }
     }
 
-    void UpdatePlayerPos(int id, PlayerInput input)
+    bool UpdatePlayerPos(int id, PlayerInput input)
     {
         if (newState.players[id].stunnedTime > 0)
         {
             newState.players[id].stunnedTime -= c.fixedDeltaTime;
-            return;
+            return false;
         }
         else if (newState.players[id].invincibleTime > 0)
         {
@@ -143,12 +144,12 @@ public class Logic
 
         if (!newState.players[id].connected)
         {
-            return;
+            return false;
         }
         Vector2 axis = new Vector2(input.xAxis, input.yAxis);
         if (axis.x == 0.0f && axis.y == 0.0f)
         {
-            return;
+            return false;
         }
 
         if (axis.magnitude > 1f)
@@ -160,6 +161,8 @@ public class Logic
         newState.players[id].position.y += axis.y * c.playerSpeed * c.fixedDeltaTime;
 
         newState.players[id].rotation = Vector2.SignedAngle(Vector2.right, axis);
+
+        return true;
     }
 
     void UpdatePlayerActions(int id, PlayerInput lastInput, PlayerInput newInput)

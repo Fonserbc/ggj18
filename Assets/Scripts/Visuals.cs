@@ -75,4 +75,12 @@ public class Visuals : MonoBehaviour {
         //End Connections
 
     }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.green;
+        foreach (AntennaScript an in antenas) {
+            Gizmos.DrawWireSphere(an.transform.position, myLogic.c.antenaLinkMaxRadius);
+        }
+    }
 }
