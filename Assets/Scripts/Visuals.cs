@@ -48,23 +48,27 @@ public class Visuals : MonoBehaviour {
         //Antenna Visuals
         for (int i = 0; i < antenas.Length; ++i)
         {
-            antenas[i].isConnected = myLogic.IsAntenaLinking(i);
+            antenas[i].isConnected = myLogic.IsAntenaLinking(i);            
+            antenas[i].SetColor(c.antennaColors[(int)state.antenas[i].state]);
         }
         //End Antenna Visuals
 
         //Connections Visuals
         List<Vector2i> connections = myLogic.GetCurrentAntenasAristas();
-        int indexBolt = 0;        
-        foreach (DigitalRuby.LightningBolt.LightningBoltScript bolt in bolts)
+        int indexBolt = 0;  
+        while(indexBolt < bolts.Count)
         {
-            if(indexBolt < connections.Count)
+            if (indexBolt < connections.Count)
             {
-                bolt.StartObject = antenas[connections[indexBolt].x].spawnBolt.gameObject;
-                bolt.EndObject = antenas[connections[indexBolt].y].spawnBolt.gameObject;
+                bolts[indexBolt].StartObject = antenas[connections[indexBolt].x].spawnBolt.gameObject;
+                bolts[indexBolt].EndObject = antenas[connections[indexBolt].y].spawnBolt.gameObject;
+                bolts[indexBolt].GetComponent<LineRenderer>().material.SetColor("_EmissionColor", c.connectionColors[((int)state.antenas[connections[indexBolt].x].state)-1]);
+              
                 ++indexBolt;
-            } else
+            }
+            else
             {
-                Destroy(bolt.gameObject);
+                Destroy(bolts[indexBolt].gameObject);
                 bolts.RemoveAt(indexBolt);
             }
         }
