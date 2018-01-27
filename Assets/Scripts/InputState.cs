@@ -1,8 +1,4 @@
-﻿public struct InputState {
-    public struct PlayerInput {
-        public float xAxis, yAxis;
-        public bool up, down, left, right;
-    }
-
+﻿public struct InputState
+{
     public PlayerInput[] playerInputs;
 }

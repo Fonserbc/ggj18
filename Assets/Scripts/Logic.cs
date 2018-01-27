@@ -74,7 +74,7 @@ public class Logic : MonoBehaviour
         return newState;
     }
 
-    void UpdatePlayerPos(int id, InputState.PlayerInput input)
+    void UpdatePlayerPos(int id, PlayerInput input)
     {
         if (newState.players[id].stunned > 0)
         {
@@ -103,7 +103,7 @@ public class Logic : MonoBehaviour
         newState.players[id].rotation = Vector2.SignedAngle(Vector2.right, axis);
     }
 
-    void UpdatePlayerActions(int id, InputState.PlayerInput lastInput, InputState.PlayerInput newInput)
+    void UpdatePlayerActions(int id, PlayerInput lastInput, PlayerInput newInput)
     {
         int nearestAntenna = FindAntenaNearPlayer(newState.players[id].position);
 
