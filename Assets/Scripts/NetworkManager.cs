@@ -311,11 +311,13 @@ public class NetworkManager : MonoBehaviour
 			case NetworkStatus.LocalRunning:
 				{
 					PlayerInput input;
+					PlayerInput input2;
 					gameLogic.GetNewInput(out input);
+					gameLogic.GetNewInput2(out input2);
 					gameLogic.TryAddNewFrame();
 					uint updateId = gameLogic.NewestFrameId();
 					gameLogic.SetInputPlayer1(input, updateId);
-					gameLogic.SetInputPlayer2(input, updateId);
+					gameLogic.SetInputPlayer2(input2, updateId);
 					gameLogic.Update();
 					break;
 				}

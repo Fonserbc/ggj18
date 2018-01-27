@@ -35,33 +35,40 @@ public class Visuals : MonoBehaviour {
             }
 
             players[i].position = new Vector3(state.players[i].position.x, players[i].position.y, state.players[i].position.y);
-            players[i].rotation = Quaternion.Euler(0, state.players[i].rotation, 0);
+            players[i].rotation = Quaternion.AngleAxis(state.players[i].rotation, Vector3.down);
+
+            
+            playerAnimators[i].SetBool("Moving", state.players[i].moving);
             playerAnimators[i].SetBool("Stunned", state.players[i].stunnedTime > 0);
-
-
+            playerAnimators[i].SetBool("Invincible", state.players[i].invincibleTime > 0);
+            
         }
         //End Player Visuals
 
         //Antenna Visuals
-        for(int i = 0; i < antenas.Length; ++i)
+        for (int i = 0; i < antenas.Length; ++i)
         {
-            antenas[i].isConnected = myLogic.IsAntenaLinking(i);
+            antenas[i].isConnected = myLogic.IsAntenaLinking(i);            
+            antenas[i].SetColor(c.antennaColors[(int)state.antenas[i].state]);
         }
         //End Antenna Visuals
 
         //Connections Visuals
         List<Vector2i> connections = myLogic.GetCurrentAntenasAristas();
-        int indexBolt = 0;        
-        foreach (DigitalRuby.LightningBolt.LightningBoltScript bolt in bolts)
+        int indexBolt = 0;  
+        while(indexBolt < bolts.Count)
         {
-            if(indexBolt < connections.Count)
+            if (indexBolt < connections.Count)
             {
-                bolt.StartObject = antenas[connections[indexBolt].x].spawnBolt.gameObject;
-                bolt.EndObject = antenas[connections[indexBolt].y].spawnBolt.gameObject;
+                bolts[indexBolt].StartObject = antenas[connections[indexBolt].x].spawnBolt.gameObject;
+                bolts[indexBolt].EndObject = antenas[connections[indexBolt].y].spawnBolt.gameObject;
+                bolts[indexBolt].GetComponent<LineRenderer>().material.SetColor("_EmissionColor", c.connectionColors[((int)state.antenas[connections[indexBolt].x].state)-1]);
+              
                 ++indexBolt;
-            } else
+            }
+            else
             {
-                Destroy(bolt.gameObject);
+                Destroy(bolts[indexBolt].gameObject);
                 bolts.RemoveAt(indexBolt);
             }
         }
@@ -86,6 +93,13 @@ public class Visuals : MonoBehaviour {
             Gizmos.DrawWireSphere(an.transform.position, c.antenaActivationRadius);
             Gizmos.color = Color.yellow;
             Gizmos.DrawWireSphere(an.transform.position, c.antenaLinkMaxRadius);
+        }
+
+        foreach(Transform pl in players)
+        {
+            Gizmos.color = Color.green;
+            Gizmos.DrawWireSphere(pl.position, c.playerCollisionRadius);
+
         }
     }
 }

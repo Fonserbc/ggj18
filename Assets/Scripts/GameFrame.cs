@@ -102,6 +102,24 @@ public class GameLogic
 		input.right = Input.GetButton("B1");
 	}
 
+	public void GetNewInput2(out PlayerInput input)
+	{
+		input.legit = true;
+
+		input.xAxis = Input.GetAxisRaw("Horizontal2");
+		input.yAxis = Input.GetAxisRaw("Vertical2");
+
+		input.justUp = Input.GetButtonDown("Y2");
+		input.justDown = Input.GetButtonDown("A2");
+		input.justLeft = Input.GetButtonDown("X2");
+		input.justRight = Input.GetButtonDown("B2");
+
+		input.up = Input.GetButton("Y2");
+		input.down = Input.GetButton("A2");
+		input.left = Input.GetButton("X2");
+		input.right = Input.GetButton("B2");
+	}
+
 	public bool TryAddNewFrame()
 	{
 		if (current_frame != (newest_frame + 1)) ;

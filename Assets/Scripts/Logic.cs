@@ -74,6 +74,9 @@ public class Logic
         UpdateAntennaConnections();
 
         // Physics Collisions
+        bool[] playerWasCorrected = new bool[c.numPlayers];
+        Utilities.InitializeArray(ref playerWasCorrected, false);
+
         for (int i = 0; i < c.numPlayers; ++i)
         {
             // Against static world
@@ -82,6 +85,7 @@ public class Logic
                 if (CircleAABBCollides(newState.players[i].position, c.playerCollisionRadius, staticWorld[j]))
                 {
                     newState.players[i].position = CircleAABBCorrect(newState.players[i].position, c.playerCollisionRadius, staticWorld[j]);
+                    playerWasCorrected[i] = true;
                 }
             }
 
@@ -92,10 +96,14 @@ public class Logic
                 {
                     newState.players[i].position = CircleCircleCorrect(newState.players[i].position, c.playerCollisionRadius, newState.antenas[j].position, c.antenaCollisionRadius);
 
+                    /*
                     if (IsAntenaLinking(j) && IsPlayerVulnerable(i))
                     {
                         StunPlayer(i);
                     }
+                    */
+
+                    playerWasCorrected[i] = true;
                 }
             }
 
@@ -104,7 +112,14 @@ public class Logic
             {
                 if (i != j && CircleCircleCollides(newState.players[i].position, c.playerCollisionRadius, newState.players[j].position, c.playerCollisionRadius))
                 {
-                    newState.players[i].position = CircleCircleCorrect(newState.players[i].position, c.playerCollisionRadius, newState.players[j].position, c.playerCollisionRadius);
+                    if (newState.players[i].moving && !playerWasCorrected[i]) {
+                        newState.players[i].position = CircleCircleCorrect(newState.players[i].position, c.playerCollisionRadius, newState.players[j].position, c.playerCollisionRadius);
+                        playerWasCorrected[i] = true;
+                    }
+                    if (newState.players[j].moving && !playerWasCorrected[i]) {
+                        newState.players[j].position = CircleCircleCorrect(newState.players[j].position, c.playerCollisionRadius, newState.players[i].position, c.playerCollisionRadius);
+                        playerWasCorrected[j] = true;
+                    }
                 }
             }
         }
@@ -172,19 +187,19 @@ public class Logic
 
         if (newInput.justUp)
         {
-            newState.antenas[nearestAntenna].state = GameState.AntenaInfo.AntenaState.ColorUp;
+            newState.antenas[nearestAntenna].state = (newState.antenas[nearestAntenna].state == GameState.AntenaInfo.AntenaState.ColorUp) ? GameState.AntenaInfo.AntenaState.Off : GameState.AntenaInfo.AntenaState.ColorUp;
         }
         else if (newInput.justDown)
         {
-            newState.antenas[nearestAntenna].state = GameState.AntenaInfo.AntenaState.ColorDown;
+            newState.antenas[nearestAntenna].state = (newState.antenas[nearestAntenna].state == GameState.AntenaInfo.AntenaState.ColorDown) ? GameState.AntenaInfo.AntenaState.Off : GameState.AntenaInfo.AntenaState.ColorDown;
         }
         else if (newInput.justLeft)
         {
-            newState.antenas[nearestAntenna].state = GameState.AntenaInfo.AntenaState.ColorLeft;
+            newState.antenas[nearestAntenna].state = (newState.antenas[nearestAntenna].state == GameState.AntenaInfo.AntenaState.ColorLeft) ? GameState.AntenaInfo.AntenaState.Off : GameState.AntenaInfo.AntenaState.ColorLeft;
         }
         else if (newInput.justRight)
         {
-            newState.antenas[nearestAntenna].state = GameState.AntenaInfo.AntenaState.ColorRight;
+            newState.antenas[nearestAntenna].state = (newState.antenas[nearestAntenna].state == GameState.AntenaInfo.AntenaState.ColorRight) ? GameState.AntenaInfo.AntenaState.Off : GameState.AntenaInfo.AntenaState.ColorRight;
         }
     }
 
@@ -273,11 +288,16 @@ public class Logic
         return Vector2.Distance(c1, c2) < r1 + r2;
     }
 
-    Vector2 CircleCircleCorrect(Vector2 c1After, float r1, Vector2 c2, float r2)
+    Vector2 CircleCircleCorrect(Vector2 c1, float r1, Vector2 c2, float r2)
     {
         // TODO check it works
-        Vector2 normal = c1After - c2;
-        normal.Normalize();
+        Vector2 normal = c1 - c2;
+        if (Mathf.Abs(normal.sqrMagnitude) <= 0.01f) { // Inside, whoops
+            float angle = Random.Range(0, 2f*Mathf.PI);
+            normal.x = Mathf.Cos(angle);
+            normal.y = Mathf.Sin(angle);
+        }
+        else normal.Normalize();
 
         return c2 + normal * (r1 + r2);
     }
