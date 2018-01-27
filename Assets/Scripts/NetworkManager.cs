@@ -3,6 +3,7 @@ using System;
 using System.IO;
 using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.Networking.Types;
 using UnityEngine.SceneManagement;
 
 public class NetworkInitParameters
@@ -19,270 +20,6 @@ public class NetworkInitParameters
 	public ushort port;
 }
 
-public struct PlayerInput
-{
-	public bool legit;
-	public float xAxis, yAxis;
-
-	public bool justUp, justDown, justLeft, justRight;
-	public bool up, down, left, right;
-}
-
-public class GameFrame
-{
-    public bool valid = false;
-    public uint frame_id;
-    public PlayerInput input_player1 = new PlayerInput();
-    public PlayerInput input_player2 = new PlayerInput();
-    public GameState state = new GameState();
-}
-
-public class GameLogic
-{
-	uint GaemFrame_index = GAEMFRAME_BUFFSIZE;
-	uint oldest_frame;
-	uint current_frame;
-    uint newest_frame;
-
-	public Logic logic = new Logic();
-	private Visuals visuals = null;
-
-	public enum InitState
-	{
-		NONE,
-		LOADING,
-		LOADED
-	}
-
-	InitState initState = InitState.NONE;
-
-	const int GAEMFRAME_BUFFSIZE = 128;
-	GameFrame[] MemoryFrame = new GameFrame[GAEMFRAME_BUFFSIZE];
-
-	public void Init()
-	{
-		switch (initState)
-		{
-			case InitState.NONE:
-				SceneManager.LoadScene("Game", LoadSceneMode.Single);
-
-				for (int i = 0; i < GAEMFRAME_BUFFSIZE; i++)
-				{
-					MemoryFrame[i] = new GameFrame();
-				}
-
-				GaemFrame_index = 0;
-				oldest_frame = 0;
-				current_frame = 1;
-				newest_frame = 0;
-
-				initState = InitState.LOADING;
-				break;
-			case InitState.LOADING:
-				Scene game = SceneManager.GetSceneByName("Game");
-				GameObject visualsObject = GameObject.FindGameObjectWithTag("GameController");
-				if (visualsObject != null)
-				{
-					visuals = visualsObject.GetComponent<Visuals>();
-					if (visuals != null)
-					{
-						GameFrame frame = MemoryFrame[0];
-						frame.state = logic.InitFirstState(visuals);
-						initState = InitState.LOADED;
-					}
-				}
-				break;
-			case InitState.LOADED:
-				break;
-		}
-	}
-
-	public bool IsInit()
-	{
-		return initState == InitState.LOADED;
-	}
-
-	public void GetNewInput(out PlayerInput input)
-	{
-		input.legit = true;
-
-		input.xAxis = Input.GetAxisRaw("Horizontal1");
-		input.yAxis = Input.GetAxisRaw("Vertical1");
-
-		input.justUp = Input.GetButtonDown("Y1");
-		input.justDown = Input.GetButtonDown("A1");
-		input.justLeft = Input.GetButtonDown("X1");
-		input.justRight = Input.GetButtonDown("B1");
-
-		input.up = Input.GetButton("Y1");
-		input.down = Input.GetButton("A1");
-		input.left = Input.GetButton("X1");
-		input.right = Input.GetButton("B1");
-	}
-
-    public void GetNewInput2(out PlayerInput input)
-    {
-        input.legit = true;
-
-        input.xAxis = Input.GetAxisRaw("Horizontal2");
-        input.yAxis = Input.GetAxisRaw("Vertical2");
-
-        input.justUp = Input.GetButtonDown("Y2");
-        input.justDown = Input.GetButtonDown("A2");
-        input.justLeft = Input.GetButtonDown("X2");
-        input.justRight = Input.GetButtonDown("B2");
-
-        input.up = Input.GetButton("Y2");
-        input.down = Input.GetButton("A2");
-        input.left = Input.GetButton("X2");
-        input.right = Input.GetButton("B2");
-    }
-
-    public bool TryAddNewFrame()
-	{
-		if(current_frame != (newest_frame + 1));
-
-		uint Index = (GaemFrame_index + 1) & (GAEMFRAME_BUFFSIZE - 1);
-		GameFrame CurrentFrame = MemoryFrame[Index];
-		uint NextIndex = (Index + 1) & (GAEMFRAME_BUFFSIZE - 1);
-		GameFrame NextFrame = MemoryFrame[NextIndex];
-
-		if (!NextFrame.valid || ((NextFrame.input_player1.legit) && (NextFrame.input_player2.legit)))
-		{
-			GaemFrame_index = Index;
-			newest_frame++;
-			CurrentFrame.frame_id = newest_frame;
-
-			//Last frame of the ring has not legit input
-			CurrentFrame.input_player1.legit = false;
-			CurrentFrame.input_player2.legit = false;
-			CurrentFrame.valid = true;
-
-			if (MemoryFrame[0].frame_id < GAEMFRAME_BUFFSIZE)
-				oldest_frame = MemoryFrame[0].frame_id;
-			else
-			{
-				int OldestGaemFraem_index = ((int)(GaemFrame_index + 1)) & (GAEMFRAME_BUFFSIZE - 1);
-				oldest_frame = MemoryFrame[OldestGaemFraem_index].frame_id;
-			}
-
-			return true;
-		}
-
-		return false;
-	}
-
-	public uint Logic_OldestFrameId()
-	{
-		return oldest_frame + 1;
-	}
-
-	public uint NewestFrameId()
-	{
-		return newest_frame;
-	}
-
-	private int GetIndexFromFrameId(uint frame_id)
-	{
-		if(!(frame_id >= oldest_frame && frame_id <= newest_frame))
-			Debug.LogWarning("!(frame_id >= oldest_frame && frame_id <= newest_frame)");
-
-		return ((int)(GaemFrame_index + (frame_id - newest_frame))) & (GAEMFRAME_BUFFSIZE - 1);
-	}
-
-	public bool IsInputPlayer1Legit(uint frame_id)
-	{
-		int index = GetIndexFromFrameId(frame_id);
-		GameFrame frame = MemoryFrame[index];
-		return frame.input_player1.legit;
-	}
-
-	public bool IsInputPlayer2Legit(uint frame_id)
-	{
-		int index = GetIndexFromFrameId(frame_id);
-		GameFrame frame = MemoryFrame[index];
-		return frame.input_player2.legit;
-	}
-
-	public void SetInputPlayer1(PlayerInput input, uint frame_id)
-	{
-		int index = GetIndexFromFrameId(frame_id);
-		GameFrame frame = MemoryFrame[index];
-		SetInput(ref frame.input_player1, input, frame_id);
-	}
-
-	public void SetInputPlayer2(PlayerInput input, uint frame_id)
-	{
-		int index = GetIndexFromFrameId(frame_id);
-		GameFrame frame = MemoryFrame[index];
-		SetInput(ref frame.input_player2, input, frame_id);
-	}
-
-	private void SetInput(ref PlayerInput dest, PlayerInput input, uint frame_id)
-	{
-		if (!dest.legit)
-		{
-			bool predictionWasRight = (
-				dest.xAxis == input.xAxis && dest.yAxis == input.yAxis &&
-				dest.up == input.up && dest.down == input.down &&
-				dest.left == input.left && dest.right == input.right &&
-				dest.justUp == input.justUp && dest.justDown == input.justDown &&
-				dest.justLeft == input.justLeft && dest.justRight == input.justRight
-			);
-
-			if (!predictionWasRight)
-			{
-				//rollback until
-				if (current_frame > frame_id)
-					current_frame = frame_id;
-			}
-
-			dest = input;
-			dest.legit = true; //Now is legit :)
-		}
-	}
-
-	public void Update()
-	{
-		if (current_frame > newest_frame)
-			return;
-
-		if (!(current_frame > oldest_frame))
-			Debug.LogWarning("!(current_frame > oldest_frame)");
-
-		int index = GetIndexFromFrameId(current_frame - 1);
-		GameFrame frame = MemoryFrame[index];
-
-		while (current_frame <= newest_frame)
-		{
-			int next_index = GetIndexFromFrameId(current_frame);
-			GameFrame next_frame = MemoryFrame[next_index];
-
-			next_frame.state.CopyFrom(frame.state);
-
-			if (!next_frame.input_player1.legit)
-			{
-				next_frame.input_player1 = frame.input_player1;
-				next_frame.input_player1.legit = false;
-			}
-
-			if (!next_frame.input_player2.legit)
-			{
-				next_frame.input_player2 = frame.input_player2;
-				next_frame.input_player2.legit = false;
-			}
-
-			index = next_index;
-			frame = next_frame;
-
-			logic.UpdateState(ref frame);
-			current_frame++;
-		}
-
-		visuals.UpdateFrom(frame);
-	}
-}
-
 public class NetworkManager : MonoBehaviour
 {
 	static NetworkManager _instance = null;
@@ -290,6 +27,7 @@ public class NetworkManager : MonoBehaviour
 
 	public Constants constants;
 
+	Type networkConnectionClass = typeof(NetworkConnection);
 	GameLogic gameLogic = new GameLogic();
 
 	public struct StoreInput
@@ -323,6 +61,23 @@ public class NetworkManager : MonoBehaviour
 
 	ConnectionConfig connectionConfig;
 	HostTopology topology;
+	NetworkConnection connection;
+
+	enum ConnectState
+	{
+		None,
+		Resolving,
+		Resolved,
+		Connecting,
+		Connected,
+		Disconnected,
+		Failed
+	}
+
+	ConnectState AsyncConnect = ConnectState.None;
+
+	public bool IsConnected { get { return AsyncConnect == ConnectState.Connected; } }
+
 	int channelId;
 	int hostId;
 	int connectionId;
@@ -368,7 +123,7 @@ public class NetworkManager : MonoBehaviour
 				NetworkTransport.Init();
 				connectionConfig = new ConnectionConfig();
 				channelId = connectionConfig.AddChannel(QosType.Reliable);
-				topology = new HostTopology(connectionConfig, 16);
+				topology = new HostTopology(connectionConfig, 1);
 				hostId = NetworkTransport.AddHost(topology, initParams.port);
 				connectionId = -1;
 				status = NetworkStatus.WaitingPeer;
@@ -377,10 +132,14 @@ public class NetworkManager : MonoBehaviour
 				NetworkTransport.Init();
 				connectionConfig = new ConnectionConfig();
 				channelId = connectionConfig.AddChannel(QosType.Reliable);
-				topology = new HostTopology(connectionConfig, 16);
-				hostId = NetworkTransport.AddHost(topology, initParams.port);
+				topology = new HostTopology(connectionConfig, 1);
+				hostId = NetworkTransport.AddHost(topology, initParams.port + 1);
+
 				byte error;
 				connectionId = NetworkTransport.Connect(hostId, initParams.address, initParams.port, 0, out error);
+				connection = (NetworkConnection)Activator.CreateInstance(networkConnectionClass);
+				connection.Initialize(initParams.address, hostId, connectionId, topology);
+
 				status = NetworkStatus.WaitingPeer;
 				break;
 		}
@@ -391,7 +150,7 @@ public class NetworkManager : MonoBehaviour
 		return status != NetworkStatus.Created;
 	}
 
-	public void Update()
+	public void FixedUpdate()
 	{
 		if (status != NetworkStatus.Closed && status != NetworkStatus.Created && status != NetworkStatus.LocalRunning)
 		{
@@ -416,10 +175,11 @@ public class NetworkManager : MonoBehaviour
 						if (connectionIdOut == connectionId)
 						{
 							//Connected succesfully
+							SetWarming(false);
 						}
 						else
 						{
-							connectionId = connectionIdOut;
+							HandleConnect(connectionIdOut, error);
 							SetWarming(true);
 						}
 						break;
@@ -427,6 +187,7 @@ public class NetworkManager : MonoBehaviour
 						Parse(recBuffer, dataSize);
 						break;
 					case NetworkEventType.DisconnectEvent:
+						connection = null;
 						status = NetworkStatus.Closed;
 						break;
 					default:
@@ -441,8 +202,10 @@ public class NetworkManager : MonoBehaviour
 		switch (status)
 		{
 			case NetworkStatus.WaitingPeer:
+				Debug.Log("WaitingPeer");
 				break;
 			case NetworkStatus.HostWarming:
+				Debug.Log("HostWarming");
 				SendQuality(CustomPacketId.ID_QUALITY_REPORT);
 
 				int diff = (int) localAdvantage * (int) remoteAdvantage;
@@ -459,31 +222,16 @@ public class NetworkManager : MonoBehaviour
 				{
 					counter = 0;
 				}
+
+				ClientWarmingHandle(ref skip_next_frame);
 				break;
 			case NetworkStatus.ClientWarming:
-				gameLogic.Init();
-
-				if (startUpdateId != 0 && startUpdateId <= localUpdateId)
-				{
-					if (startUpdateId != localUpdateId)
-						Debug.LogWarning("startUpdateId != localUpdateId");
-
-					if (gameLogic.IsInit())
-					{
-						SetRunning();
-					}
-				}
-				else if (localAdvantage > remoteAdvantage)
-				{
-					skip_next_frame = true;
-				}
-
-				if (!skip_next_frame)
-					localUpdateId++;
-
+				Debug.Log("ClientWarming");
+				ClientWarmingHandle(ref skip_next_frame);
 				break;
 			case NetworkStatus.HostRunning:
 			case NetworkStatus.ClientRunning:
+				Debug.Log("HostRunning + ClientRunning");
 				if (localAdvantage > remoteAdvantage)
 				{
 					counter++;
@@ -563,10 +311,10 @@ public class NetworkManager : MonoBehaviour
 			case NetworkStatus.LocalRunning:
 				{
 					PlayerInput input;
-                    PlayerInput input2;
-                    gameLogic.GetNewInput(out input);
-                    gameLogic.GetNewInput2(out input2);
-                    gameLogic.TryAddNewFrame();
+					PlayerInput input2;
+					gameLogic.GetNewInput(out input);
+					gameLogic.GetNewInput2(out input2);
+					gameLogic.TryAddNewFrame();
 					uint updateId = gameLogic.NewestFrameId();
 					gameLogic.SetInputPlayer1(input, updateId);
 					gameLogic.SetInputPlayer2(input2, updateId);
@@ -574,6 +322,32 @@ public class NetworkManager : MonoBehaviour
 					break;
 				}
 		}
+
+		if (connection != null)
+			connection.FlushChannels();
+	}
+
+	private void ClientWarmingHandle(ref bool skip_next_frame)
+	{
+		gameLogic.Init();
+
+		if (startUpdateId != 0 && startUpdateId <= localUpdateId)
+		{
+			if (startUpdateId != localUpdateId)
+				Debug.LogWarning("startUpdateId != localUpdateId");
+
+			if (gameLogic.IsInit())
+			{
+				SetRunning();
+			}
+		}
+		else if (localAdvantage > remoteAdvantage)
+		{
+			skip_next_frame = true;
+		}
+
+		if (!skip_next_frame)
+			localUpdateId++;
 	}
 
 	private void SetWarming(bool host)
@@ -595,63 +369,68 @@ public class NetworkManager : MonoBehaviour
 
 	private void Parse(byte[] recBuffer, int dataSize)
 	{
-		MemoryStream stream = new MemoryStream(recBuffer, 0, dataSize, false);
-		BinaryReader reader = new BinaryReader(stream);
-		CustomPacketId packetId = (CustomPacketId)reader.ReadByte();
+		NetworkReader reader = new NetworkReader(recBuffer);
 
-		switch (packetId)
+		while (reader.Position < dataSize)
 		{
-			case CustomPacketId.ID_QUALITY_REPORT:
-				switch (status)
-				{
-					case NetworkStatus.HostRunning:
-					case NetworkStatus.ClientRunning:
-					case NetworkStatus.HostWarming:
-					case NetworkStatus.ClientWarming:
-						ReadQuality(reader);
-						SendQuality(CustomPacketId.ID_QUALITY_REPLY);
-						break;
-				}
-				break;
-			case CustomPacketId.ID_QUALITY_REPLY:
-				switch (status)
-				{
-					case NetworkStatus.HostRunning:
-					case NetworkStatus.ClientRunning:
-					case NetworkStatus.HostWarming:
-					case NetworkStatus.ClientWarming:
-						ReadQuality(reader);
-						break;
-				}
-				break;
-			case CustomPacketId.ID_INPUT:
-				switch (status)
-				{
-					case NetworkStatus.HostRunning:
-					case NetworkStatus.ClientRunning:
-						PlayerInput input;
-						uint remoteInputUpdateId;
-						ReadInput(reader, out input, out remoteInputUpdateId);
-						int i = 0;
-						for (; i < STORE_INPUT_LENGTH; i++)
-						{
-							if (storeInputs[i].updateId == 0)
+			CustomPacketId packetId = (CustomPacketId)reader.ReadByte();
+			switch (packetId)
+			{
+				case CustomPacketId.ID_QUALITY_REPORT:
+					switch (status)
+					{
+						case NetworkStatus.HostRunning:
+						case NetworkStatus.ClientRunning:
+						case NetworkStatus.HostWarming:
+						case NetworkStatus.ClientWarming:
+							ReadQuality(reader);
+							SendQuality(CustomPacketId.ID_QUALITY_REPLY);
+							break;
+					}
+					break;
+				case CustomPacketId.ID_QUALITY_REPLY:
+					switch (status)
+					{
+						case NetworkStatus.HostRunning:
+						case NetworkStatus.ClientRunning:
+						case NetworkStatus.HostWarming:
+						case NetworkStatus.ClientWarming:
+							ReadQuality(reader);
+							break;
+					}
+					break;
+				case CustomPacketId.ID_INPUT:
+					switch (status)
+					{
+						case NetworkStatus.HostRunning:
+						case NetworkStatus.ClientRunning:
+							PlayerInput input;
+							uint remoteInputUpdateId;
+							ReadInput(reader, out input, out remoteInputUpdateId);
+							int i = 0;
+							for (; i < STORE_INPUT_LENGTH; i++)
 							{
-								storeInputs[i].updateId = remoteInputUpdateId;
-								storeInputs[i].input = input;
-								break;
+								if (storeInputs[i].updateId == 0)
+								{
+									storeInputs[i].updateId = remoteInputUpdateId;
+									storeInputs[i].input = input;
+									break;
+								}
 							}
-						}
-						break;
-				}
-				break;
-			case CustomPacketId.ID_START:
-				ReadStart(reader);
-				break;
+							break;
+					}
+					break;
+				case CustomPacketId.ID_START:
+					ReadStart(reader);
+					break;
+				default:
+					Debug.LogError("Packed ID UKNOWN: " + packetId);
+					break;
+			}
 		}
 	}
 
-	private void ReadQuality(BinaryReader reader)
+	private void ReadQuality(NetworkReader reader)
 	{
 		remoteUpdateId = reader.ReadUInt32();
 		uint ack_localUpdateId = reader.ReadUInt32();
@@ -662,18 +441,14 @@ public class NetworkManager : MonoBehaviour
 
 	private void SendQuality(CustomPacketId id_packet)
 	{
-		MemoryStream stream = new MemoryStream();
-		BinaryWriter writer = new BinaryWriter(stream);
+		NetworkWriter writer = new NetworkWriter();
 		writer.Write((byte)id_packet);
 		writer.Write(localUpdateId);
 		writer.Write(remoteUpdateId);
-
-		byte[] msg = stream.ToArray();
-		byte error;
-		NetworkTransport.Send(hostId, connectionId, channelId, msg, msg.Length, out error);
+		connection.SendWriter(writer, channelId);
 	}
 
-	private void ReadInput(BinaryReader reader, out PlayerInput input, out uint remoteInputUpdateId)
+	private void ReadInput(NetworkReader reader, out PlayerInput input, out uint remoteInputUpdateId)
 	{
 		remoteInputUpdateId = reader.ReadUInt32();
 		if (remoteUpdateId < remoteInputUpdateId)
@@ -702,8 +477,7 @@ public class NetworkManager : MonoBehaviour
 
 	void SendInput(PlayerInput input)
 	{
-		MemoryStream stream = new MemoryStream();
-		BinaryWriter writer = new BinaryWriter(stream);
+		NetworkWriter writer = new NetworkWriter();
 
 		writer.Write((byte)CustomPacketId.ID_INPUT);
 		writer.Write(localUpdateId);
@@ -722,26 +496,45 @@ public class NetworkManager : MonoBehaviour
 		writer.Write(input.left);
 		writer.Write(input.right);
 
-		byte[] msg = stream.ToArray();
-		byte error;
-		NetworkTransport.Send(hostId, connectionId, channelId, msg, msg.Length, out error);
+		connection.SendWriter(writer, channelId);
 	}
 
-	private void ReadStart(BinaryReader reader)
+	private void ReadStart(NetworkReader reader)
 	{
 		startUpdateId = reader.ReadUInt32();
 	}
 
 	private void SendStart()
 	{
-		MemoryStream stream = new MemoryStream();
-		BinaryWriter writer = new BinaryWriter(stream);
+		NetworkWriter writer = new NetworkWriter();
 
-		writer.Write((byte)CustomPacketId.ID_START);
+		writer.Write((byte) CustomPacketId.ID_START);
 		writer.Write(startUpdateId);
 
-		byte[] msg = stream.ToArray();
-		byte error;
-		NetworkTransport.Send(hostId, connectionId, channelId, msg, msg.Length, out error);
+		connection.SendWriter(writer, channelId);
+	}
+
+	void HandleConnect(int connectionId, byte error)
+	{
+		if (LogFilter.logDebug)
+		{
+			Debug.Log("NetworkServerSimple accepted client:" + connectionId);
+		}
+
+		if (error != 0)
+		{
+			Debug.LogError("OnConnectError error:" + error);
+			return;
+		}
+
+		string address;
+		int port;
+		NetworkID networkId;
+		NodeID node;
+		byte error2;
+		NetworkTransport.GetConnectionInfo(hostId, connectionId, out address, out port, out networkId, out node, out error2);
+
+		connection = (NetworkConnection) Activator.CreateInstance(networkConnectionClass);
+		connection.Initialize(address, hostId, connectionId, topology);
 	}
 }

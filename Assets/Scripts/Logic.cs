@@ -288,11 +288,16 @@ public class Logic
         return Vector2.Distance(c1, c2) < r1 + r2;
     }
 
-    Vector2 CircleCircleCorrect(Vector2 c1After, float r1, Vector2 c2, float r2)
+    Vector2 CircleCircleCorrect(Vector2 c1, float r1, Vector2 c2, float r2)
     {
         // TODO check it works
-        Vector2 normal = c1After - c2;
-        normal.Normalize();
+        Vector2 normal = c1 - c2;
+        if (Mathf.Abs(normal.sqrMagnitude) <= 0.01f) { // Inside, whoops
+            float angle = Random.Range(0, 2f*Mathf.PI);
+            normal.x = Mathf.Cos(angle);
+            normal.y = Mathf.Sin(angle);
+        }
+        else normal.Normalize();
 
         return c2 + normal * (r1 + r2);
     }

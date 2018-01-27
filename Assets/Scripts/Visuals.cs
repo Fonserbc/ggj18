@@ -14,6 +14,8 @@ public class Visuals : MonoBehaviour {
     public Constants c;
     //Lista de pares de antenas
 
+    public int ownPlayer = -1;
+
 	public void Init (Logic l)
     {
         myLogic = l;
