@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Logic : MonoBehaviour
+public class Logic
 {
 
     public Constants c;
