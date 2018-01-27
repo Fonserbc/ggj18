@@ -279,7 +279,7 @@ public class GameLogic
 			current_frame++;
 		}
 
-		visuals.UpdateFrom(frame.state);
+		visuals.UpdateFrom(frame);
 	}
 }
 

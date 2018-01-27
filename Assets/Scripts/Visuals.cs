@@ -6,7 +6,7 @@ public class Visuals : MonoBehaviour {
 
     public GameObject BoltPrefab;
     public AntennaScript[] antenas;
-    public Transform[] players;
+    public PlayerScript[] players;
     Animator[] playerAnimators;
 	List<DigitalRuby.LightningBolt.LightningBoltScript> bolts = new List<DigitalRuby.LightningBolt.LightningBoltScript>();
     public Transform levelTransform;
@@ -24,8 +24,9 @@ public class Visuals : MonoBehaviour {
         }
 	}
 	
-    public void UpdateFrom (GameState state)
+    public void UpdateFrom (GameFrame frame)
     {
+        GameState state = frame.state;
         //Player Visuals
         for(int i = 0; i < state.players.Length; ++i)
         {
@@ -34,9 +35,10 @@ public class Visuals : MonoBehaviour {
                 players[i].gameObject.SetActive(state.players[i].connected);
             }
 
-            players[i].position = new Vector3(state.players[i].position.x, players[i].position.y, state.players[i].position.y);
-            players[i].rotation = Quaternion.AngleAxis(state.players[i].rotation, Vector3.down);
+            players[i].transform.position = new Vector3(state.players[i].position.x, players[i].transform.position.y, state.players[i].position.y);
+            players[i].transform.rotation = Quaternion.AngleAxis(state.players[i].rotation, Vector3.down);
 
+            SetPlayerWave(i, (i==0) ? frame.input_player1 : frame.input_player2);
             
             playerAnimators[i].SetBool("Moving", state.players[i].moving);
             playerAnimators[i].SetBool("Stunned", state.players[i].stunnedTime > 0);
@@ -84,6 +86,40 @@ public class Visuals : MonoBehaviour {
 
     }
 
+    void SetPlayerWave(int id, PlayerInput input)
+    {
+
+            if (input.up)
+            {
+                players[id].waving = true;
+                players[id].waveRenderer.material.SetColor("_EmissionColor", c.connectionColors[0]);
+                players[id].waveRenderer.gameObject.SetActive(true);
+            }
+            else if (input.down)
+            {
+                players[id].waving = true;
+                players[id].waveRenderer.material.SetColor("_EmissionColor", c.connectionColors[1]);
+                players[id].waveRenderer.gameObject.SetActive(true);
+            }
+            else if (input.left)
+            {
+                players[id].waving = true;
+                players[id].waveRenderer.material.SetColor("_EmissionColor", c.connectionColors[2]);
+                players[id].waveRenderer.gameObject.SetActive(true);
+            }
+            else if (input.right)
+            {
+                players[id].waving = true;
+                players[id].waveRenderer.material.SetColor("_EmissionColor", c.connectionColors[3]);
+                players[id].waveRenderer.gameObject.SetActive(true);
+            }
+            else
+            {
+                players[id].waving = false;
+                players[id].waveRenderer.gameObject.SetActive(false);
+            }
+    }
+
     private void OnDrawGizmosSelected()
     {
         foreach (AntennaScript an in antenas) {
@@ -95,10 +131,10 @@ public class Visuals : MonoBehaviour {
             Gizmos.DrawWireSphere(an.transform.position, c.antenaLinkMaxRadius);
         }
 
-        foreach(Transform pl in players)
+        foreach(PlayerScript pl in players)
         {
             Gizmos.color = Color.green;
-            Gizmos.DrawWireSphere(pl.position, c.playerCollisionRadius);
+            Gizmos.DrawWireSphere(pl.transform.position, c.playerCollisionRadius);
 
         }
     }
