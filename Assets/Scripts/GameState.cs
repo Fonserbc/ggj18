@@ -9,6 +9,7 @@ public struct GameState
         public float rotation;
         public float stunnedTime;
         public float invincibleTime;
+        public bool moving;
     }
     public struct AntenaInfo
     {
