@@ -34,7 +34,7 @@ public class Visuals : MonoBehaviour {
             }
 
             players[i].position = new Vector3(state.players[i].position.x, players[i].position.y, state.players[i].position.y);
-            players[i].rotation = Quaternion.Euler(0, state.players[i].rotation, 0);
+            players[i].rotation = Quaternion.AngleAxis(state.players[i].rotation, Vector3.down);
             playerAnimators[i].SetBool("Stunned", state.players[i].stunnedTime > 0);
 
 
