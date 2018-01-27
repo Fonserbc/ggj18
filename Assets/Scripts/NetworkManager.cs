@@ -332,38 +332,48 @@ public class NetworkManager : MonoBehaviour
 	{
 		if (status != NetworkStatus.Closed && status != NetworkStatus.Created)
 		{
-			int recHostIdOut;
-			int connectionIdOut;
-			int channelIdOut;
-			byte[] recBuffer = new byte[1024];
-			int bufferSize = 1024;
-			int dataSize;
-			byte error;
-			NetworkEventType recData = NetworkTransport.Receive(out recHostIdOut, out connectionIdOut, out channelIdOut, recBuffer, bufferSize, out dataSize, out error);
-			switch (recData)
-			{
-				case NetworkEventType.Nothing:
-					break;
-				case NetworkEventType.ConnectEvent:
-					if (connectionIdOut == connectionId)
-					{
-						//Connected succesfully
-					}
-					else
-					{
-						connectionId = connectionIdOut;
-						SetWarming(true);
-					}
-					break;
-				case NetworkEventType.DataEvent:
-					Parse(recBuffer, dataSize);
-					break;
-				case NetworkEventType.DisconnectEvent:
-					status = NetworkStatus.Closed;
-					break;
-			}
-		}
+			NetworkEventType networkEvent;
 
+			do
+			{
+				int connectionIdOut;
+				int channelIdOut;
+
+				byte[] recBuffer = new byte[1024];
+				int bufferSize = 1024;
+				int dataSize;
+				byte error;
+
+				networkEvent = NetworkTransport.ReceiveFromHost(hostId, out connectionIdOut, out channelIdOut, recBuffer, bufferSize, out dataSize, out error);
+				switch (networkEvent)
+				{
+					case NetworkEventType.Nothing:
+						break;
+					case NetworkEventType.ConnectEvent:
+						if (connectionIdOut == connectionId)
+						{
+							//Connected succesfully
+						}
+						else
+						{
+							connectionId = connectionIdOut;
+							SetWarming(true);
+						}
+						break;
+					case NetworkEventType.DataEvent:
+						Parse(recBuffer, dataSize);
+						break;
+					case NetworkEventType.DisconnectEvent:
+						status = NetworkStatus.Closed;
+						break;
+					default:
+						Debug.LogError("Unknown network message type received: " + networkEvent);
+						break;
+				}
+			}
+			while (networkEvent != NetworkEventType.Nothing);
+		}
+			
 		bool skip_next_frame = false;
 		switch (status)
 		{
