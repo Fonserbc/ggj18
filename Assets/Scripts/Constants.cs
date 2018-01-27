@@ -11,4 +11,11 @@ public class Constants : ScriptableObject {
     public float playerSpeed = 2f;
     public float stunnedtime = 1f;
     public float invincibilityTime = 2f;
+    public Color[] antennaColors = {
+        Color.white, Color.yellow, Color.green, Color.blue, Color.red
+    };
+
+    public Color[] connectionColors = {
+        Color.yellow, Color.green, Color.blue, Color.red
+    };
 }

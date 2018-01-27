@@ -48,26 +48,8 @@ public class Visuals : MonoBehaviour {
         //Antenna Visuals
         for (int i = 0; i < antenas.Length; ++i)
         {
-            antenas[i].isConnected = myLogic.IsAntenaLinking(i);
-            Color c = Color.white;
-            switch (state.antenas[i].state)
-            {
-                case GameState.AntenaInfo.AntenaState.ColorUp:
-                    c = Color.yellow;
-                    break;
-                case GameState.AntenaInfo.AntenaState.ColorRight:
-                    c = Color.red;
-                    break;
-                case GameState.AntenaInfo.AntenaState.ColorDown:
-                    c = Color.green;
-                    break;
-                case GameState.AntenaInfo.AntenaState.ColorLeft:
-                    c = Color.blue;
-                    break;
-                default:
-                    break;
-            }
-            antenas[i].SetColor(c);
+            antenas[i].isConnected = myLogic.IsAntenaLinking(i);            
+            antenas[i].SetColor(c.antennaColors[(int)state.antenas[i].state]);
         }
         //End Antenna Visuals
 
@@ -80,6 +62,8 @@ public class Visuals : MonoBehaviour {
             {
                 bolts[indexBolt].StartObject = antenas[connections[indexBolt].x].spawnBolt.gameObject;
                 bolts[indexBolt].EndObject = antenas[connections[indexBolt].y].spawnBolt.gameObject;
+                bolts[indexBolt].GetComponent<LineRenderer>().material.SetColor("_EmissionColor", c.connectionColors[((int)state.antenas[connections[indexBolt].x].state)-1]);
+              
                 ++indexBolt;
             }
             else

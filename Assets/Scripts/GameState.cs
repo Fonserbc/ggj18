@@ -14,11 +14,11 @@ public struct GameState
     public struct AntenaInfo
     {
         public enum AntenaState {
-            Off,
-            ColorUp,
-            ColorDown,
-            ColorLeft,
-            ColorRight
+            Off = 0,
+            ColorUp = 1,
+            ColorDown = 2,
+            ColorLeft = 3,
+            ColorRight = 4
         }
         public AntenaState state;
         public Vector2 position;
