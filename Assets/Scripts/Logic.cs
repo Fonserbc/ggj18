@@ -12,12 +12,17 @@ public class Logic : MonoBehaviour
     BoxCollider2D[] staticWorld;
 
     List<int>[] antenaConnections;
+    List<Vector2i> antenaLinks;
 
     void Init(Visuals v)
     {
         staticWorld = v.levelTransform.gameObject.GetComponentsInChildren<BoxCollider2D>();
 
-
+        antenaConnections = new List<int>[v.antenas.Length];
+        antenaLinks = new List<Vector2i>(v.antenas.Length * (v.antenas.Length - 1));
+        for (int i = 0; i < antenaConnections.Length; ++i) {
+            antenaConnections[i] = new List<int>(antenaConnections.Length - 1);
+        }
     }
 
     public GameState UpdateState(GameState previousState, InputState previousInput, InputState newInput)
@@ -32,7 +37,9 @@ public class Logic : MonoBehaviour
             UpdatePlayerActions(i, previousInput.playerInputs[i], newInput.playerInputs[i]);
         }
 
-        // Physics Collision
+        UpdateAntennaConnections();
+
+        // Physics Collisions
         for (int i = 0; i < c.numPlayers; ++i)
         {
             // Against static world
@@ -51,9 +58,9 @@ public class Logic : MonoBehaviour
                 {
                     newState.players[i].position = CircleCircleCorrect(previousState.players[i].position, newState.players[i].position, c.playerCollisionRadius, newState.antenas[j].position, c.antenaCollisionRadius);
 
-                    if (IsAntenaLinking(j) && newState.players[i].stunned <= 0)
+                    if (IsAntenaLinking(j) && newState.players[i].stunned <= 0 && newState.players[i].invincible <= 0)
                     {
-                        newState.players[i].stunned = c.stunnedFrames;
+                        StunPlayer(i);
                     }
                 }
             }
@@ -71,6 +78,16 @@ public class Logic : MonoBehaviour
         // World Logic
         // Electricity/antenagrabbing/whatever
 
+        // Physics Triggers
+        for (int i = 0; i < c.numPlayers; ++i)
+        {
+            for (int j = 0; j < antenaLinks.Count; ++j) {
+                Vector2i link = antenaLinks[j];
+
+                //CircleLineCollides();
+            }
+        }
+
         return newState;
     }
 
@@ -80,6 +97,10 @@ public class Logic : MonoBehaviour
         {
             newState.players[id].stunned--;
             return;
+        }
+        else if (newState.players[id].invincible > 0)
+        {
+            newState.players[id].invincible--;
         }
 
         if (!newState.players[id].connected)
@@ -127,6 +148,31 @@ public class Logic : MonoBehaviour
         }
     }
 
+    void StunPlayer(int p) {
+        newState.players[p].stunned = c.stunnedFrames;
+        newState.players[p].invincible = c.invincibilityFrames;
+    }
+
+    void UpdateAntennaConnections()
+    {
+        for (int i = 0; i < antenaConnections.Length; ++i) {
+            antenaConnections[i].Clear();
+        }
+        antenaLinks.Clear();
+
+        for (int i = 0; i < newState.antenas.Length; ++i) {
+            for (int j = i + 1; j < newState.antenas.Length; ++j)
+            {
+                if (Vector2.Distance(newState.antenas[i].position, newState.antenas[j].position) <= c.antenaLinkMaxRadius
+                    && newState.antenas[i].state == newState.antenas[j].state && newState.antenas[i].state != GameState.AntenaInfo.AntenaState.Off) {
+                    antenaConnections[i].Add(j);
+                    antenaConnections[j].Add(i);
+                    antenaLinks.Add(new Vector2i(i, j));
+                }
+            }
+        }
+    }
+
     int FindAntenaNearPlayer(Vector2 playerPos)
     {
         for (int i = 0; i < newState.antenas.Length; ++i)
@@ -134,6 +180,26 @@ public class Logic : MonoBehaviour
             if (Vector2.Distance(playerPos, newState.antenas[i].position) < c.antenaActivationRadius) return i;
         }
         return -1;
+    }
+
+    bool CircleLineCollides (Vector2 lPos1, Vector2 lPos2, Vector2 p, float r)
+    {
+        Vector2 lineDir = lPos2 - lPos1;
+        float lineMagnitude = lineDir.magnitude;
+        lineDir.Normalize();
+
+        Vector2 v = p - lPos1;
+        float d = Vector2.Dot(v, lineDir);
+
+        Vector2 projected = lPos1 + lineDir * d;
+
+        if (Vector2.Distance(projected, p) > r)
+            return false;
+
+        float d1 = Vector2.Distance(lPos1, projected);
+        float d2 = Vector2.Distance(lPos2, projected);
+
+        return d1 + d2 <= lineMagnitude;
     }
 
     bool CircleAABBCollides(Vector2 cPos, float r, Bounds aabb)
@@ -174,10 +240,14 @@ public class Logic : MonoBehaviour
 
     bool IsAntenaLinking(int antenaId)
     {
-        return false;
+        return antenaConnections[antenaId].Count > 0;
     }
 
-    public List<Vector2i> GetCurrentAntenasConnections() {
-        return null;
+    public List<Vector2i> GetCurrentAntenasAristas() {
+        return antenaLinks;
+    }
+
+    public List<int>[] GetCurrentAntenaConnections() {
+        return antenaConnections;
     }
 }
