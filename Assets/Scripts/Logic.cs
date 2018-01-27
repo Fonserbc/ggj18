@@ -280,7 +280,7 @@ public class Logic
         return c2 + normal * (r1 + r2);
     }
 
-    bool IsAntenaLinking(int antenaId)
+    public bool IsAntenaLinking(int antenaId)
     {
         return antenaConnections[antenaId].Count > 0;
     }
