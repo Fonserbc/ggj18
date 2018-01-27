@@ -20,7 +20,7 @@ public class Logic : MonoBehaviour
 
     public GameState UpdateState(GameState previousState, InputState previousInput, InputState newInput)
     {
-        newState = previousState;
+        newState = previousState; // Copy (?)
 
         // PlayerInput
         for (int i = 0; i < c.numPlayers; ++i)
@@ -38,7 +38,7 @@ public class Logic : MonoBehaviour
             {
                 if (CircleAABBCollides(newState.players[i].position, c.playerCollisionRadius, staticWorld[j].bounds))
                 {
-                    newState.players[i].position = CircleAABBCorrect(newState.players[i].position, c.playerCollisionRadius, staticWorld[j].bounds);
+                    newState.players[i].position = CircleAABBCorrect(previousState.players[i].position, newState.players[i].position, c.playerCollisionRadius, staticWorld[j].bounds);
                 }
             }
 
@@ -47,7 +47,7 @@ public class Logic : MonoBehaviour
             {
                 if (CircleCircleCollides(newState.players[i].position, c.playerCollisionRadius, newState.antenas[j].position, c.antenaCollisionRadius))
                 {
-                    newState.players[i].position = CircleCircleCorrect(newState.players[i].position, c.playerCollisionRadius, newState.antenas[j].position, c.antenaCollisionRadius);
+                    newState.players[i].position = CircleCircleCorrect(previousState.players[i].position, newState.players[i].position, c.playerCollisionRadius, newState.antenas[j].position, c.antenaCollisionRadius);
                 }
             }
 
@@ -56,7 +56,7 @@ public class Logic : MonoBehaviour
             {
                 if (i != j && CircleCircleCollides(newState.players[i].position, c.playerCollisionRadius, newState.players[j].position, c.playerCollisionRadius))
                 {
-                    newState.players[i].position = CircleCircleCorrect(newState.players[i].position, c.playerCollisionRadius, newState.players[j].position, c.playerCollisionRadius);
+                    newState.players[i].position = CircleCircleCorrect(previousState.players[i].position, newState.players[i].position, c.playerCollisionRadius, newState.players[j].position, c.playerCollisionRadius);
                 }
             }
         }
@@ -131,21 +131,28 @@ public class Logic : MonoBehaviour
 
     bool CircleAABBCollides(Vector2 cPos, float r, Bounds aabb)
     {
-        return false;
+        if (aabb.Contains(cPos)) return true;
+
+        Vector2 closest = aabb.ClosestPoint(cPos);
+        return Vector2.Distance(closest, cPos) < r;
     }
 
-    Vector2 CircleAABBCorrect(Vector2 cPos, float r, Bounds aabb)
+    Vector2 CircleAABBCorrect(Vector2 cBefore, Vector2 cAfter, float r, Bounds aabb)
     {
-        return cPos;
+        return cBefore;
     }
 
     bool CircleCircleCollides(Vector2 c1, float r1, Vector2 c2, float r2)
     {
-        return false;
+        return Vector2.Distance(c1, c2) < r1 + r2;
     }
 
-    Vector2 CircleCircleCorrect(Vector2 movingCenter, float movingRadius, Vector2 staticCenter, float staticRadius)
+    Vector2 CircleCircleCorrect(Vector2 c1Before, Vector2 c1After, float r1, Vector2 c2, float r2)
     {
-        return movingCenter;
+        // TODO do something better
+        Vector2 normal = c1After - c2;
+        normal.Normalize();
+
+        return c2 + normal * (r1 + r2);
     }
 }

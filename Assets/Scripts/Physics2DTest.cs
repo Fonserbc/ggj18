@@ -6,6 +6,7 @@ public class Physics2DTest : MonoBehaviour {
 
     public Collider2D col1, col2;
     public ContactFilter2D contactFilter;
+    public Transform aux;
 
 	// Use this for initialization
 	void Start () {
@@ -14,7 +15,8 @@ public class Physics2DTest : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        Collider2D[] res = new Collider2D[8];
-        Debug.Log("Touching? "+col1.OverlapCollider(contactFilter, res));
+        aux.position = col1.bounds.ClosestPoint(col2.transform.position);
+
+        //Debug.Log("Contains? "+col1.bounds.Contains(col2.transform.position));
 	}
 }
