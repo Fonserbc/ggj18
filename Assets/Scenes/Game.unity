@@ -196,6 +196,7 @@ MonoBehaviour:
   - {fileID: 505857081}
   - {fileID: 1406353872}
   levelTransform: {fileID: 1679579661}
+  c: {fileID: 11400000, guid: 71cd57026ba824f3cb5fc5d345985b38, type: 2}
 --- !u!4 &325190463
 Transform:
   m_ObjectHideFlags: 0
@@ -336,6 +337,12 @@ Prefab:
       propertyPath: m_Name
       value: AntennaSmall
       objectReference: {fileID: 0}
+    - target: {fileID: 114222151352021460, guid: 8085cdca59d2f414f9edd9e330ef49af,
+        type: 2}
+      propertyPath: c
+      value: 
+      objectReference: {fileID: 11400000, guid: 71cd57026ba824f3cb5fc5d345985b38,
+        type: 2}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 8085cdca59d2f414f9edd9e330ef49af, type: 2}
   m_IsPrefabParent: 0
@@ -636,6 +643,12 @@ Prefab:
       propertyPath: m_RootOrder
       value: 4
       objectReference: {fileID: 0}
+    - target: {fileID: 114222151352021460, guid: 8085cdca59d2f414f9edd9e330ef49af,
+        type: 2}
+      propertyPath: c
+      value: 
+      objectReference: {fileID: 11400000, guid: 71cd57026ba824f3cb5fc5d345985b38,
+        type: 2}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 8085cdca59d2f414f9edd9e330ef49af, type: 2}
   m_IsPrefabParent: 0

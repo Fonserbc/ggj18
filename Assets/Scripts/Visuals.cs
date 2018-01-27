@@ -11,6 +11,7 @@ public class Visuals : MonoBehaviour {
 	List<DigitalRuby.LightningBolt.LightningBoltScript> bolts = new List<DigitalRuby.LightningBolt.LightningBoltScript>();
     public Transform levelTransform;
     Logic myLogic;
+    public Constants c;
     //Lista de pares de antenas
 
 	public void Init (Logic l)
@@ -76,11 +77,10 @@ public class Visuals : MonoBehaviour {
 
     }
 
-    private void OnDrawGizmos()
+    private void OnDrawGizmosSelected()
     {
-        Gizmos.color = Color.green;
         foreach (AntennaScript an in antenas) {
-            Gizmos.DrawWireSphere(an.transform.position, myLogic.c.antenaLinkMaxRadius);
+            an.OnDrawGizmosSelected();
         }
     }
 }

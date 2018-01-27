@@ -13,10 +13,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   fixedDeltaTime: 0.016
   numPlayers: 2
-  antenaActivationRadius: 1
+  antenaActivationRadius: 1.5
   antenaCollisionRadius: 0.5
   antenaLinkMaxRadius: 10
   playerCollisionRadius: 0.5
   playerSpeed: 2
-  stunnedFrames: 32
-  invincibilityFrames: 46
+  stunnedtime: 1
+  invincibilityTime: 2
