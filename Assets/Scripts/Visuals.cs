@@ -8,7 +8,7 @@ public class Visuals : MonoBehaviour {
     public AntennaScript[] antenas;
     public Transform[] players;
     Animator[] playerAnimators;
-    List<DigitalRuby.LightningBolt.LightningBoltScript> bolts;
+	List<DigitalRuby.LightningBolt.LightningBoltScript> bolts = new List<DigitalRuby.LightningBolt.LightningBoltScript>();
     public Transform levelTransform;
     Logic myLogic;
     //Lista de pares de antenas

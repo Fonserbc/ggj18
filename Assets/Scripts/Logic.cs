@@ -37,8 +37,8 @@ public class Logic
         for (int i = 0; i < newState.players.Length; ++i) {
             newState.players[i] = new GameState.PlayerInfo();
             newState.players[i].position = new Vector2(v.players[i].transform.position.x, v.players[i].transform.position.z);
-            newState.antenas[i].rotation = v.players[i].transform.eulerAngles.y;
-            newState.players[i].connected = false;
+            newState.players[i].rotation = v.players[i].transform.eulerAngles.y;
+            newState.players[i].connected = true;
         }
         newState.antenas = new GameState.AntenaInfo[antenaCount];
         for (int i = 0; i < antenaCount; ++i)

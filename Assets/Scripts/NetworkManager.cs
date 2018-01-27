@@ -78,7 +78,7 @@ public class GameLogic
 				break;
 			case InitState.LOADING:
 				Scene game = SceneManager.GetSceneByName("Game");
-				GameObject visualsObject = GameObject.Find("Visuals");
+				GameObject visualsObject = GameObject.FindGameObjectWithTag("GameController");
 				if (visualsObject != null)
 				{
 					visuals = visualsObject.GetComponent<Visuals>();
