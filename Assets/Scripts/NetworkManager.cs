@@ -135,14 +135,39 @@ public class GameLogic
 		return frame.input_player2.legit;
 	}
 
-	public void SetInputPlayer1(PlayerInput input, uint currentFrameID)
+	public void SetInputPlayer1(PlayerInput input, uint frame_id)
 	{
-
+		int index = GetIndexFromFrameId(frame_id);
+		GameFrame frame = MemoryFrame[index];
+		SetInput(ref frame.input_player1, input, frame_id);
 	}
 
-	public void SetInputPlayer2(PlayerInput input, uint currentFrameID)
+	public void SetInputPlayer2(PlayerInput input, uint frame_id)
 	{
+		int index = GetIndexFromFrameId(frame_id);
+		GameFrame frame = MemoryFrame[index];
+		SetInput(ref frame.input_player2, input, frame_id);
+	}
 
+	private void SetInput(ref PlayerInput dest, PlayerInput input, uint frame_id)
+	{
+		if (!dest.legit)
+		{
+			bool predictionWasRight = (
+				dest.xAxis == input.xAxis && dest.yAxis == input.yAxis &&
+				dest.up == input.up && dest.down == input.down &&
+				dest.left == input.left && dest.right == input.right);
+
+			if (!predictionWasRight)
+			{
+				//rollback until
+				if (current_frame > frame_id)
+					current_frame = frame_id;
+			}
+
+			dest = input;
+			dest.legit = true; //Now is legit :)
+		}
 	}
 
 	public void Update()
@@ -292,38 +317,38 @@ public class NetworkManager : MonoBehaviour
 
 	public void Update()
 	{
-		if (!IsInit())
-			return;
-
-		int recHostIdOut;
-		int connectionIdOut;
-		int channelIdOut;
-		byte[] recBuffer = new byte[1024];
-		int bufferSize = 1024;
-		int dataSize;
-		byte error;
-		NetworkEventType recData = NetworkTransport.Receive(out recHostIdOut, out connectionIdOut, out channelIdOut, recBuffer, bufferSize, out dataSize, out error);
-		switch (recData)
+		if (status != NetworkStatus.Closed && status != NetworkStatus.Created)
 		{
-			case NetworkEventType.Nothing:
-				break;
-			case NetworkEventType.ConnectEvent:
-				if (connectionIdOut == connectionId)
-				{
-					//Connected succesfully
-				}
-				else
-				{
-					connectionId = connectionIdOut;
-					SetWarming(true);
-				}
-				break;
-			case NetworkEventType.DataEvent:
-				Parse(recBuffer, dataSize);
-				break;
-			case NetworkEventType.DisconnectEvent:
-				status = NetworkStatus.Closed;
-				break;
+			int recHostIdOut;
+			int connectionIdOut;
+			int channelIdOut;
+			byte[] recBuffer = new byte[1024];
+			int bufferSize = 1024;
+			int dataSize;
+			byte error;
+			NetworkEventType recData = NetworkTransport.Receive(out recHostIdOut, out connectionIdOut, out channelIdOut, recBuffer, bufferSize, out dataSize, out error);
+			switch (recData)
+			{
+				case NetworkEventType.Nothing:
+					break;
+				case NetworkEventType.ConnectEvent:
+					if (connectionIdOut == connectionId)
+					{
+						//Connected succesfully
+					}
+					else
+					{
+						connectionId = connectionIdOut;
+						SetWarming(true);
+					}
+					break;
+				case NetworkEventType.DataEvent:
+					Parse(recBuffer, dataSize);
+					break;
+				case NetworkEventType.DisconnectEvent:
+					status = NetworkStatus.Closed;
+					break;
+			}
 		}
 
 		bool skip_next_frame = false;
