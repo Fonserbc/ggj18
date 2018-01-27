@@ -294,7 +294,7 @@ public class NetworkManager : MonoBehaviour
 					}
 				}
 
-				gameLogic.Update();
+                gameLogic.Update(status == NetworkStatus.HostRunning);
 				if (!skip_next_frame)
 					localUpdateId++;
 
@@ -318,7 +318,7 @@ public class NetworkManager : MonoBehaviour
 					uint updateId = gameLogic.NewestFrameId();
 					gameLogic.SetInputPlayer1(input, updateId);
 					gameLogic.SetInputPlayer2(input2, updateId);
-					gameLogic.Update();
+                    gameLogic.Update(true);
 					break;
 				}
 		}

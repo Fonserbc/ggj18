@@ -46,7 +46,7 @@ public class GameLogic
 		switch (initState)
 		{
 			case InitState.NONE:
-				SceneManager.LoadScene("Game", LoadSceneMode.Single);
+				SceneManager.LoadScene(2, LoadSceneMode.Single);
 
 				for (int i = 0; i < GAEMFRAME_BUFFSIZE; i++)
 				{
@@ -61,7 +61,6 @@ public class GameLogic
 				initState = InitState.LOADING;
 				break;
 			case InitState.LOADING:
-				Scene game = SceneManager.GetSceneByName("Game");
 				GameObject visualsObject = GameObject.FindGameObjectWithTag("GameController");
 				if (visualsObject != null)
 				{
@@ -224,7 +223,7 @@ public class GameLogic
 		}
 	}
 
-	public void Update()
+	public void Update(bool isHost)
 	{
 		if (current_frame > newest_frame)
 			return;
@@ -262,5 +261,6 @@ public class GameLogic
 		}
 
 		visuals.UpdateFrom(frame);
+        visuals.ownPlayer = isHost ? 0 : 1;
 	}
 }
