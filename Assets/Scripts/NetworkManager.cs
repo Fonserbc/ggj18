@@ -3,6 +3,7 @@ using System;
 using System.IO;
 using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.SceneManagement;
 
 public class NetworkInitParameters
 {
@@ -41,15 +42,27 @@ public class GameLogic
 	uint current_frame;
     uint newest_frame;
 
+	Logic logic = new Logic();
+
 	const int GAEMFRAME_BUFFSIZE = 128;
 	GameFrame[] MemoryFrame = new GameFrame[GAEMFRAME_BUFFSIZE];
 
 	public void Init()
 	{
+		SceneManager.LoadScene("Game", LoadSceneMode.Single);
+
 		for(int i = 0; i < GAEMFRAME_BUFFSIZE; i++)
 		{
 			MemoryFrame[i] = new GameFrame();
 		}
+
+		GaemFrame_index = 0;
+		oldest_frame = 0;
+		current_frame = 1;
+		newest_frame = 0;
+
+		GameFrame frame = MemoryFrame[0];
+		// logic.InitFirstState();
 	}
 
 	public bool IsInit()
@@ -201,10 +214,10 @@ public class GameLogic
 			}
 
 			index = next_index;
-			GameFrame last_frame = frame;
+			GameFrame prev_frame = frame;
 			frame = next_frame;
 
-			//Logic_UpdateFrame(frame);
+			logic.UpdateState(prev_frame, ref frame);
 			current_frame++;
 		}
 	}
