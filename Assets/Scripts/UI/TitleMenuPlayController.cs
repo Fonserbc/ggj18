@@ -46,7 +46,6 @@ public class TitleMenuPlayController : MonoBehaviour
 		buttonLocal.Select();
 	}
 
-
 	void OnLocalSelected()
 	{
 		Debug.Log("OnLocalSelected");
@@ -59,7 +58,7 @@ public class TitleMenuPlayController : MonoBehaviour
 
 	void OnHostSelected()
 	{
-		Debug.Log("OnHostSelected");
+		MenuController.GoToHost();
 	}
 
 	void OnBackSelected()

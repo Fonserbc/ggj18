@@ -25,7 +25,10 @@ public class TitleMenuEnterIP : MonoBehaviour
 
 	void OnEndEdit(string address)
 	{
-		Debug.Log("OnEndEdit " + address);
+		PlayerPrefs.SetString("AddressField", address);
+		PlayerPrefs.Save();
+
+		MenuController.GoToConnecting(address);
 	}
 
 	void OnCancel()

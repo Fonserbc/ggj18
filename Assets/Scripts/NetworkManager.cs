@@ -18,16 +18,38 @@ public class NetworkInitParameters
 	public ushort port;
 }
 
-public struct InputData
+public struct PlayerInput
 {
-
+	public bool legit;
+	public float xAxis, yAxis;
+	public bool up, down, left, right;
 }
 
 public class GameLogic
 {
+	uint GaemFrame_index;
+	uint oldest_frame;
+	uint current_frame;
+	uint newest_frame;
+
+	class GameFrame
+	{
+		public bool valid = false;
+		public uint frame_id;
+		public PlayerInput input_player1 = new PlayerInput();
+		public PlayerInput input_player2 = new PlayerInput();
+		public GameState state = new GameState();
+	}
+
+	const int GAEMFRAME_BUFFSIZE = 128;
+	GameFrame[] MemoryFrame = new GameFrame[GAEMFRAME_BUFFSIZE];
+
 	public void Init()
 	{
-		
+		for(int i = 0; i < GAEMFRAME_BUFFSIZE; i++)
+		{
+			MemoryFrame[i] = new GameFrame();
+		}
 	}
 
 	public bool IsInit()
@@ -35,44 +57,131 @@ public class GameLogic
 		return true;
 	}
 
-	public void GetNewInput(out InputData input)
+	public void GetNewInput(out PlayerInput input)
 	{
+		input.legit = true;
 
+		input.xAxis = 0.0f;
+		input.yAxis = 0.0f;
+		input.up = false;
+		input.down = false;
+		input.left = false;
+		input.right = false;
 	}
 
 	public bool TryAddNewFrame()
 	{
-		return true;
+		if(current_frame != (newest_frame + 1));
+
+		uint Index = (GaemFrame_index + 1) & (GAEMFRAME_BUFFSIZE - 1);
+		GameFrame CurrentFrame = MemoryFrame[Index];
+		uint NextIndex = (Index + 1) & (GAEMFRAME_BUFFSIZE - 1);
+		GameFrame NextFrame = MemoryFrame[NextIndex];
+
+		if (!NextFrame.valid || ((NextFrame.input_player1.legit) && (NextFrame.input_player2.legit)))
+		{
+			GaemFrame_index = Index;
+			newest_frame++;
+			CurrentFrame.frame_id = newest_frame;
+
+			//Last frame of the ring has not legit input
+			CurrentFrame.input_player1.legit = false;
+			CurrentFrame.input_player2.legit = false;
+			CurrentFrame.valid = true;
+
+			if (MemoryFrame[0].frame_id < GAEMFRAME_BUFFSIZE)
+				oldest_frame = MemoryFrame[0].frame_id;
+			else
+			{
+				int OldestGaemFraem_index = ((int)(GaemFrame_index + 1)) & (GAEMFRAME_BUFFSIZE - 1);
+				oldest_frame = MemoryFrame[OldestGaemFraem_index].frame_id;
+			}
+
+			return true;
+		}
+
+		return false;
+	}
+
+	public uint Logic_OldestFrameId()
+	{
+		return oldest_frame + 1;
 	}
 
 	public uint NewestFrameId()
 	{
-		return 0;
+		return newest_frame;
 	}
 
-	public bool IsInputPlayer1Legit(uint currentFrameID)
+	private int GetIndexFromFrameId(uint frame_id)
 	{
-		return false;
+		if(!(frame_id >= oldest_frame && frame_id <= newest_frame))
+			Debug.LogWarning("!(frame_id >= oldest_frame && frame_id <= newest_frame)");
+
+		return ((int)(GaemFrame_index + (frame_id - newest_frame))) & (GAEMFRAME_BUFFSIZE - 1);
 	}
 
-	public bool IsInputPlayer2Legit(uint currentFrameID)
+	public bool IsInputPlayer1Legit(uint frame_id)
 	{
-		return false;
+		int index = GetIndexFromFrameId(frame_id);
+		GameFrame frame = MemoryFrame[index];
+		return frame.input_player1.legit;
 	}
 
-	public void SetInputPlayer1(InputData input, uint currentFrameID)
+	public bool IsInputPlayer2Legit(uint frame_id)
+	{
+		int index = GetIndexFromFrameId(frame_id);
+		GameFrame frame = MemoryFrame[index];
+		return frame.input_player2.legit;
+	}
+
+	public void SetInputPlayer1(PlayerInput input, uint currentFrameID)
 	{
 
 	}
 
-	public void SetInputPlayer2(InputData input, uint currentFrameID)
+	public void SetInputPlayer2(PlayerInput input, uint currentFrameID)
 	{
 
 	}
 
 	public void Update()
 	{
-		throw new NotImplementedException();
+		if (current_frame > newest_frame)
+			return;
+
+		if (!(current_frame > oldest_frame))
+			Debug.LogWarning("!(current_frame > oldest_frame)");
+
+		int index = GetIndexFromFrameId(current_frame - 1);
+		GameFrame frame = MemoryFrame[index];
+
+		while (current_frame <= newest_frame)
+		{
+			int next_index = GetIndexFromFrameId(current_frame);
+			GameFrame next_frame = MemoryFrame[next_index];
+
+			next_frame.state =  frame.state;
+
+			if (!next_frame.input_player1.legit)
+			{
+				next_frame.input_player1 = frame.input_player1;
+				next_frame.input_player1.legit = false;
+			}
+
+			if (!next_frame.input_player2.legit)
+			{
+				next_frame.input_player2 = frame.input_player2;
+				next_frame.input_player2.legit = false;
+			}
+
+			index = next_index;
+			GameFrame last_frame = frame;
+			frame = next_frame;
+
+			//Logic_UpdateFrame(frame);
+			current_frame++;
+		}
 	}
 }
 
@@ -86,7 +195,7 @@ public class NetworkManager : MonoBehaviour
 
 	public struct StoreInput
 	{
-		public InputData input;
+		public PlayerInput input;
 		public uint updateId;
 	};
 
@@ -148,25 +257,26 @@ public class NetworkManager : MonoBehaviour
 			storeInputs[i].updateId = 0;
 		}
 
-		if (!IsInit())
-		{
-			NetworkTransport.Init();
-			connectionConfig = new ConnectionConfig();
-			channelId = connectionConfig.AddChannel(QosType.Reliable);
-			topology = new HostTopology(connectionConfig, 16);
-		}
-
 		switch (initParams.op_id)
 		{
 			case NetworkInitParameters.Operation.NONE:
+				NetworkTransport.Shutdown();
 				status = NetworkStatus.Closed;
 				break;
 			case NetworkInitParameters.Operation.HOST:
+				NetworkTransport.Init();
+				connectionConfig = new ConnectionConfig();
+				channelId = connectionConfig.AddChannel(QosType.Reliable);
+				topology = new HostTopology(connectionConfig, 16);
 				hostId = NetworkTransport.AddHost(topology, initParams.port);
 				connectionId = -1;
 				status = NetworkStatus.WaitingPeer;
 				break;
 			case NetworkInitParameters.Operation.CLIENT:
+				NetworkTransport.Init();
+				connectionConfig = new ConnectionConfig();
+				channelId = connectionConfig.AddChannel(QosType.Reliable);
+				topology = new HostTopology(connectionConfig, 16);
 				hostId = NetworkTransport.AddHost(topology, initParams.port);
 				byte error;
 				connectionId = NetworkTransport.Connect(hostId, initParams.address, initParams.port, 0, out error);
@@ -280,7 +390,7 @@ public class NetworkManager : MonoBehaviour
 				}
 				else
 				{
-					InputData input;
+					PlayerInput input;
 					gameLogic.GetNewInput(out input);
 					SendInput(input);
 
@@ -335,7 +445,7 @@ public class NetworkManager : MonoBehaviour
 				break;
 			case NetworkStatus.LocalRunning:
 				{
-					InputData input;
+					PlayerInput input;
 					gameLogic.GetNewInput(out input);
 					gameLogic.TryAddNewFrame();
 					uint updateId = gameLogic.NewestFrameId();
@@ -400,7 +510,7 @@ public class NetworkManager : MonoBehaviour
 				{
 					case NetworkStatus.HostRunning:
 					case NetworkStatus.ClientRunning:
-						InputData input;
+						PlayerInput input;
 						uint remoteInputUpdateId;
 						ReadInput(reader, out input, out remoteInputUpdateId);
 						int i = 0;
@@ -444,7 +554,7 @@ public class NetworkManager : MonoBehaviour
 		NetworkTransport.Send(hostId, connectionId, channelId, msg, msg.Length, out error);
 	}
 
-	private void ReadInput(BinaryReader reader, out InputData input, out uint remoteInputUpdateId)
+	private void ReadInput(BinaryReader reader, out PlayerInput input, out uint remoteInputUpdateId)
 	{
 		remoteInputUpdateId = reader.ReadUInt32();
 		if (remoteUpdateId < remoteInputUpdateId)
@@ -456,13 +566,16 @@ public class NetworkManager : MonoBehaviour
 		remoteAdvantage = (short)((int)(remoteUpdateId + travelTime) - (int)ack_localUpdateId);
 		localAdvantage = (short)((int)(localUpdateId + travelTime) - (int)remoteUpdateId);
 
-		// Y AQUI SE LEE EL INPUT SEGUN TOQUE, POR EJEMPLO
-		//input.action = reader.ReadInt32();
-		//input.x = reader.ReadInt16();
-		//input.y = reader.ReadInt16();
+		input.legit = true;
+		input.xAxis = (float) reader.ReadDouble();
+		input.yAxis = (float) reader.ReadDouble();
+		input.up = reader.ReadBoolean();
+		input.down = reader.ReadBoolean();
+		input.left = reader.ReadBoolean();
+		input.right = reader.ReadBoolean();
 	}
 
-	void SendInput(InputData input)
+	void SendInput(PlayerInput input)
 	{
 		MemoryStream stream = new MemoryStream();
 		BinaryWriter writer = new BinaryWriter(stream);
@@ -471,10 +584,12 @@ public class NetworkManager : MonoBehaviour
 		writer.Write(localUpdateId);
 		writer.Write(remoteUpdateId);
 
-		// Y AQUI SE ESCRIBE EL INPUT SEGUN TOQUE, POR EJEMPLO
-		// writer.Write(input.action);
-		// writer.Write(input.x);
-		// writer.Write(input.y);
+		writer.Write((double) input.xAxis);
+		writer.Write((double) input.yAxis);
+		writer.Write(input.up);
+		writer.Write(input.down);
+		writer.Write(input.left);
+		writer.Write(input.right);
 
 		byte[] msg = stream.ToArray();
 		byte error;
