@@ -5,7 +5,7 @@ using UnityEngine;
 public class Visuals : MonoBehaviour {
 
 
-    public Transform[] antennas;
+    public Transform[] antenas;
     public Transform[] players;
     Animator[] playerAnimators;
     public Transform levelTransform;
@@ -40,7 +40,7 @@ public class Visuals : MonoBehaviour {
         }
 
         //Connections
-        List<Vector2i> connections = myLogic.GetCurrentAntenasConnections();
+        List<Vector2i> connections = myLogic.GetCurrentAntenasAristas();
         for (int i = 0; i < connections.Count; ++i)
         {
 
