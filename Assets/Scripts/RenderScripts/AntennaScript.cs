@@ -5,6 +5,7 @@ using UnityEngine;
 public class AntennaScript : MonoBehaviour {
 
     public Transform antenna;
+    public bool canRotate = true;
     public float rotTime = .2f;
     public float minAngle = 0;
     public float maxAngle = 180;
@@ -32,7 +33,7 @@ public class AntennaScript : MonoBehaviour {
         if(counter >= rotTime)
         {
             counter -= rotTime;
-            antenna.Rotate(Vector3.forward * Random.Range(minAngle, maxAngle));
+            if(canRotate) antenna.Rotate(Vector3.forward * Random.Range(minAngle, maxAngle));
             Vector3 pos = spawnBolt.localPosition;
             pos.y = Random.Range(minPosition, maxPosition);
             spawnBolt.localPosition = pos;
