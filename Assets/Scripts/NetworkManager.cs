@@ -199,7 +199,7 @@ public class GameLogic
 			int next_index = GetIndexFromFrameId(current_frame);
 			GameFrame next_frame = MemoryFrame[next_index];
 
-			next_frame.state =  frame.state;
+            next_frame.state.CopyFrom(frame.state);
 
 			if (!next_frame.input_player1.legit)
 			{

@@ -27,4 +27,36 @@ public struct GameState
     //
     public PlayerInfo[] players;
     public AntenaInfo[] antenas;
+
+    public GameState(GameState from) {
+        players = null;
+        if (from.players != null)
+        {
+            players = new PlayerInfo[from.players.Length];
+            from.players.CopyTo(players, 0);
+        }
+
+        antenas = null;
+        if (from.antenas != null)
+        {
+            antenas = new AntenaInfo[from.antenas.Length];
+            from.antenas.CopyTo(antenas, 0);
+        }
+    }
+
+    public void CopyFrom(GameState from) {
+        players = null;
+        if (from.players != null)
+        {
+            players = new PlayerInfo[from.players.Length];
+            from.players.CopyTo(players, 0);
+        }
+
+        antenas = null;
+        if (from.antenas != null)
+        {
+            antenas = new AntenaInfo[from.antenas.Length];
+            from.antenas.CopyTo(antenas, 0);
+        }
+    }
 }

@@ -83,7 +83,7 @@ public class Logic
                 {
                     newState.players[i].position = CircleCircleCorrect(previousState.players[i].position, newState.players[i].position, c.playerCollisionRadius, newState.antenas[j].position, c.antenaCollisionRadius);
 
-                    if (IsAntenaLinking(j) && newState.players[i].stunned <= 0 && newState.players[i].invincible <= 0)
+                    if (IsAntenaLinking(j) && IsPlayerVulnerable(i))
                     {
                         StunPlayer(i);
                     }
@@ -106,14 +106,18 @@ public class Logic
         // Physics Triggers
         for (int i = 0; i < c.numPlayers; ++i)
         {
+            if (!IsPlayerVulnerable(i)) continue;
             for (int j = 0; j < antenaLinks.Count; ++j) {
                 Vector2i link = antenaLinks[j];
 
-                //CircleLineCollides();
+                if (CircleLineCollides(newState.antenas[link.x].position, newState.antenas[link.y].position,
+                                       newState.players[i].position, c.playerCollisionRadius))
+                {
+                    StunPlayer(i);
+                    break;
+                }
             }
         }
-
-        frame.state = newState;
     }
 
     void UpdatePlayerPos(int id, PlayerInput input)
@@ -173,6 +177,10 @@ public class Logic
         }
     }
 
+    bool IsPlayerVulnerable(int p) {
+        return newState.players[p].stunned <= 0 && newState.players[p].invincible <= 0;
+    }
+
     void StunPlayer(int p) {
         newState.players[p].stunned = c.stunnedFrames;
         newState.players[p].invincible = c.invincibilityFrames;
@@ -224,7 +232,7 @@ public class Logic
         float d1 = Vector2.Distance(lPos1, projected);
         float d2 = Vector2.Distance(lPos2, projected);
 
-        return d1 + d2 <= lineMagnitude;
+        return d1 + d2 <= lineMagnitude+2*r;
     }
 
     bool CircleAABBCollides(Vector2 cPos, float r, Bounds aabb)
