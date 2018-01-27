@@ -36,13 +36,15 @@ public class Logic
         newState.players = new GameState.PlayerInfo[c.numPlayers];
         for (int i = 0; i < newState.players.Length; ++i) {
             newState.players[i] = new GameState.PlayerInfo();
+            newState.players[i].position = new Vector2(v.players[i].transform.position.x, v.players[i].transform.position.z);
+            newState.antenas[i].rotation = v.players[i].transform.eulerAngles.y;
             newState.players[i].connected = false;
         }
         newState.antenas = new GameState.AntenaInfo[antenaCount];
         for (int i = 0; i < antenaCount; ++i)
         {
             newState.antenas[i] = new GameState.AntenaInfo();
-            newState.antenas[i].position = v.antenas[i].transform.position;
+            newState.antenas[i].position = new Vector2(v.antenas[i].transform.position.x, v.antenas[i].transform.position.z);
             newState.antenas[i].rotation = v.antenas[i].transform.rotation.eulerAngles.y;
         }
 
