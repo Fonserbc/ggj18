@@ -48,7 +48,11 @@ public class TitleMenuPlayController : MonoBehaviour
 
 	void OnLocalSelected()
 	{
-		Debug.Log("OnLocalSelected");
+		NetworkInitParameters prms = new NetworkInitParameters();
+		prms.op_id = NetworkInitParameters.Operation.NONE;
+		NetworkManager.Instance.Init(prms);
+
+		MenuController.GoToPlayMenu();
 	}
 
 	void OnConnectSelected()
