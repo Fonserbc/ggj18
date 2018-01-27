@@ -1,10 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class Logic
 {
-
     public Constants c;
 
     GameState newState;
@@ -47,6 +45,8 @@ public class Logic
             newState.antenas[i].position = v.antenas[i].transform.position;
             newState.antenas[i].rotation = v.antenas[i].transform.rotation.eulerAngles.y;
         }
+
+        v.Init(this);
 
         return newState;
     }
@@ -129,14 +129,14 @@ public class Logic
 
     void UpdatePlayerPos(int id, PlayerInput input)
     {
-        if (newState.players[id].stunned > 0)
+        if (newState.players[id].stunnedTime > 0)
         {
-            newState.players[id].stunned--;
+            newState.players[id].stunnedTime -= c.fixedDeltaTime;
             return;
         }
-        else if (newState.players[id].invincible > 0)
+        else if (newState.players[id].invincibleTime > 0)
         {
-            newState.players[id].invincible--;
+            newState.players[id].invincibleTime -= c.fixedDeltaTime;
         }
 
         if (!newState.players[id].connected)
@@ -185,12 +185,12 @@ public class Logic
     }
 
     bool IsPlayerVulnerable(int p) {
-        return newState.players[p].stunned <= 0 && newState.players[p].invincible <= 0;
+        return newState.players[p].stunnedTime <= 0 && newState.players[p].invincibleTime <= 0;
     }
 
     void StunPlayer(int p) {
-        newState.players[p].stunned = c.stunnedFrames;
-        newState.players[p].invincible = c.invincibilityFrames;
+        newState.players[p].stunnedTime = c.stunnedtime;
+        newState.players[p].invincibleTime = c.invincibilityTime;
     }
 
     void UpdateAntennaConnections()

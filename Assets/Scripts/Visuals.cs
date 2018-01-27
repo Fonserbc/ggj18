@@ -23,7 +23,7 @@ public class Visuals : MonoBehaviour {
         }
 	}
 	
-    void UpdateFrom (GameState state)
+    public void UpdateFrom (GameState state)
     {
         //Player Visuals
         for(int i = 0; i < state.players.Length; ++i)
@@ -35,7 +35,7 @@ public class Visuals : MonoBehaviour {
 
             players[i].position = new Vector3(state.players[i].position.x, players[i].position.y, state.players[i].position.y);
             players[i].rotation = Quaternion.Euler(0, state.players[i].rotation, 0);
-            playerAnimators[i].SetBool("Stunned", state.players[i].stunned != 0);
+            playerAnimators[i].SetBool("Stunned", state.players[i].stunnedTime > 0);
 
 
         }

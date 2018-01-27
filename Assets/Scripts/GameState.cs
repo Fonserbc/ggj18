@@ -7,8 +7,8 @@ public struct GameState
         public bool connected;
         public Vector2 position;
         public float rotation;
-        public int stunned;
-        public int invincible;
+        public float stunnedTime;
+        public float invincibleTime;
     }
     public struct AntenaInfo
     {
