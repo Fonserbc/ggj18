@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AntennaRotation : MonoBehaviour {
+public class AntennaScript : MonoBehaviour {
 
     public Transform antenna;
     public float rotTime = .2f;

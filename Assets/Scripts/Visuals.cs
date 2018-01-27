@@ -4,10 +4,11 @@ using UnityEngine;
 
 public class Visuals : MonoBehaviour {
 
-
-    public Transform[] antenas;
+    public GameObject BoltPrefab;
+    public AntennaScript[] antenas;
     public Transform[] players;
     Animator[] playerAnimators;
+    List<DigitalRuby.LightningBolt.LightningBoltScript> bolts;
     public Transform levelTransform;
     Logic myLogic;
     //Lista de pares de antenas
@@ -38,20 +39,33 @@ public class Visuals : MonoBehaviour {
 
 
         }
+        //End Player Visuals
 
-        //Connections
+        //Connections Visuals
         List<Vector2i> connections = myLogic.GetCurrentAntenasAristas();
-        for (int i = 0; i < connections.Count; ++i)
+        int indexBolt = 0;        
+        foreach (DigitalRuby.LightningBolt.LightningBoltScript bolt in bolts)
         {
-
+            if(indexBolt < connections.Count)
+            {
+                bolt.StartObject = antenas[connections[indexBolt].x].spawnBolt.gameObject;
+                bolt.EndObject = antenas[connections[indexBolt].y].spawnBolt.gameObject;
+                ++indexBolt;
+            } else
+            {
+                Destroy(bolt.gameObject);
+                bolts.RemoveAt(indexBolt);
+            }
         }
-
-        //mover todo al siti
-        //desactivar y activar cosas
-        //animaciones
-
-        //Electricity
-        //ANimations
+        
+        for(int i = indexBolt; i < connections.Count; ++i)
+        {
+            DigitalRuby.LightningBolt.LightningBoltScript newBolt = (Instantiate(BoltPrefab, transform.position, transform.rotation, transform)).GetComponent<DigitalRuby.LightningBolt.LightningBoltScript>();
+            newBolt.StartObject = antenas[connections[i].x].spawnBolt.gameObject;
+            newBolt.EndObject = antenas[connections[i].y].spawnBolt.gameObject;
+            bolts.Add(newBolt);
+        }
+        //End Connections
 
     }
 }

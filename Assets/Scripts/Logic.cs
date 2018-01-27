@@ -44,8 +44,8 @@ public class Logic
         for (int i = 0; i < antenaCount; ++i)
         {
             newState.antenas[i] = new GameState.AntenaInfo();
-            newState.antenas[i].position = v.antenas[i].position;
-            newState.antenas[i].rotation = v.antenas[i].rotation.eulerAngles.y;
+            newState.antenas[i].position = v.antenas[i].transform.position;
+            newState.antenas[i].rotation = v.antenas[i].transform.rotation.eulerAngles.y;
         }
 
         return newState;
