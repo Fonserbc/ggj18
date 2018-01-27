@@ -9,13 +9,11 @@ public class Logic : MonoBehaviour
 
     GameState newState;
 
-    public GameObject level;
+    BoxCollider2D[] staticWorld;
 
-    public BoxCollider2D[] staticWorld;
-
-    void Start()
+    void Init(Visuals v)
     {
-        staticWorld = level.GetComponentsInChildren<BoxCollider2D>();
+        staticWorld = v.levelTransform.gameObject.GetComponentsInChildren<BoxCollider2D>();
     }
 
     public GameState UpdateState(GameState previousState, InputState previousInput, InputState newInput)
@@ -48,6 +46,11 @@ public class Logic : MonoBehaviour
                 if (CircleCircleCollides(newState.players[i].position, c.playerCollisionRadius, newState.antenas[j].position, c.antenaCollisionRadius))
                 {
                     newState.players[i].position = CircleCircleCorrect(previousState.players[i].position, newState.players[i].position, c.playerCollisionRadius, newState.antenas[j].position, c.antenaCollisionRadius);
+
+                    if (IsAntenaLinking(j) && newState.players[i].stunned <= 0)
+                    {
+                        newState.players[i].stunned = c.stunnedFrames;
+                    }
                 }
             }
 
@@ -139,7 +142,16 @@ public class Logic : MonoBehaviour
 
     Vector2 CircleAABBCorrect(Vector2 cBefore, Vector2 cAfter, float r, Bounds aabb)
     {
-        return cBefore;
+        // TODO check it works
+        Vector2 closest = aabb.ClosestPoint(cAfter);
+        Vector2 normal = cAfter - closest);
+        normal.Normalize();
+
+        if (aabb.Contains(cAfter)) {
+            normal *= -1f;
+        }
+
+        return closest + normal * r;
     }
 
     bool CircleCircleCollides(Vector2 c1, float r1, Vector2 c2, float r2)
@@ -149,10 +161,15 @@ public class Logic : MonoBehaviour
 
     Vector2 CircleCircleCorrect(Vector2 c1Before, Vector2 c1After, float r1, Vector2 c2, float r2)
     {
-        // TODO do something better
+        // TODO check it works
         Vector2 normal = c1After - c2;
         normal.Normalize();
 
         return c2 + normal * (r1 + r2);
+    }
+
+    bool IsAntenaLinking(int antenaId)
+    {
+        return false;
     }
 }

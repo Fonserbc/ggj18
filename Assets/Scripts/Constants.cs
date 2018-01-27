@@ -6,6 +6,8 @@ public class Constants : ScriptableObject {
     public int numPlayers = 2;
     public float antenaActivationRadius = 1f;
     public float antenaCollisionRadius = 0.5f;
+    public float antenaLinkMaxRadius = 10f;
     public float playerCollisionRadius = 0.5f;
     public float playerSpeed = 2f;
+    public int stunnedFrames = 32;
 }
