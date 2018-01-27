@@ -41,6 +41,13 @@ public class Visuals : MonoBehaviour {
         }
         //End Player Visuals
 
+        //Antenna Visuals
+        for(int i = 0; i < antenas.Length; ++i)
+        {
+            antenas[i].isConnected = myLogic.IsAntenaLinking(i);
+        }
+        //End Antenna Visuals
+
         //Connections Visuals
         List<Vector2i> connections = myLogic.GetCurrentAntenasAristas();
         int indexBolt = 0;        

@@ -13,11 +13,14 @@ public class AntennaScript : MonoBehaviour {
     public float minPosition = 0.75f;
     public float maxPosition = 4.25f;
 
+    public bool isConnected = false;
+
 
     float counter = 0;
 
 	// Update is called once per frame
 	void Update () {
+        if (!isConnected) return;
         counter += Time.deltaTime;
         if(counter >= rotTime)
         {
