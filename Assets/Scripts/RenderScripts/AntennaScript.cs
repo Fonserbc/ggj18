@@ -14,6 +14,7 @@ public class AntennaScript : MonoBehaviour {
     public float maxPosition = 4.25f;
 
     public bool isConnected = false;
+    public Constants c;
 
 
     float counter = 0;
@@ -31,4 +32,14 @@ public class AntennaScript : MonoBehaviour {
             spawnBolt.localPosition = pos;
         }
 	}
+
+    public void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireSphere(transform.position, c.antenaCollisionRadius);
+        Gizmos.color = Color.blue;
+        Gizmos.DrawWireSphere(transform.position, c.antenaActivationRadius);
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(transform.position, c.antenaLinkMaxRadius);
+    }
 }

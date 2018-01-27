@@ -13,7 +13,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   fixedDeltaTime: 0.016
   numPlayers: 2
-  antenaActivationRadius: 1
+  antenaActivationRadius: 1.5
   antenaCollisionRadius: 0.5
   antenaLinkMaxRadius: 10
   playerCollisionRadius: 0.5

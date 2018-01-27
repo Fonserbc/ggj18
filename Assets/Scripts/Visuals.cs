@@ -11,6 +11,7 @@ public class Visuals : MonoBehaviour {
 	List<DigitalRuby.LightningBolt.LightningBoltScript> bolts = new List<DigitalRuby.LightningBolt.LightningBoltScript>();
     public Transform levelTransform;
     Logic myLogic;
+    public Constants c;
     //Lista de pares de antenas
 
 	public void Init (Logic l)
@@ -35,6 +36,7 @@ public class Visuals : MonoBehaviour {
 
             players[i].position = new Vector3(state.players[i].position.x, players[i].position.y, state.players[i].position.y);
             players[i].rotation = Quaternion.AngleAxis(state.players[i].rotation, Vector3.down);
+
             playerAnimators[i].SetBool("Moving", state.players[i].moving);
             playerAnimators[i].SetBool("Stunned", state.players[i].stunnedTime > 0);
             playerAnimators[i].SetBool("Invincible", state.players[i].invincibleTime > 0);
@@ -76,11 +78,15 @@ public class Visuals : MonoBehaviour {
 
     }
 
-    private void OnDrawGizmos()
+    private void OnDrawGizmosSelected()
     {
-        Gizmos.color = Color.green;
         foreach (AntennaScript an in antenas) {
-            Gizmos.DrawWireSphere(an.transform.position, myLogic.c.antenaLinkMaxRadius);
+            Gizmos.color = Color.green;
+            Gizmos.DrawWireSphere(an.transform.position, c.antenaCollisionRadius);
+            Gizmos.color = Color.blue;
+            Gizmos.DrawWireSphere(an.transform.position, c.antenaActivationRadius);
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawWireSphere(an.transform.position, c.antenaLinkMaxRadius);
         }
     }
 }

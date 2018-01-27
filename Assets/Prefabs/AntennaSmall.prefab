@@ -38,7 +38,6 @@ GameObject:
   - component: {fileID: 4151703628667032}
   - component: {fileID: 33558551834369910}
   - component: {fileID: 23455365582691390}
-  - component: {fileID: 114739470757734916}
   m_Layer: 0
   m_Name: AntennaBase
   m_TagString: Untagged
@@ -234,25 +233,7 @@ MonoBehaviour:
   minPosition: 0.75
   maxPosition: 2.33
   isConnected: 0
---- !u!114 &114739470757734916
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1265086443136054}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 43ccdd6df8a245042a098944c02d9812, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  antenna: {fileID: 4820247331886636}
-  rotTime: 0.1
-  minAngle: 0
-  maxAngle: 180
-  spawnBolt: {fileID: 4836961699881184}
-  minPosition: 0.75
-  maxPosition: 4.25
-  isConnected: 0
+  c: {fileID: 11400000, guid: 71cd57026ba824f3cb5fc5d345985b38, type: 2}
 --- !u!135 &135056540608735514
 SphereCollider:
   m_ObjectHideFlags: 1
