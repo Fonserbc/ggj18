@@ -35,7 +35,7 @@ public class Visuals : MonoBehaviour {
             }
 
             players[i].position = new Vector3(state.players[i].position.x, players[i].position.y, state.players[i].position.y);
-            players[i].rotation = Quaternion.AngleAxis(state.players[i].rotation, Vector3.down);
+            players[i].rotation = Quaternion.Euler(0, state.players[i].rotation, 0);
             playerAnimators[i].SetBool("Stunned", state.players[i].stunnedTime > 0);
 
 
@@ -80,7 +80,12 @@ public class Visuals : MonoBehaviour {
     private void OnDrawGizmosSelected()
     {
         foreach (AntennaScript an in antenas) {
-            an.OnDrawGizmosSelected();
+            Gizmos.color = Color.green;
+            Gizmos.DrawWireSphere(an.transform.position, c.antenaCollisionRadius);
+            Gizmos.color = Color.blue;
+            Gizmos.DrawWireSphere(an.transform.position, c.antenaActivationRadius);
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawWireSphere(an.transform.position, c.antenaLinkMaxRadius);
         }
     }
 }
