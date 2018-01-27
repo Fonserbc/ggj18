@@ -3,6 +3,7 @@ using System;
 using System.IO;
 using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.SceneManagement;
 
 public class NetworkInitParameters
 {
@@ -25,31 +26,43 @@ public struct PlayerInput
 	public bool up, down, left, right;
 }
 
+public class GameFrame
+{
+    public bool valid = false;
+    public uint frame_id;
+    public PlayerInput input_player1 = new PlayerInput();
+    public PlayerInput input_player2 = new PlayerInput();
+    public GameState state = new GameState();
+}
+
 public class GameLogic
 {
 	uint GaemFrame_index;
 	uint oldest_frame;
 	uint current_frame;
-	uint newest_frame;
+    uint newest_frame;
 
-	class GameFrame
-	{
-		public bool valid = false;
-		public uint frame_id;
-		public PlayerInput input_player1 = new PlayerInput();
-		public PlayerInput input_player2 = new PlayerInput();
-		public GameState state = new GameState();
-	}
+	Logic logic = new Logic();
 
 	const int GAEMFRAME_BUFFSIZE = 128;
 	GameFrame[] MemoryFrame = new GameFrame[GAEMFRAME_BUFFSIZE];
 
 	public void Init()
 	{
+		SceneManager.LoadScene("Game", LoadSceneMode.Single);
+
 		for(int i = 0; i < GAEMFRAME_BUFFSIZE; i++)
 		{
 			MemoryFrame[i] = new GameFrame();
 		}
+
+		GaemFrame_index = 0;
+		oldest_frame = 0;
+		current_frame = 1;
+		newest_frame = 0;
+
+		GameFrame frame = MemoryFrame[0];
+		// logic.InitFirstState();
 	}
 
 	public bool IsInit()
@@ -135,14 +148,39 @@ public class GameLogic
 		return frame.input_player2.legit;
 	}
 
-	public void SetInputPlayer1(PlayerInput input, uint currentFrameID)
+	public void SetInputPlayer1(PlayerInput input, uint frame_id)
 	{
-
+		int index = GetIndexFromFrameId(frame_id);
+		GameFrame frame = MemoryFrame[index];
+		SetInput(ref frame.input_player1, input, frame_id);
 	}
 
-	public void SetInputPlayer2(PlayerInput input, uint currentFrameID)
+	public void SetInputPlayer2(PlayerInput input, uint frame_id)
 	{
+		int index = GetIndexFromFrameId(frame_id);
+		GameFrame frame = MemoryFrame[index];
+		SetInput(ref frame.input_player2, input, frame_id);
+	}
 
+	private void SetInput(ref PlayerInput dest, PlayerInput input, uint frame_id)
+	{
+		if (!dest.legit)
+		{
+			bool predictionWasRight = (
+				dest.xAxis == input.xAxis && dest.yAxis == input.yAxis &&
+				dest.up == input.up && dest.down == input.down &&
+				dest.left == input.left && dest.right == input.right);
+
+			if (!predictionWasRight)
+			{
+				//rollback until
+				if (current_frame > frame_id)
+					current_frame = frame_id;
+			}
+
+			dest = input;
+			dest.legit = true; //Now is legit :)
+		}
 	}
 
 	public void Update()
@@ -176,10 +214,10 @@ public class GameLogic
 			}
 
 			index = next_index;
-			GameFrame last_frame = frame;
+			GameFrame prev_frame = frame;
 			frame = next_frame;
 
-			//Logic_UpdateFrame(frame);
+			logic.UpdateState(prev_frame, ref frame);
 			current_frame++;
 		}
 	}
@@ -292,40 +330,50 @@ public class NetworkManager : MonoBehaviour
 
 	public void Update()
 	{
-		if (!IsInit())
-			return;
-
-		int recHostIdOut;
-		int connectionIdOut;
-		int channelIdOut;
-		byte[] recBuffer = new byte[1024];
-		int bufferSize = 1024;
-		int dataSize;
-		byte error;
-		NetworkEventType recData = NetworkTransport.Receive(out recHostIdOut, out connectionIdOut, out channelIdOut, recBuffer, bufferSize, out dataSize, out error);
-		switch (recData)
+		if (status != NetworkStatus.Closed && status != NetworkStatus.Created)
 		{
-			case NetworkEventType.Nothing:
-				break;
-			case NetworkEventType.ConnectEvent:
-				if (connectionIdOut == connectionId)
-				{
-					//Connected succesfully
-				}
-				else
-				{
-					connectionId = connectionIdOut;
-					SetWarming(true);
-				}
-				break;
-			case NetworkEventType.DataEvent:
-				Parse(recBuffer, dataSize);
-				break;
-			case NetworkEventType.DisconnectEvent:
-				status = NetworkStatus.Closed;
-				break;
-		}
+			NetworkEventType networkEvent;
 
+			do
+			{
+				int connectionIdOut;
+				int channelIdOut;
+
+				byte[] recBuffer = new byte[1024];
+				int bufferSize = 1024;
+				int dataSize;
+				byte error;
+
+				networkEvent = NetworkTransport.ReceiveFromHost(hostId, out connectionIdOut, out channelIdOut, recBuffer, bufferSize, out dataSize, out error);
+				switch (networkEvent)
+				{
+					case NetworkEventType.Nothing:
+						break;
+					case NetworkEventType.ConnectEvent:
+						if (connectionIdOut == connectionId)
+						{
+							//Connected succesfully
+						}
+						else
+						{
+							connectionId = connectionIdOut;
+							SetWarming(true);
+						}
+						break;
+					case NetworkEventType.DataEvent:
+						Parse(recBuffer, dataSize);
+						break;
+					case NetworkEventType.DisconnectEvent:
+						status = NetworkStatus.Closed;
+						break;
+					default:
+						Debug.LogError("Unknown network message type received: " + networkEvent);
+						break;
+				}
+			}
+			while (networkEvent != NetworkEventType.Nothing);
+		}
+			
 		bool skip_next_frame = false;
 		switch (status)
 		{

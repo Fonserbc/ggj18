@@ -10,4 +10,5 @@ public class Constants : ScriptableObject {
     public float playerCollisionRadius = 0.5f;
     public float playerSpeed = 2f;
     public int stunnedFrames = 32;
+    public int invincibilityFrames = 46;
 }
