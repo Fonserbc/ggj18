@@ -11,9 +11,13 @@ public class Logic : MonoBehaviour
 
     BoxCollider2D[] staticWorld;
 
+    List<int>[] antenaConnections;
+
     void Init(Visuals v)
     {
         staticWorld = v.levelTransform.gameObject.GetComponentsInChildren<BoxCollider2D>();
+
+
     }
 
     public GameState UpdateState(GameState previousState, InputState previousInput, InputState newInput)
@@ -144,7 +148,7 @@ public class Logic : MonoBehaviour
     {
         // TODO check it works
         Vector2 closest = aabb.ClosestPoint(cAfter);
-        Vector2 normal = cAfter - closest);
+        Vector2 normal = cAfter - closest;
         normal.Normalize();
 
         if (aabb.Contains(cAfter)) {
@@ -171,5 +175,9 @@ public class Logic : MonoBehaviour
     bool IsAntenaLinking(int antenaId)
     {
         return false;
+    }
+
+    public List<Vector2i> GetCurrentAntenasConnections() {
+        
     }
 }
