@@ -40,6 +40,7 @@ public class Logic
             newState.players[i].rotation = v.players[i].transform.eulerAngles.y;
             newState.players[i].connected = true;
             newState.players[i].moving = false;
+            newState.players[i].antenaInRadius = -1;
         }
         newState.antenas = new GameState.AntenaInfo[antenaCount];
         for (int i = 0; i < antenaCount; ++i)
@@ -183,24 +184,30 @@ public class Logic
     {
         int nearestAntenna = FindAntenaNearPlayer(newState.players[id].position);
 
-        if (nearestAntenna < 0) return;
+        if (nearestAntenna < 0)
+        {
+            newState.players[id].antenaInRadius = -1;
+            return;
+        }
 
-        if (newInput.justUp)
+        if (newInput.justUp || (newInput.up && newState.players[id].antenaInRadius != nearestAntenna))
         {
             newState.antenas[nearestAntenna].state = (newState.antenas[nearestAntenna].state == GameState.AntenaInfo.AntenaState.ColorUp) ? GameState.AntenaInfo.AntenaState.Off : GameState.AntenaInfo.AntenaState.ColorUp;
         }
-        else if (newInput.justDown)
+        else if (newInput.justDown || (newInput.down && newState.players[id].antenaInRadius != nearestAntenna))
         {
             newState.antenas[nearestAntenna].state = (newState.antenas[nearestAntenna].state == GameState.AntenaInfo.AntenaState.ColorDown) ? GameState.AntenaInfo.AntenaState.Off : GameState.AntenaInfo.AntenaState.ColorDown;
         }
-        else if (newInput.justLeft)
+        else if (newInput.justLeft || (newInput.left && newState.players[id].antenaInRadius != nearestAntenna))
         {
             newState.antenas[nearestAntenna].state = (newState.antenas[nearestAntenna].state == GameState.AntenaInfo.AntenaState.ColorLeft) ? GameState.AntenaInfo.AntenaState.Off : GameState.AntenaInfo.AntenaState.ColorLeft;
         }
-        else if (newInput.justRight)
+        else if (newInput.justRight || (newInput.right && newState.players[id].antenaInRadius != nearestAntenna))
         {
             newState.antenas[nearestAntenna].state = (newState.antenas[nearestAntenna].state == GameState.AntenaInfo.AntenaState.ColorRight) ? GameState.AntenaInfo.AntenaState.Off : GameState.AntenaInfo.AntenaState.ColorRight;
         }
+
+        newState.players[id].antenaInRadius = nearestAntenna;
     }
 
     bool IsPlayerVulnerable(int p) {
@@ -271,7 +278,6 @@ public class Logic
 
     Vector2 CircleAABBCorrect(Vector2 cAfter, float r, Bounds aabb)
     {
-        // TODO check it works
         Vector2 closest = aabb.ClosestPoint(cAfter);
         Vector2 normal = cAfter - closest;
         normal.Normalize();
@@ -290,7 +296,6 @@ public class Logic
 
     Vector2 CircleCircleCorrect(Vector2 c1, float r1, Vector2 c2, float r2)
     {
-        // TODO check it works
         Vector2 normal = c1 - c2;
         if (Mathf.Abs(normal.sqrMagnitude) <= 0.01f) { // Inside, whoops
             float angle = Random.Range(0, 2f*Mathf.PI);

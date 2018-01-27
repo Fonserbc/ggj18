@@ -10,6 +10,7 @@ public struct GameState
         public float stunnedTime;
         public float invincibleTime;
         public bool moving;
+        public int antenaInRadius;
     }
     public struct AntenaInfo
     {
