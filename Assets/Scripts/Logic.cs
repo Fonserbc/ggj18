@@ -14,28 +14,53 @@ public class Logic : MonoBehaviour
     List<int>[] antenaConnections;
     List<Vector2i> antenaLinks;
 
-    void Init(Visuals v)
+    public GameState InitFirstState (Visuals v)
     {
+        int antenaCount = v.antenas.Length;
         staticWorld = v.levelTransform.gameObject.GetComponentsInChildren<BoxCollider2D>();
 
-        antenaConnections = new List<int>[v.antenas.Length];
-        antenaLinks = new List<Vector2i>(v.antenas.Length * (v.antenas.Length - 1));
-        for (int i = 0; i < antenaConnections.Length; ++i) {
-            antenaConnections[i] = new List<int>(antenaConnections.Length - 1);
+        antenaConnections = new List<int>[antenaCount];
+        antenaLinks = new List<Vector2i>(antenaCount * (antenaCount - 1));
+        for (int i = 0; i < antenaConnections.Length; ++i)
+        {
+            antenaConnections[i] = new List<int>(antenaCount - 1);
         }
+
+
+        newState = new GameState();
+        newState.players = new GameState.PlayerInfo[c.numPlayers];
+        for (int i = 0; i < newState.players.Length; ++i) {
+            newState.players[i] = new GameState.PlayerInfo();
+            newState.players[i].connected = false;
+        }
+        newState.antenas = new GameState.AntenaInfo[antenaCount];
+        for (int i = 0; i < antenaCount; ++i)
+        {
+            newState.antenas[i] = new GameState.AntenaInfo();
+            newState.antenas[i].position = v.antenas[i].position;
+            newState.antenas[i].rotation = v.antenas[i].rotation.eulerAngles.y;
+        }
+
+        return newState;
     }
 
-    public GameState UpdateState(GameState previousState, InputState previousInput, InputState newInput)
+    public void UpdateState(GameFrame previousFrame, ref GameFrame frame)
     {
-        newState = previousState; // Copy (?)
+        newState = frame.state;
+        GameState previousState = previousFrame.state;
 
         // PlayerInput
-        for (int i = 0; i < c.numPlayers; ++i)
-        {
-            UpdatePlayerPos(i, newInput.playerInputs[i]);
+        UpdatePlayerPos(0, frame.input_player1);
+        UpdatePlayerActions(0, previousFrame.input_player1, frame.input_player1);
+        UpdatePlayerPos(1, frame.input_player2);
+        UpdatePlayerActions(1, previousFrame.input_player1, frame.input_player2);
 
-            UpdatePlayerActions(i, previousInput.playerInputs[i], newInput.playerInputs[i]);
-        }
+        //for (int i = 0; i < c.numPlayers; ++i)
+        //{
+        //    UpdatePlayerPos(i, newInput.playerInputs[i]);
+
+        //    UpdatePlayerActions(i, previousInput.playerInputs[i], newInput.playerInputs[i]);
+        //}
 
         UpdateAntennaConnections();
 
@@ -88,7 +113,7 @@ public class Logic : MonoBehaviour
             }
         }
 
-        return newState;
+        frame.state = newState;
     }
 
     void UpdatePlayerPos(int id, PlayerInput input)

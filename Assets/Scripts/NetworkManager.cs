@@ -25,21 +25,21 @@ public struct PlayerInput
 	public bool up, down, left, right;
 }
 
+public class GameFrame
+{
+    public bool valid = false;
+    public uint frame_id;
+    public PlayerInput input_player1 = new PlayerInput();
+    public PlayerInput input_player2 = new PlayerInput();
+    public GameState state = new GameState();
+}
+
 public class GameLogic
 {
 	uint GaemFrame_index;
 	uint oldest_frame;
 	uint current_frame;
-	uint newest_frame;
-
-	class GameFrame
-	{
-		public bool valid = false;
-		public uint frame_id;
-		public PlayerInput input_player1 = new PlayerInput();
-		public PlayerInput input_player2 = new PlayerInput();
-		public GameState state = new GameState();
-	}
+    uint newest_frame;
 
 	const int GAEMFRAME_BUFFSIZE = 128;
 	GameFrame[] MemoryFrame = new GameFrame[GAEMFRAME_BUFFSIZE];
