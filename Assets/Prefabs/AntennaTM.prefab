@@ -244,10 +244,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   antenna: {fileID: 4016351500420540}
+  antennaRend: {fileID: 23126498709054938}
   canRotate: 0
+  randomRotation: 1
   rotTime: 0.1
   minAngle: 0
   maxAngle: 180
+  rotationDir: {x: 0, y: 0, z: 1}
+  rotationSpeed: 90
   spawnBolt: {fileID: 4612197090761960}
   minPosition: 1
   maxPosition: 2.7
