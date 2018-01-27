@@ -87,10 +87,21 @@ public class GameLogic
 	{
 		input.legit = true;
 
-		input.xAxis = Input.GetAxisRaw("Horizontal");
-		input.yAxis = Input.GetAxisRaw("Vertical");
+		input.xAxis = Input.GetAxisRaw("Horizontal1");
+		input.yAxis = Input.GetAxisRaw("Vertical1");
 
-		input.justUp = Input.GetButtonDown("Y1");
+#if UNITY_STANDALONE_OSX || UNITY_EDITOR_OSX
+        input.justUp = Input.GetButtonDown("YM1");
+		input.justDown = Input.GetButtonDown("AM1");
+		input.justLeft = Input.GetButtonDown("XM1");
+		input.justRight = Input.GetButtonDown("BM1");
+
+		input.up = Input.GetButton("YM1");
+		input.down = Input.GetButton("AM1");
+		input.left = Input.GetButton("XM1");
+		input.right = Input.GetButton("BM1");
+#else
+        input.justUp = Input.GetButtonDown("Y1");
 		input.justDown = Input.GetButtonDown("A1");
 		input.justLeft = Input.GetButtonDown("X1");
 		input.justRight = Input.GetButtonDown("B1");
@@ -99,7 +110,8 @@ public class GameLogic
 		input.down = Input.GetButton("A1");
 		input.left = Input.GetButton("X1");
 		input.right = Input.GetButton("B1");
-	}
+#endif
+    }
 
 	public void GetNewInput2(out PlayerInput input)
 	{
@@ -108,18 +120,30 @@ public class GameLogic
 		input.xAxis = Input.GetAxisRaw("Horizontal2");
 		input.yAxis = Input.GetAxisRaw("Vertical2");
 
-		input.justUp = Input.GetButtonDown("Y2");
-		input.justDown = Input.GetButtonDown("A2");
-		input.justLeft = Input.GetButtonDown("X2");
-		input.justRight = Input.GetButtonDown("B2");
+#if UNITY_STANDALONE_OSX || UNITY_EDITOR_OSX
+		input.justUp = Input.GetButtonDown("YM2");
+		input.justDown = Input.GetButtonDown("AM2");
+		input.justLeft = Input.GetButtonDown("XM2");
+		input.justRight = Input.GetButtonDown("BM2");
 
-		input.up = Input.GetButton("Y2");
-		input.down = Input.GetButton("A2");
-		input.left = Input.GetButton("X2");
-		input.right = Input.GetButton("B2");
-	}
+		input.up = Input.GetButton("YM2");
+		input.down = Input.GetButton("AM2");
+		input.left = Input.GetButton("XM2");
+		input.right = Input.GetButton("BM2");
+#else
+        input.justUp = Input.GetButtonDown("Y2");
+        input.justDown = Input.GetButtonDown("A2");
+        input.justLeft = Input.GetButtonDown("X2");
+        input.justRight = Input.GetButtonDown("B2");
 
-	public bool TryAddNewFrame()
+        input.up = Input.GetButton("Y2");
+        input.down = Input.GetButton("A2");
+        input.left = Input.GetButton("X2");
+        input.right = Input.GetButton("B2");
+#endif
+    }
+
+    public bool TryAddNewFrame()
 	{
 		if (current_frame != (newest_frame + 1)) ;
 
