@@ -106,8 +106,8 @@ public class GameLogic
 	{
 		input.legit = true;
 
-		input.xAxis = Input.GetAxisRaw("Horizontal");
-		input.yAxis = Input.GetAxisRaw("Vertical");
+		input.xAxis = Input.GetAxisRaw("Horizontal1");
+		input.yAxis = Input.GetAxisRaw("Vertical1");
 
 		input.justUp = Input.GetButtonDown("Y1");
 		input.justDown = Input.GetButtonDown("A1");
@@ -120,7 +120,25 @@ public class GameLogic
 		input.right = Input.GetButton("B1");
 	}
 
-	public bool TryAddNewFrame()
+    public void GetNewInput2(out PlayerInput input)
+    {
+        input.legit = true;
+
+        input.xAxis = Input.GetAxisRaw("Horizontal2");
+        input.yAxis = Input.GetAxisRaw("Vertical2");
+
+        input.justUp = Input.GetButtonDown("Y2");
+        input.justDown = Input.GetButtonDown("A2");
+        input.justLeft = Input.GetButtonDown("X2");
+        input.justRight = Input.GetButtonDown("B2");
+
+        input.up = Input.GetButton("Y2");
+        input.down = Input.GetButton("A2");
+        input.left = Input.GetButton("X2");
+        input.right = Input.GetButton("B2");
+    }
+
+    public bool TryAddNewFrame()
 	{
 		if(current_frame != (newest_frame + 1));
 
@@ -545,11 +563,13 @@ public class NetworkManager : MonoBehaviour
 			case NetworkStatus.LocalRunning:
 				{
 					PlayerInput input;
-					gameLogic.GetNewInput(out input);
-					gameLogic.TryAddNewFrame();
+                    PlayerInput input2;
+                    gameLogic.GetNewInput(out input);
+                    gameLogic.GetNewInput2(out input2);
+                    gameLogic.TryAddNewFrame();
 					uint updateId = gameLogic.NewestFrameId();
 					gameLogic.SetInputPlayer1(input, updateId);
-					gameLogic.SetInputPlayer2(input, updateId);
+					gameLogic.SetInputPlayer2(input2, updateId);
 					gameLogic.Update();
 					break;
 				}
