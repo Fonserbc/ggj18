@@ -7,6 +7,10 @@ using UnityEngine.Serialization;
 
 public class CancelEventHandler : MonoBehaviour, ICancelHandler
 {
+	public Color Unselected;
+	public Color Selected;
+	public Graphic TargetGraphic;
+
 	[Serializable]
 	public class CancelEvent : UnityEvent { }
 
@@ -21,13 +25,16 @@ public class CancelEventHandler : MonoBehaviour, ICancelHandler
 		set { m_OnCancel = value; }
 	}
 
-	private void Cancel()
+	public void OnCancel(BaseEventData eventData)
 	{
 		m_OnCancel.Invoke();
 	}
 
-	public void OnCancel(BaseEventData eventData)
+	public void Update()
 	{
-		Cancel();
+		if (TargetGraphic != null)
+		{
+			TargetGraphic.color = EventSystem.current.currentSelectedGameObject == gameObject ? Selected : Unselected;
+		}
 	}
 }

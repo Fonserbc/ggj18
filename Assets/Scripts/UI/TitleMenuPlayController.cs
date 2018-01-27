@@ -25,6 +25,9 @@ public class TitleMenuPlayController : MonoBehaviour
 		optionButton.onClick.AddListener(action);
 		CancelEventHandler optionCancel = optionButton.gameObject.AddComponent<CancelEventHandler>();
 		optionCancel.onCancel.AddListener(OnCancel);
+		optionCancel.TargetGraphic = optionText;
+		optionCancel.Selected = new Color(0.8f, 0.3f, 0.3f, 1.0f);
+		optionCancel.Unselected = optionText.color;
 		optionText.text = text;
 
 		return optionButton;
