@@ -23,6 +23,8 @@ public struct PlayerInput
 {
 	public bool legit;
 	public float xAxis, yAxis;
+
+	public bool justUp, justDown, justLeft, justRight;
 	public bool up, down, left, right;
 }
 
@@ -106,6 +108,12 @@ public class GameLogic
 
 		input.xAxis = Input.GetAxisRaw("Horizontal");
 		input.yAxis = Input.GetAxisRaw("Vertical");
+
+		input.justUp = Input.GetButtonDown("Y1");
+		input.justDown = Input.GetButtonDown("A1");
+		input.justLeft = Input.GetButtonDown("X1");
+		input.justRight = Input.GetButtonDown("B1");
+
 		input.up = Input.GetButton("Y1");
 		input.down = Input.GetButton("A1");
 		input.left = Input.GetButton("X1");
@@ -199,7 +207,10 @@ public class GameLogic
 			bool predictionWasRight = (
 				dest.xAxis == input.xAxis && dest.yAxis == input.yAxis &&
 				dest.up == input.up && dest.down == input.down &&
-				dest.left == input.left && dest.right == input.right);
+				dest.left == input.left && dest.right == input.right &&
+				dest.justUp == input.justUp && dest.justDown == input.justDown &&
+				dest.justLeft == input.justLeft && dest.justRight == input.justRight
+			);
 
 			if (!predictionWasRight)
 			{
@@ -244,10 +255,9 @@ public class GameLogic
 			}
 
 			index = next_index;
-			GameFrame prev_frame = frame;
 			frame = next_frame;
 
-			logic.UpdateState(prev_frame, ref frame);
+			logic.UpdateState(ref frame);
 			current_frame++;
 		}
 
@@ -658,6 +668,12 @@ public class NetworkManager : MonoBehaviour
 		input.legit = true;
 		input.xAxis = (float) reader.ReadDouble();
 		input.yAxis = (float) reader.ReadDouble();
+
+		input.justUp = reader.ReadBoolean();
+		input.justDown = reader.ReadBoolean();
+		input.justLeft = reader.ReadBoolean();
+		input.justRight = reader.ReadBoolean();
+
 		input.up = reader.ReadBoolean();
 		input.down = reader.ReadBoolean();
 		input.left = reader.ReadBoolean();
@@ -675,6 +691,12 @@ public class NetworkManager : MonoBehaviour
 
 		writer.Write((double) input.xAxis);
 		writer.Write((double) input.yAxis);
+
+		writer.Write(input.justUp);
+		writer.Write(input.justDown);
+		writer.Write(input.justLeft);
+		writer.Write(input.justRight);
+
 		writer.Write(input.up);
 		writer.Write(input.down);
 		writer.Write(input.left);
