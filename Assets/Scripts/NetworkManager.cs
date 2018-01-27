@@ -42,44 +42,74 @@ public class GameLogic
 	uint current_frame;
     uint newest_frame;
 
-	Logic logic = new Logic();
+	public Logic logic = new Logic();
+	private Visuals visuals = null;
+
+	public enum InitState
+	{
+		NONE,
+		LOADING,
+		LOADED
+	}
+
+	InitState initState = InitState.NONE;
 
 	const int GAEMFRAME_BUFFSIZE = 128;
 	GameFrame[] MemoryFrame = new GameFrame[GAEMFRAME_BUFFSIZE];
 
 	public void Init()
 	{
-		SceneManager.LoadScene("Game", LoadSceneMode.Single);
-
-		for(int i = 0; i < GAEMFRAME_BUFFSIZE; i++)
+		switch (initState)
 		{
-			MemoryFrame[i] = new GameFrame();
+			case InitState.NONE:
+				SceneManager.LoadScene("Game", LoadSceneMode.Single);
+
+				for (int i = 0; i < GAEMFRAME_BUFFSIZE; i++)
+				{
+					MemoryFrame[i] = new GameFrame();
+				}
+
+				GaemFrame_index = 0;
+				oldest_frame = 0;
+				current_frame = 1;
+				newest_frame = 0;
+
+				initState = InitState.LOADING;
+				break;
+			case InitState.LOADING:
+				Scene game = SceneManager.GetSceneByName("Game");
+				GameObject visualsObject = GameObject.Find("Visuals");
+				if (visualsObject != null)
+				{
+					visuals = visualsObject.GetComponent<Visuals>();
+					if (visuals != null)
+					{
+						GameFrame frame = MemoryFrame[0];
+						frame.state = logic.InitFirstState(visuals);
+						initState = InitState.LOADED;
+					}
+				}
+				break;
+			case InitState.LOADED:
+				break;
 		}
-
-		GaemFrame_index = 0;
-		oldest_frame = 0;
-		current_frame = 1;
-		newest_frame = 0;
-
-		GameFrame frame = MemoryFrame[0];
-		// logic.InitFirstState();
 	}
 
 	public bool IsInit()
 	{
-		return GaemFrame_index < GAEMFRAME_BUFFSIZE;
+		return initState == InitState.LOADED;
 	}
 
 	public void GetNewInput(out PlayerInput input)
 	{
 		input.legit = true;
 
-		input.xAxis = 0.0f;
-		input.yAxis = 0.0f;
-		input.up = false;
-		input.down = false;
-		input.left = false;
-		input.right = false;
+		input.xAxis = Input.GetAxisRaw("Horizontal");
+		input.yAxis = Input.GetAxisRaw("Vertical");
+		input.up = Input.GetButton("Y1");
+		input.down = Input.GetButton("A1");
+		input.left = Input.GetButton("X1");
+		input.right = Input.GetButton("B1");
 	}
 
 	public bool TryAddNewFrame()
@@ -199,7 +229,7 @@ public class GameLogic
 			int next_index = GetIndexFromFrameId(current_frame);
 			GameFrame next_frame = MemoryFrame[next_index];
 
-            next_frame.state.CopyFrom(frame.state);
+			next_frame.state.CopyFrom(frame.state);
 
 			if (!next_frame.input_player1.legit)
 			{
@@ -220,14 +250,17 @@ public class GameLogic
 			logic.UpdateState(prev_frame, ref frame);
 			current_frame++;
 		}
+
+		visuals.UpdateFrom(frame.state);
 	}
 }
 
 public class NetworkManager : MonoBehaviour
 {
-
 	static NetworkManager _instance = null;
 	static public NetworkManager Instance { get { return _instance; } }
+
+	public Constants constants;
 
 	GameLogic gameLogic = new GameLogic();
 
@@ -278,6 +311,8 @@ public class NetworkManager : MonoBehaviour
 		{
 			_instance = this;
 		}
+
+		gameLogic.logic.c = constants;
 	}
 
 	enum CustomPacketId : byte
@@ -398,12 +433,17 @@ public class NetworkManager : MonoBehaviour
 				}
 				break;
 			case NetworkStatus.ClientWarming:
+				gameLogic.Init();
+
 				if (startUpdateId != 0 && startUpdateId <= localUpdateId)
 				{
 					if (startUpdateId != localUpdateId)
 						Debug.LogWarning("startUpdateId != localUpdateId");
-					
-					SetRunning();
+
+					if (gameLogic.IsInit())
+					{
+						SetRunning();
+					}
 				}
 				else if (localAdvantage > remoteAdvantage)
 				{
@@ -484,12 +524,13 @@ public class NetworkManager : MonoBehaviour
 
 				break;
 			case NetworkStatus.Closed:
-				if (!gameLogic.IsInit())
+				gameLogic.Init();
+
+				if (gameLogic.IsInit())
 				{
-					gameLogic.Init();
+					status = NetworkStatus.LocalRunning;
 				}
 
-				status = NetworkStatus.LocalRunning;
 				break;
 			case NetworkStatus.LocalRunning:
 				{
