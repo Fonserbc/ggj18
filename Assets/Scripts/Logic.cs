@@ -54,16 +54,15 @@ public class Logic
         return newState;
     }
 
-    public void UpdateState(GameFrame previousFrame, ref GameFrame frame)
+    public void UpdateState(ref GameFrame frame)
     {
         newState = frame.state;
-        GameState previousState = previousFrame.state;
 
         // PlayerInput
         newState.players[0].moving = UpdatePlayerPos(0, frame.input_player1);
-        UpdatePlayerActions(0, previousFrame.input_player1, frame.input_player1);
+        UpdatePlayerActions(0, frame.input_player1);
         newState.players[1].moving = UpdatePlayerPos(1, frame.input_player2);
-        UpdatePlayerActions(1, previousFrame.input_player1, frame.input_player2);
+        UpdatePlayerActions(1, frame.input_player2);
 
         //for (int i = 0; i < c.numPlayers; ++i)
         //{
@@ -82,7 +81,7 @@ public class Logic
             {
                 if (CircleAABBCollides(newState.players[i].position, c.playerCollisionRadius, staticWorld[j]))
                 {
-                    newState.players[i].position = CircleAABBCorrect(previousState.players[i].position, newState.players[i].position, c.playerCollisionRadius, staticWorld[j]);
+                    newState.players[i].position = CircleAABBCorrect(newState.players[i].position, c.playerCollisionRadius, staticWorld[j]);
                 }
             }
 
@@ -91,7 +90,7 @@ public class Logic
             {
                 if (CircleCircleCollides(newState.players[i].position, c.playerCollisionRadius, newState.antenas[j].position, c.antenaCollisionRadius))
                 {
-                    newState.players[i].position = CircleCircleCorrect(previousState.players[i].position, newState.players[i].position, c.playerCollisionRadius, newState.antenas[j].position, c.antenaCollisionRadius);
+                    newState.players[i].position = CircleCircleCorrect(newState.players[i].position, c.playerCollisionRadius, newState.antenas[j].position, c.antenaCollisionRadius);
 
                     if (IsAntenaLinking(j) && IsPlayerVulnerable(i))
                     {
@@ -105,7 +104,7 @@ public class Logic
             {
                 if (i != j && CircleCircleCollides(newState.players[i].position, c.playerCollisionRadius, newState.players[j].position, c.playerCollisionRadius))
                 {
-                    newState.players[i].position = CircleCircleCorrect(previousState.players[i].position, newState.players[i].position, c.playerCollisionRadius, newState.players[j].position, c.playerCollisionRadius);
+                    newState.players[i].position = CircleCircleCorrect(newState.players[i].position, c.playerCollisionRadius, newState.players[j].position, c.playerCollisionRadius);
                 }
             }
         }
@@ -165,25 +164,25 @@ public class Logic
         return true;
     }
 
-    void UpdatePlayerActions(int id, PlayerInput lastInput, PlayerInput newInput)
+    void UpdatePlayerActions(int id, PlayerInput newInput)
     {
         int nearestAntenna = FindAntenaNearPlayer(newState.players[id].position);
 
         if (nearestAntenna < 0) return;
 
-        if (!lastInput.up && newInput.up)
+        if (newInput.justUp)
         {
             newState.antenas[nearestAntenna].state = GameState.AntenaInfo.AntenaState.ColorUp;
         }
-        else if (!lastInput.down && newInput.down)
+        else if (newInput.justDown)
         {
             newState.antenas[nearestAntenna].state = GameState.AntenaInfo.AntenaState.ColorDown;
         }
-        else if (!lastInput.left && newInput.left)
+        else if (newInput.justLeft)
         {
             newState.antenas[nearestAntenna].state = GameState.AntenaInfo.AntenaState.ColorLeft;
         }
-        else if (!lastInput.right && newInput.right)
+        else if (newInput.justRight)
         {
             newState.antenas[nearestAntenna].state = GameState.AntenaInfo.AntenaState.ColorRight;
         }
@@ -255,7 +254,7 @@ public class Logic
         return Vector2.Distance(closest, cPos) < r;
     }
 
-    Vector2 CircleAABBCorrect(Vector2 cBefore, Vector2 cAfter, float r, Bounds aabb)
+    Vector2 CircleAABBCorrect(Vector2 cAfter, float r, Bounds aabb)
     {
         // TODO check it works
         Vector2 closest = aabb.ClosestPoint(cAfter);
@@ -274,7 +273,7 @@ public class Logic
         return Vector2.Distance(c1, c2) < r1 + r2;
     }
 
-    Vector2 CircleCircleCorrect(Vector2 c1Before, Vector2 c1After, float r1, Vector2 c2, float r2)
+    Vector2 CircleCircleCorrect(Vector2 c1After, float r1, Vector2 c2, float r2)
     {
         // TODO check it works
         Vector2 normal = c1After - c2;
