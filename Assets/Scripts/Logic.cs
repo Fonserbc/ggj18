@@ -96,10 +96,12 @@ public class Logic
                 {
                     newState.players[i].position = CircleCircleCorrect(newState.players[i].position, c.playerCollisionRadius, newState.antenas[j].position, c.antenaCollisionRadius);
 
+                    /*
                     if (IsAntenaLinking(j) && IsPlayerVulnerable(i))
                     {
                         StunPlayer(i);
                     }
+                    */
 
                     playerWasCorrected[i] = true;
                 }
@@ -185,19 +187,19 @@ public class Logic
 
         if (newInput.justUp)
         {
-            newState.antenas[nearestAntenna].state = GameState.AntenaInfo.AntenaState.ColorUp;
+            newState.antenas[nearestAntenna].state = (newState.antenas[nearestAntenna].state == GameState.AntenaInfo.AntenaState.ColorUp) ? GameState.AntenaInfo.AntenaState.Off : GameState.AntenaInfo.AntenaState.ColorUp;
         }
         else if (newInput.justDown)
         {
-            newState.antenas[nearestAntenna].state = GameState.AntenaInfo.AntenaState.ColorDown;
+            newState.antenas[nearestAntenna].state = (newState.antenas[nearestAntenna].state == GameState.AntenaInfo.AntenaState.ColorDown) ? GameState.AntenaInfo.AntenaState.Off : GameState.AntenaInfo.AntenaState.ColorDown;
         }
         else if (newInput.justLeft)
         {
-            newState.antenas[nearestAntenna].state = GameState.AntenaInfo.AntenaState.ColorLeft;
+            newState.antenas[nearestAntenna].state = (newState.antenas[nearestAntenna].state == GameState.AntenaInfo.AntenaState.ColorLeft) ? GameState.AntenaInfo.AntenaState.Off : GameState.AntenaInfo.AntenaState.ColorLeft;
         }
         else if (newInput.justRight)
         {
-            newState.antenas[nearestAntenna].state = GameState.AntenaInfo.AntenaState.ColorRight;
+            newState.antenas[nearestAntenna].state = (newState.antenas[nearestAntenna].state == GameState.AntenaInfo.AntenaState.ColorRight) ? GameState.AntenaInfo.AntenaState.Off : GameState.AntenaInfo.AntenaState.ColorRight;
         }
     }
 

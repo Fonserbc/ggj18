@@ -18,9 +18,15 @@ public class AntennaScript : MonoBehaviour {
 
 
     float counter = 0;
+    Renderer myRend;
 
-	// Update is called once per frame
-	void Update () {
+    private void Start()
+    {
+        myRend = antenna.GetComponent<Renderer>();
+    }
+
+    // Update is called once per frame
+    void Update () {
         if (!isConnected) return;
         counter += Time.deltaTime;
         if(counter >= rotTime)
@@ -41,5 +47,10 @@ public class AntennaScript : MonoBehaviour {
         Gizmos.DrawWireSphere(transform.position, c.antenaActivationRadius);
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(transform.position, c.antenaLinkMaxRadius);
+    }
+
+    public void SetColor(Color c)
+    {
+        myRend.material.color = c;
     }
 }

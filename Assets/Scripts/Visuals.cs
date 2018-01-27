@@ -49,22 +49,42 @@ public class Visuals : MonoBehaviour {
         for (int i = 0; i < antenas.Length; ++i)
         {
             antenas[i].isConnected = myLogic.IsAntenaLinking(i);
+            Color c = Color.white;
+            switch (state.antenas[i].state)
+            {
+                case GameState.AntenaInfo.AntenaState.ColorUp:
+                    c = Color.yellow;
+                    break;
+                case GameState.AntenaInfo.AntenaState.ColorRight:
+                    c = Color.red;
+                    break;
+                case GameState.AntenaInfo.AntenaState.ColorDown:
+                    c = Color.green;
+                    break;
+                case GameState.AntenaInfo.AntenaState.ColorLeft:
+                    c = Color.blue;
+                    break;
+                default:
+                    break;
+            }
+            antenas[i].SetColor(c);
         }
         //End Antenna Visuals
 
         //Connections Visuals
         List<Vector2i> connections = myLogic.GetCurrentAntenasAristas();
-        int indexBolt = 0;        
-        foreach (DigitalRuby.LightningBolt.LightningBoltScript bolt in bolts)
+        int indexBolt = 0;  
+        while(indexBolt < bolts.Count)
         {
-            if(indexBolt < connections.Count)
+            if (indexBolt < connections.Count)
             {
-                bolt.StartObject = antenas[connections[indexBolt].x].spawnBolt.gameObject;
-                bolt.EndObject = antenas[connections[indexBolt].y].spawnBolt.gameObject;
+                bolts[indexBolt].StartObject = antenas[connections[indexBolt].x].spawnBolt.gameObject;
+                bolts[indexBolt].EndObject = antenas[connections[indexBolt].y].spawnBolt.gameObject;
                 ++indexBolt;
-            } else
+            }
+            else
             {
-                Destroy(bolt.gameObject);
+                Destroy(bolts[indexBolt].gameObject);
                 bolts.RemoveAt(indexBolt);
             }
         }
