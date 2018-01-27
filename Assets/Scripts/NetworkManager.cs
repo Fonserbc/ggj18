@@ -37,7 +37,7 @@ public class GameFrame
 
 public class GameLogic
 {
-	uint GaemFrame_index;
+	uint GaemFrame_index = GAEMFRAME_BUFFSIZE;
 	uint oldest_frame;
 	uint current_frame;
     uint newest_frame;
@@ -67,7 +67,7 @@ public class GameLogic
 
 	public bool IsInit()
 	{
-		return true;
+		return GaemFrame_index < GAEMFRAME_BUFFSIZE;
 	}
 
 	public void GetNewInput(out PlayerInput input)
@@ -199,7 +199,7 @@ public class GameLogic
 			int next_index = GetIndexFromFrameId(current_frame);
 			GameFrame next_frame = MemoryFrame[next_index];
 
-			next_frame.state =  frame.state;
+            next_frame.state.CopyFrom(frame.state);
 
 			if (!next_frame.input_player1.legit)
 			{
@@ -330,7 +330,7 @@ public class NetworkManager : MonoBehaviour
 
 	public void Update()
 	{
-		if (status != NetworkStatus.Closed && status != NetworkStatus.Created)
+		if (status != NetworkStatus.Closed && status != NetworkStatus.Created && status != NetworkStatus.LocalRunning)
 		{
 			NetworkEventType networkEvent;
 

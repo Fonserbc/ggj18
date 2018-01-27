@@ -10,7 +10,18 @@ public class Physics2DTest : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		
+        GameState state = new GameState();
+        state.players = new GameState.PlayerInfo[2];
+        state.players[0].stunned = 1;
+
+        GameState copyState = new GameState(state);
+
+
+        copyState.players[0].stunned = 0;
+
+        if (copyState.players[0].stunned == state.players[0].stunned) {
+            Debug.Log("L'array no es copia");;
+        }
 	}
 	
 	// Update is called once per frame
