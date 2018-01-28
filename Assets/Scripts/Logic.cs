@@ -160,7 +160,7 @@ public class Logic
         for (int i = 0; i < newState.messages.Length; ++i)
         {
             GameState.MessageInfo currentMessage = newState.messages[i];
-            if (currentMessage.color == GameState.ColorState.Off)
+            if (!currentMessage.onScene)
                 continue;
 
             // Remove last antena if broken
@@ -190,7 +190,7 @@ public class Logic
                 }
             }
 
-            if (newState.antenas[currentMessage.currentAntena].state != currentMessage.color && newState.antenas[currentMessage.nextAntena].state != currentMessage.color)
+            if (currentMessage.nextAntena != -1 && newState.antenas[currentMessage.currentAntena].state != currentMessage.color && newState.antenas[currentMessage.nextAntena].state != currentMessage.color)
             {
                 currentMessage.transmissionTime -= c.fixedDeltaTime;
 
@@ -349,7 +349,7 @@ public class Logic
     }
 
     void InstantiateMessage(int id) {
-        int receiver = FindFreeReceiver();
+        int receiver = receiverAntenaId[currentFrame % receiverAntenaId.Length]; //FindFreeReceiver();
 
         if (receiver >= 0) {
             newState.messages[id].currentAntena = receiver;
