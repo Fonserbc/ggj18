@@ -99,11 +99,6 @@ public class GameLogic
 					MemoryFrame[i] = new GameFrame();
 				}
 
-				GaemFrame_index = 0;
-				oldest_frame = 0;
-				current_frame = 1;
-				newest_frame = 0;
-
 				initState = InitState.LOADING;
 				break;
 			case InitState.LOADING:
@@ -113,8 +108,7 @@ public class GameLogic
 					visuals = visualsObject.GetComponent<Visuals>();
 					if (visuals != null)
 					{
-						GameFrame frame = MemoryFrame[0];
-						frame.state = logic.InitFirstState(visuals);
+						
 						initState = InitState.LOADED;
 					}
 				}
@@ -122,6 +116,22 @@ public class GameLogic
 			case InitState.LOADED:
 				break;
 		}
+	}
+
+	public void StartGame(uint seed)
+	{
+		if (!IsInit())
+			return;
+
+		GaemFrame_index = 0;
+		oldest_frame = 0;
+		current_frame = 1;
+		newest_frame = 0;
+
+		GameFrame frame = MemoryFrame[0];
+
+		Debug.Log("Running game with seed " + seed);
+		frame.state = logic.InitFirstState(visuals, seed);
 	}
 
 	public bool IsInit()

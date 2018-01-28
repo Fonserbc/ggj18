@@ -60,6 +60,7 @@ public class NetworkManager : MonoBehaviour
 	NetworkStatus status = NetworkStatus.Created;
 	byte counter;
 	uint startUpdateId;
+	uint startSeed;
 	uint localUpdateId;
 	uint remoteUpdateId;
 	short localAdvantage;
@@ -334,6 +335,8 @@ public class NetworkManager : MonoBehaviour
 
 				if (gameLogic.IsInit())
 				{
+					startSeed = ((uint)Time.frameCount) * 1103515245 + 12345;
+					gameLogic.StartGame(startSeed);
 					status = NetworkStatus.LocalRunning;
 				}
 
@@ -456,6 +459,7 @@ public class NetworkManager : MonoBehaviour
 	private void SetRunning()
 	{
 		status = (status == NetworkStatus.HostWarming) ? NetworkStatus.HostRunning : NetworkStatus.ClientRunning;
+		gameLogic.StartGame(startSeed);
 	}
 
 	private void Parse(byte[] recBuffer, int dataSize)
@@ -593,6 +597,7 @@ public class NetworkManager : MonoBehaviour
 	private void ReadStart(NetworkReader reader)
 	{
 		startUpdateId = reader.ReadUInt32();
+		startSeed = reader.ReadUInt32();
 	}
 
 	private void SendStart()
@@ -601,6 +606,9 @@ public class NetworkManager : MonoBehaviour
 
 		writer.Write((byte) CustomPacketId.ID_START);
 		writer.Write(startUpdateId);
+
+		startSeed = ((uint) Time.frameCount) * 1103515245 + 12345;
+		writer.Write(startSeed);
 
 		connection.SendWriter(writer, channelId);
 	}
