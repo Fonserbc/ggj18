@@ -2539,7 +2539,7 @@ TerrainCollider:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 184369086}
   m_Material: {fileID: 0}
-  m_Enabled: 1
+  m_Enabled: 0
   m_TerrainData: {fileID: 15600000, guid: 683ef3a8bd24f4fa2b6cb5f200573ff9, type: 2}
   m_EnableTreeColliders: 1
 --- !u!218 &184369088
@@ -4974,7 +4974,7 @@ MonoBehaviour:
   players:
   - {fileID: 505857080}
   - {fileID: 1406353875}
-  levelTransform: {fileID: 1999285548}
+  levelTransform: {fileID: 1679579661}
   c: {fileID: 11400000, guid: 71cd57026ba824f3cb5fc5d345985b38, type: 2}
   ownPlayer: -1
 --- !u!4 &325190463
