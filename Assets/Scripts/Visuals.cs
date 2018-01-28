@@ -5,10 +5,12 @@ using UnityEngine;
 public class Visuals : MonoBehaviour {
 
     public GameObject BoltPrefab;
+    public GameObject MessagePrefab;
     public AntennaScript[] antenas;
     public AntennaScript[] recieverAntenas;
     public AntennaScript[] baseAntenas;
     public PlayerScript[] players;
+    MessageScript[] messages;
     Animator[] playerAnimators;
 	List<DigitalRuby.LightningBolt.LightningBoltScript> bolts = new List<DigitalRuby.LightningBolt.LightningBoltScript>();
     public Transform levelTransform;
@@ -26,6 +28,9 @@ public class Visuals : MonoBehaviour {
         {
             playerAnimators[i] = players[i].GetComponent<Animator>();
         }
+
+        messages = new MessageScript[c.numMessages];
+        for (int i = 0; i < messages.Length; ++i) messages[i] = null;
 	}
 	
     public void UpdateFrom (GameFrame frame)
@@ -60,6 +65,31 @@ public class Visuals : MonoBehaviour {
             antenas[i].SetColor(c.antennaColors[(int)state.antenas[i].state]);
         }
         //End Antenna Visuals
+
+        //Message Visuals
+        for(int i = 0; i < messages.Length; ++i)
+        {
+            int holderId = (int)state.messages[i].color;
+            int currentAnt = state.messages[i].currentAntena;
+
+            if (state.messages[i].onScene && messages[i] == null)
+            {
+                messages[i] = Instantiate(MessagePrefab, antenas[currentAnt].messageHolders[holderId-1].position, antenas[currentAnt].messageHolders[holderId - 1].rotation).GetComponent<MessageScript>();
+                messages[i].messageRend.material.color = c.connectionColors[holderId - 1];
+            } else if (!state.messages[i].onScene && messages[i] != null)
+            {
+                Destroy(messages[i].gameObject);
+            }
+
+            if(messages[i] != null)
+            {
+                messages[i].transform.position = Vector3.Lerp(messages[i].transform.position, antenas[currentAnt].messageHolders[holderId - 1].position, .9f);
+                messages[i].transform.rotation = Quaternion.Lerp(messages[i].transform.rotation, antenas[currentAnt].messageHolders[holderId - 1].rotation, .9f);
+            }
+
+
+        }
+        //End Message Visuals
 
         //Connections Visuals
         List<Vector2i> connections = myLogic.GetCurrentAntenasAristas();
