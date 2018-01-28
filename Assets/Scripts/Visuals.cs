@@ -5,6 +5,8 @@ using UnityEngine;
 public class Visuals : MonoBehaviour {
 
     public GameObject BoltPrefab;
+    public GameObject antenasParent;
+    [System.NonSerialized]
     public AntennaScript[] antenas;
     public AntennaScript[] recieverAntenas;
     public AntennaScript[] baseAntenas;
@@ -128,15 +130,6 @@ public class Visuals : MonoBehaviour {
 
     private void OnDrawGizmosSelected()
     {
-        foreach (AntennaScript an in antenas) {
-            Gizmos.color = Color.green;
-            Gizmos.DrawWireSphere(an.transform.position, c.antenaCollisionRadius);
-            Gizmos.color = Color.blue;
-            Gizmos.DrawWireSphere(an.transform.position, c.antenaActivationRadius);
-            Gizmos.color = Color.yellow;
-            Gizmos.DrawWireSphere(an.transform.position, c.antenaLinkMaxRadius);
-        }
-
         foreach(PlayerScript pl in players)
         {
             Gizmos.color = Color.green;

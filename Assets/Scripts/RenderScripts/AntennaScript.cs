@@ -18,6 +18,10 @@ public class AntennaScript : MonoBehaviour {
     public float minPosition = 0.75f;
     public float maxPosition = 4.25f;
 
+    public float collisionRadius = 0.5f;
+    public float activationRadius = 2f;
+    public float linkMaxRadius = 10f;
+
     public bool isConnected = false;
     public Constants c;
 
@@ -48,11 +52,11 @@ public class AntennaScript : MonoBehaviour {
     public void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.green;
-        Gizmos.DrawWireSphere(transform.position, c.antenaCollisionRadius);
+        Gizmos.DrawWireSphere(transform.position, collisionRadius);
         Gizmos.color = Color.blue;
-        Gizmos.DrawWireSphere(transform.position, c.antenaActivationRadius);
+        Gizmos.DrawWireSphere(transform.position, activationRadius);
         Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(transform.position, c.antenaLinkMaxRadius);
+        Gizmos.DrawWireSphere(transform.position, linkMaxRadius);
     }
 
     public void SetColor(Color c)

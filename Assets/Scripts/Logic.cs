@@ -15,8 +15,14 @@ public class Logic
     int[] receiverAntenaId;
     int[] baseAntenaId;
 
-    public GameState InitFirstState (Visuals v)
+    Visuals v;
+
+    public GameState InitFirstState (Visuals visuals)
     {
+        v = visuals;
+
+        v.antenas = v.antenasParent.GetComponentsInChildren<AntennaScript>();
+
         int antenaCount = v.antenas.Length;
         Collider[] staticColliders = v.levelTransform.gameObject.GetComponentsInChildren<Collider>();
         staticWorld = new Bounds[staticColliders.Length];
@@ -123,9 +129,9 @@ public class Logic
             // Against antenas
             for (int j = 0; j < newState.antenas.Length; ++j)
             {
-                if (CircleCircleCollides(newState.players[i].position, c.playerCollisionRadius, newState.antenas[j].position, c.antenaCollisionRadius))
+                if (CircleCircleCollides(newState.players[i].position, c.playerCollisionRadius, newState.antenas[j].position, v.antenas[j].collisionRadius))
                 {
-                    newState.players[i].position = CircleCircleCorrect(newState.players[i].position, c.playerCollisionRadius, newState.antenas[j].position, c.antenaCollisionRadius);
+                    newState.players[i].position = CircleCircleCorrect(newState.players[i].position, c.playerCollisionRadius, newState.antenas[j].position, v.antenas[j].collisionRadius);
 
                     /*
                     if (IsAntenaLinking(j) && IsPlayerVulnerable(i))
@@ -314,7 +320,7 @@ public class Logic
         for (int i = 0; i < newState.antenas.Length; ++i) {
             for (int j = i + 1; j < newState.antenas.Length; ++j)
             {
-                if (Vector2.Distance(newState.antenas[i].position, newState.antenas[j].position) <= c.antenaLinkMaxRadius
+                if (Vector2.Distance(newState.antenas[i].position, newState.antenas[j].position) <= v.antenas[j].linkMaxRadius
                     && newState.antenas[i].state == newState.antenas[j].state && newState.antenas[i].state != GameState.ColorState.Off) {
                     antenaConnections[i].Add(j);
                     antenaConnections[j].Add(i);
@@ -328,7 +334,7 @@ public class Logic
     {
         for (int i = 0; i < newState.antenas.Length; ++i)
         {
-            if (Vector2.Distance(playerPos, newState.antenas[i].position) < c.antenaActivationRadius) return i;
+            if (Vector2.Distance(playerPos, newState.antenas[i].position) < v.antenas[i].activationRadius) return i;
         }
         return -1;
     }
@@ -386,8 +392,8 @@ public class Logic
         float lineMagnitude = lineDir.magnitude;
         lineDir.Normalize();
 
-        Vector2 v = p - lPos1;
-        float d = Vector2.Dot(v, lineDir);
+        Vector2 delta1 = p - lPos1;
+        float d = Vector2.Dot(delta1, lineDir);
 
         Vector2 projected = lPos1 + lineDir * d;
 
@@ -437,6 +443,58 @@ public class Logic
         else normal.Normalize();
 
         return c2 + normal * (r1 + r2);
+    }
+
+    bool SegmentAABBIntersect (Vector2 p1, Vector2 p2, Bounds aabb)
+    {
+        return SegmentSegmentCollides(p1, p2, aabb.min, aabb.max) || SegmentSegmentCollides(p1, p2, new Vector2(aabb.min.x, aabb.max.y), new Vector2(aabb.max.x, aabb.min.y));
+    }
+
+    bool SegmentSegmentCollides(Vector2 p1, Vector2 p2, Vector2 q1, Vector2 q2) {
+
+        Vector2 a = p2 - p1;
+        Vector2 b = q1 - q2;
+        Vector2 c = p1 - q1;
+
+        float alphaNumerator = b.y * c.x - b.x * c.y;
+        float alphaDenominator = a.y * b.x - a.x * b.y;
+        float betaNumerator = a.x * c.y - a.y * c.x;
+        float betaDenominator = a.y * b.x - a.x * b.y;
+
+        bool doIntersect = true;
+
+        if (alphaDenominator == 0 || betaDenominator == 0)
+        {
+            doIntersect = false;
+        }
+        else
+        {
+
+            if (alphaDenominator > 0)
+            {
+                if (alphaNumerator < 0 || alphaNumerator > alphaDenominator)
+                {
+                    doIntersect = false;
+
+                }
+            }
+            else if (alphaNumerator > 0 || alphaNumerator < alphaDenominator)
+            {
+                doIntersect = false;
+            }
+
+            if (doIntersect && betaDenominator > 0) {
+                if (betaNumerator < 0 || betaNumerator > betaDenominator)
+                {
+                    doIntersect = false;
+                }
+            } else if (betaNumerator > 0 || betaNumerator < betaDenominator)
+            {
+                doIntersect = false;
+            }
+        }
+
+        return doIntersect;
     }
 
     public bool IsAntenaLinking(int antenaId)
