@@ -26005,32 +26005,6 @@ Prefab:
       propertyPath: m_RootOrder
       value: 6
       objectReference: {fileID: 0}
-    - target: {fileID: 1402480976209410, guid: 663f8f4e821e2a74e9514a5420484856, type: 2}
-      propertyPath: m_Name
-      value: Bot
-      objectReference: {fileID: 0}
-    - target: {fileID: 4631704257760516, guid: 663f8f4e821e2a74e9514a5420484856, type: 2}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 135
-      objectReference: {fileID: 0}
-    - target: {fileID: 4631704257760516, guid: 663f8f4e821e2a74e9514a5420484856, type: 2}
-      propertyPath: m_LocalScale.x
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4631704257760516, guid: 663f8f4e821e2a74e9514a5420484856, type: 2}
-      propertyPath: m_LocalScale.z
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 23512864795548240, guid: 663f8f4e821e2a74e9514a5420484856,
-        type: 2}
-      propertyPath: m_Materials.Array.data[0]
-      value: 
-      objectReference: {fileID: 2100000, guid: 72eab954480ea094a9020c265825762b, type: 2}
-    - target: {fileID: 23673910335009934, guid: 663f8f4e821e2a74e9514a5420484856,
-        type: 2}
-      propertyPath: m_Materials.Array.data[0]
-      value: 
-      objectReference: {fileID: 2100000, guid: 139edfbb82601cb4db219a48776b782a, type: 2}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 663f8f4e821e2a74e9514a5420484856, type: 2}
   m_IsPrefabParent: 0
