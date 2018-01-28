@@ -4,7 +4,6 @@ using UnityEngine.Events;
 
 public class MenuPause : MonoBehaviour
 {
-	//public TitleMenuController MenuController;
 	public GameObject OptionContainer;
 	public GameObject OptionPrefab;
 
