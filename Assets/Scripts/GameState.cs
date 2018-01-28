@@ -48,6 +48,7 @@ public struct GameState
     public MessageInfo[] messages;
     public int winnerPlayer;
     public int seed;
+    public float winTime;
 
     public GameState(GameState from) {
         players = null;
@@ -73,6 +74,7 @@ public struct GameState
 
         winnerPlayer = from.winnerPlayer;
         seed = from.seed;
+        winTime = from.winTime;
     }
 
     public void CopyFrom(GameState from) {
@@ -99,5 +101,6 @@ public struct GameState
 
         winnerPlayer = from.winnerPlayer;
         seed = from.seed;
+        winTime = from.winTime;
     }
 }

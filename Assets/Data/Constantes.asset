@@ -19,8 +19,9 @@ MonoBehaviour:
   invincibilityTime: 2
   messageTransmissionTime: 2
   timeBetweenMessages: 5
-  numMessages: 15
+  numMessages: 1
   antenaRefreshTime: 1
+  winShowTime: 7
   antennaColors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0.772, b: 0.015686275, a: 1}
