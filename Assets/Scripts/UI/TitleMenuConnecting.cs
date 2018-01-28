@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class TitleMenuConnecting : MonoBehaviour
@@ -9,6 +10,7 @@ public class TitleMenuConnecting : MonoBehaviour
 	public TitleMenuController MenuController;
 
 	Text ConnectingText;
+	Button button;
 	CancelEventHandler Cancel;
 
 	string Address = null;
@@ -16,16 +18,15 @@ public class TitleMenuConnecting : MonoBehaviour
 	void Start ()
 	{
 		ConnectingText = transform.Find("Title").GetComponent<Text>();
-		Cancel = gameObject.AddComponent<CancelEventHandler>();
+
+		button = GetComponent<Button>();
+		Cancel = gameObject.GetComponent<CancelEventHandler>();
 		Cancel.onCancel.AddListener(GoBack);
 	}
 
 	private void GoBack()
 	{
-		NetworkInitParameters prms = new NetworkInitParameters();
-		prms.op_id = NetworkInitParameters.Operation.NONE;
-		NetworkManager.Instance.Init(prms);
-
+		NetworkManager.Instance.Deinit();
 		MenuController.GoToPlayMenu();
 	}
 	
@@ -54,6 +55,13 @@ public class TitleMenuConnecting : MonoBehaviour
 
 	void Update ()
 	{
+		if (button != null)
+		{
+			bool selected = EventSystem.current.currentSelectedGameObject == button;
+			if (!selected)
+				button.Select();
+		}
+
 		if (Address != null)
 		{
 			ConnectingText.text = "Connecting to " + Address;

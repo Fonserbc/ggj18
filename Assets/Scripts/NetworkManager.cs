@@ -59,9 +59,9 @@ public class NetworkManager : MonoBehaviour
 	short localAdvantage;
 	short remoteAdvantage;
 
-	ConnectionConfig connectionConfig;
-	HostTopology topology;
-	NetworkConnection connection;
+	ConnectionConfig connectionConfig = null;
+	HostTopology topology = null;
+	NetworkConnection connection = null;
 
 	enum ConnectState
 	{
@@ -78,9 +78,9 @@ public class NetworkManager : MonoBehaviour
 
 	public bool IsConnected { get { return AsyncConnect == ConnectState.Connected; } }
 
-	int channelId;
-	int hostId;
-	int connectionId;
+	int channelId = 0;
+	int hostId = 0;
+	int connectionId = 0;
 
 	void Awake()
 	{
@@ -106,6 +106,23 @@ public class NetworkManager : MonoBehaviour
 		ID_START
 	};
 
+	public void Deinit()
+	{
+		if (connectionConfig != null)
+		{
+			NetworkTransport.Shutdown();
+			connectionConfig = null;
+			topology = null;
+			connection = null;
+
+			channelId = 0;
+			hostId = 0;
+			connectionId = 0;
+
+			status = NetworkStatus.Created;
+		}
+	}
+
 	public void Init(NetworkInitParameters initParams)
 	{
 		for (int i = 0; i < STORE_INPUT_LENGTH; i++)
@@ -116,7 +133,7 @@ public class NetworkManager : MonoBehaviour
 		switch (initParams.op_id)
 		{
 			case NetworkInitParameters.Operation.NONE:
-				NetworkTransport.Shutdown();
+				Deinit();
 				status = NetworkStatus.Closed;
 				break;
 			case NetworkInitParameters.Operation.HOST:
