@@ -13,15 +13,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   fixedDeltaTime: 0.016
   numPlayers: 2
-  antenaActivationRadius: 1.5
-  antenaCollisionRadius: 0.5
-  antenaLinkMaxRadius: 10
   playerCollisionRadius: 0.5
   playerSpeed: 15
   stunnedtime: 1
   invincibilityTime: 2
   messageTransmissionTime: 2
-  timeBetweenMessages: 10
+  timeBetweenMessages: 5
   numMessages: 16
   antennaColors:
   - {r: 0.71323526, g: 0.71323526, b: 0.71323526, a: 1}

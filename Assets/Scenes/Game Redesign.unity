@@ -4628,7 +4628,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   BoltPrefab: {fileID: 1383432733508410, guid: 1643ffe2b48e18943832aa90d5481d3f, type: 2}
   antenasParent: {fileID: 1422239014}
-  MessagePrefab: {fileID: 0}
+  MessagePrefab: {fileID: 1517946813036518, guid: ed11e3bac64e1c34da007981a820cac3,
+    type: 2}
   recieverAntenas:
   - {fileID: 755605884}
   baseAntenas:
@@ -6790,7 +6791,7 @@ Transform:
   - {fileID: 83624258}
   - {fileID: 46282271}
   m_Father: {fileID: 1422239015}
-  m_RootOrder: 5
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &444369876
 GameObject:
@@ -7955,7 +7956,7 @@ Prefab:
     m_Modifications:
     - target: {fileID: 4966283014206540, guid: a1cd74a0ff765d74181cf6885718dfd1, type: 2}
       propertyPath: m_LocalPosition.x
-      value: 21.53
+      value: 11.7
       objectReference: {fileID: 0}
     - target: {fileID: 4966283014206540, guid: a1cd74a0ff765d74181cf6885718dfd1, type: 2}
       propertyPath: m_LocalPosition.y
@@ -7963,7 +7964,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4966283014206540, guid: a1cd74a0ff765d74181cf6885718dfd1, type: 2}
       propertyPath: m_LocalPosition.z
-      value: 23.67
+      value: 18.73
       objectReference: {fileID: 0}
     - target: {fileID: 4966283014206540, guid: a1cd74a0ff765d74181cf6885718dfd1, type: 2}
       propertyPath: m_LocalRotation.x
@@ -7983,7 +7984,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4966283014206540, guid: a1cd74a0ff765d74181cf6885718dfd1, type: 2}
       propertyPath: m_RootOrder
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: a1cd74a0ff765d74181cf6885718dfd1, type: 2}
@@ -23172,12 +23173,12 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 474991739}
   - {fileID: 524074968}
+  - {fileID: 474991739}
+  - {fileID: 444289020}
   - {fileID: 1315970868}
   - {fileID: 172231803}
   - {fileID: 1406353872}
-  - {fileID: 444289020}
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

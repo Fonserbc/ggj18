@@ -49,6 +49,14 @@ public class Logic
                     break;
                 }
             }
+            for (int j = 0; j < baseAntenaId.Length; ++j)
+            {
+                if (baseAntenaId[j] < 0 && v.antenas[i] == v.baseAntenas[j])
+                {
+                    baseAntenaId[j] = i;
+                    break;
+                }
+            }
         }
 
 
@@ -186,7 +194,8 @@ public class Logic
             {   // Find possible next antena
                 List<int> possibleNextAntenas = new List<int>(antenaConnections[currentMessage.currentAntena].Count);
                 for (int j = 0; j < antenaConnections[currentMessage.currentAntena].Count; ++j) {
-                    if (currentMessage.color == newState.antenas[antenaConnections[currentMessage.currentAntena][j]].state) {
+                    if (currentMessage.lastAntena != antenaConnections[currentMessage.currentAntena][j]
+                        && currentMessage.color == newState.antenas[antenaConnections[currentMessage.currentAntena][j]].state) {
                         possibleNextAntenas.Add(antenaConnections[currentMessage.currentAntena][j]);
                     }
                 }
@@ -196,13 +205,14 @@ public class Logic
                 }
             }
 
-            if (currentMessage.nextAntena != -1 && newState.antenas[currentMessage.currentAntena].state != currentMessage.color && newState.antenas[currentMessage.nextAntena].state != currentMessage.color)
+            if (currentMessage.nextAntena != -1 && newState.antenas[currentMessage.currentAntena].state == currentMessage.color && newState.antenas[currentMessage.nextAntena].state == currentMessage.color)
             {
                 currentMessage.transmissionTime -= c.fixedDeltaTime;
 
                 if (currentMessage.transmissionTime <= 0) {
                     currentMessage.lastAntena = currentMessage.currentAntena;
                     currentMessage.currentAntena = currentMessage.nextAntena;
+                    currentMessage.nextAntena = -1;
                     currentMessage.transmissionTime = c.messageTransmissionTime;
 
                     for (int j = 0; j < baseAntenaId.Length; ++j) {
@@ -360,6 +370,7 @@ public class Logic
         if (receiver >= 0) {
             newState.messages[id].currentAntena = receiver;
             newState.messages[id].onScene = true;
+            newState.messages[id].transmissionTime = c.messageTransmissionTime;
         }
     }
 
