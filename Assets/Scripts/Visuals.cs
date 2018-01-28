@@ -7,6 +7,7 @@ public class Visuals : MonoBehaviour {
     public GameObject BoltPrefab;
     public GameObject antenasParent;
     public GameObject MessagePrefab;
+    public GameObject AudioPrefab;
     [System.NonSerialized]
     public AntennaScript[] antenas;
     public AntennaScript[] recieverAntenas;
@@ -70,6 +71,7 @@ public class Visuals : MonoBehaviour {
             antenas[i].isConnected = myLogic.IsAntenaLinking(i);            
             antenas[i].SetColor(c.antennaColors[(int)state.antenas[i].lastState]);
             antenas[i].SetCoolDown(state.antenas[i].refreshTime > 0, c.antennaColors[(int)state.antenas[i].state], c.connectionColors[(int)state.antenas[i].state]);
+            if (state.antenas[i].refreshTime == c.antenaRefreshTime) Instantiate(AudioPrefab, antenas[i].transform.position, antenas[i].transform.rotation);
         }
         //End Antenna Visuals
 
