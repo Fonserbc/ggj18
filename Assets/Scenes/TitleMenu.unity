@@ -206,6 +206,7 @@ GameObject:
   - component: {fileID: 359298958}
   - component: {fileID: 359298957}
   - component: {fileID: 359298955}
+  - component: {fileID: 359298956}
   m_Layer: 5
   m_Name: Connecting
   m_TagString: Untagged
@@ -284,6 +285,31 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+--- !u!114 &359298956
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 359298952}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 69adec38404cf1841b14bb042edddf0a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Unselected: {r: 0, g: 0, b: 0, a: 0}
+  Selected: {r: 0, g: 0, b: 0, a: 0}
+  TargetGraphic: {fileID: 0}
+  GroupLayout: {fileID: 0}
+  SelectedOffset:
+    m_Left: 0
+    m_Right: 0
+    m_Top: 0
+    m_Bottom: 0
+  m_OnCancel:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: CancelEventHandler+CancelEvent, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!114 &359298957
 MonoBehaviour:
@@ -891,7 +917,7 @@ MonoBehaviour:
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_FontData:
     m_Font: {fileID: 12800000, guid: 0724ea34e29a3ac4badb81b123e48aac, type: 3}
-    m_FontSize: 92
+    m_FontSize: 80
     m_FontStyle: 0
     m_BestFit: 0
     m_MinSize: 1
