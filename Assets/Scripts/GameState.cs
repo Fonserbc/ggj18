@@ -17,7 +17,6 @@ public struct GameState
         public float stunnedTime;
         public float invincibleTime;
         public bool moving;
-        public int antenaInRadius;
         public int points;
     }
     public struct AntenaInfo
@@ -25,6 +24,7 @@ public struct GameState
         public ColorState state;
         public Vector2 position;
         public float rotation;
+        public float refreshTime;
     }
     public struct MessageInfo
     {
