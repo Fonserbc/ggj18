@@ -279,8 +279,13 @@ public class NetworkManager : MonoBehaviour
 				}
 				else
 				{
-					PlayerInput input;
-					gameLogic.GetNewInput(out input);
+					PlayerInput input = new PlayerInput();
+
+					if (PauseMenu != null && PauseMenu.activeSelf)
+						input.Reset();
+					else
+						gameLogic.GetNewInput(out input);
+
 					SendInput(input);
 
 					uint currentFrameID = (localUpdateId - startUpdateId);
@@ -379,8 +384,13 @@ public class NetworkManager : MonoBehaviour
 		{
 			if (PauseMenu != null)
 			{
-				if (Input.GetButton("Start1") && !ScoreBoards.activeSelf)
+#if UNITY_STANDALONE_OSX || UNITY_EDITOR_OSX
+				if (Input.GetButton("StartM1") && !PauseMenu.activeSelf)
 					PauseMenu.SetActive(true);
+#else
+				if (Input.GetButton("Start1") && !PauseMenu.activeSelf)
+					PauseMenu.SetActive(true);
+#endif
 			}
 
 			if (ScoreBoards != null)
