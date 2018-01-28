@@ -37,6 +37,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4208119748730554}
   - component: {fileID: 114176588172613784}
+  - component: {fileID: 82807656036961888}
   m_Layer: 0
   m_Name: Letter
   m_TagString: Untagged
@@ -112,6 +113,86 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1230523550967578}
   m_Mesh: {fileID: 4300000, guid: 3b8f03b5f5907bd4fba5d16ccd16948d, type: 3}
+--- !u!82 &82807656036961888
+AudioSource:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1517946813036518}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_PlayOnAwake: 0
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 2
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 2
+      time: 0
+      value: 0.8
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 0
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 2
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 0
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 2
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 0
 --- !u!114 &114176588172613784
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -124,3 +205,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   messageRend: {fileID: 23395221077770108}
+  popUp:
+  - {fileID: 8300000, guid: 9ef5396932c5ba64fab2c017ace42c21, type: 3}
+  - {fileID: 8300000, guid: dc14a1ccf1c65c7478916cf5ed5e481f, type: 3}
+  - {fileID: 8300000, guid: 9735e2ac7904647478207b0aea794f3e, type: 3}
+  - {fileID: 8300000, guid: 8998d45cfb72eea44a1c8aefcd2ca344, type: 3}
+  - {fileID: 8300000, guid: ec7c2689fe4cf8243b0d246b686282d5, type: 3}
+  travel:
+  - {fileID: 8300000, guid: f6c3f35ea04db3f44ad7fa019c80ed1f, type: 3}
+  - {fileID: 8300000, guid: ac554c34626e22842ba01f1c512edb26, type: 3}
+  - {fileID: 8300000, guid: a4ea2225e9a87eb499303af1758e9c9c, type: 3}
+  - {fileID: 8300000, guid: 009e9471acba9b14eb8146e8e7cf3907, type: 3}
+  - {fileID: 8300000, guid: a8ca3173240050346ae7bf9ea1801d42, type: 3}
+  send:
+  - {fileID: 8300000, guid: b8abc682950e6914c96c67253abf4fb8, type: 3}
+  - {fileID: 8300000, guid: 5313326388ac87047af23a8132d39a3d, type: 3}
+  myAudio: {fileID: 82807656036961888}
+  currentAntena: -1
