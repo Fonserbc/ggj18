@@ -5,9 +5,14 @@ using UnityEngine;
 public class AntennaScript : MonoBehaviour {
 
     public Transform antenna;
+    public Renderer antennaRend;
+    public bool canRotate = true;
+    public bool randomRotation = true;
     public float rotTime = .2f;
     public float minAngle = 0;
     public float maxAngle = 180;
+    public Vector3 rotationDir = Vector3.forward;
+    public float rotationSpeed = 90f;
 
     public Transform spawnBolt;
     public float minPosition = 0.75f;
@@ -18,21 +23,22 @@ public class AntennaScript : MonoBehaviour {
 
 
     float counter = 0;
-    Renderer myRend;
 
-    private void Start()
-    {
-        myRend = antenna.GetComponent<Renderer>();
-    }
 
     // Update is called once per frame
     void Update () {
         if (!isConnected) return;
+
+        if(canRotate && !randomRotation) antenna.Rotate(rotationDir * rotationSpeed * Time.deltaTime);
+
         counter += Time.deltaTime;
         if(counter >= rotTime)
         {
             counter -= rotTime;
-            antenna.Rotate(Vector3.forward * Random.Range(minAngle, maxAngle));
+            if (canRotate)
+            {
+                if(randomRotation) antenna.Rotate(rotationDir * Random.Range(minAngle, maxAngle));
+            }
             Vector3 pos = spawnBolt.localPosition;
             pos.y = Random.Range(minPosition, maxPosition);
             spawnBolt.localPosition = pos;
@@ -51,6 +57,6 @@ public class AntennaScript : MonoBehaviour {
 
     public void SetColor(Color c)
     {
-        myRend.material.color = c;
+        antennaRend.material.color = c;
     }
 }
