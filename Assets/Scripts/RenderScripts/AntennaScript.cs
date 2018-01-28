@@ -5,7 +5,7 @@ using UnityEngine;
 public class AntennaScript : MonoBehaviour {
 
     public Transform antenna;
-    public Renderer[] antennaRend;
+    public Renderer antennaRend;
     public Transform messageHolder;
     public bool canRotate = true;
     public bool randomRotation = true;
@@ -27,6 +27,7 @@ public class AntennaScript : MonoBehaviour {
     public bool isConnected = false;
     public Constants c;
 
+    public Renderer[] cooldownRend;
     public DigitalRuby.LightningBolt.LightningBoltScript coolDownBolt;
     LineRenderer coolDownLine;
 
@@ -74,13 +75,17 @@ public class AntennaScript : MonoBehaviour {
 
     public void SetColor(Color c)
     {
-        for (int i = 0; i < antennaRend.Length; ++i) antennaRend[i].material.color = c;
+        antennaRend.material.color = c;
     }
 
-    public void SetCoolDown(bool enabled, Color c)
+    public void SetCoolDown(bool enabled, Color c, Color cEm)
     {
         coolDownBolt.enabled = enabled;
         coolDownLine.enabled = enabled;
-        if(enabled)coolDownLine.material.SetColor("_EmissionColor", c);
+        if (enabled)
+        {
+            coolDownLine.material.SetColor("_EmissionColor", cEm);
+            for (int i = 0; i < cooldownRend.Length; ++i) cooldownRend[i].material.color = c;
+        }
     }
 }

@@ -68,8 +68,8 @@ public class Visuals : MonoBehaviour {
         for (int i = 0; i < antenas.Length; ++i)
         {
             antenas[i].isConnected = myLogic.IsAntenaLinking(i);            
-            antenas[i].SetColor(c.antennaColors[(int)state.antenas[i].state]);
-            antenas[i].SetCoolDown(state.antenas[i].refreshTime > 0, c.connectionColors[(int)state.antenas[i].state]);
+            if(state.antenas[i].refreshTime <= 0) antenas[i].SetColor(c.antennaColors[(int)state.antenas[i].state]);
+            antenas[i].SetCoolDown(state.antenas[i].refreshTime > 0, c.antennaColors[(int)state.antenas[i].state], c.connectionColors[(int)state.antenas[i].state]);
         }
         //End Antenna Visuals
 
