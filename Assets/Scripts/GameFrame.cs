@@ -108,7 +108,11 @@ public class GameLogic
 					visuals = visualsObject.GetComponent<Visuals>();
 					if (visuals != null)
 					{
-						
+						GaemFrame_index = 0;
+						oldest_frame = 0;
+						current_frame = 1;
+						newest_frame = 0;
+
 						initState = InitState.LOADED;
 					}
 				}
@@ -123,12 +127,8 @@ public class GameLogic
 		if (!IsInit())
 			return;
 
-		GaemFrame_index = 0;
-		oldest_frame = 0;
-		current_frame = 1;
-		newest_frame = 0;
-
-		GameFrame frame = MemoryFrame[0];
+		int index = GetIndexFromFrameId(current_frame - 1);
+		GameFrame frame = MemoryFrame[index];
 
 		Debug.Log("Running game with seed " + seed);
 		frame.state = logic.InitFirstState(visuals, seed);
