@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class TitleMenuEnterIP : MonoBehaviour
 {
 	public TitleMenuController MenuController;
-	public InputField EnterField;
+	public GamePadInputField EnterField;
 
 	void OnEnable()
 	{
@@ -18,9 +18,7 @@ public class TitleMenuEnterIP : MonoBehaviour
 
 		EnterField.Select();
 		EnterField.onEndEdit.AddListener(OnEndEdit);
-
-		CancelEventHandler optionCancel = EnterField.gameObject.AddComponent<CancelEventHandler>();
-		optionCancel.onCancel.AddListener(OnCancel);
+		EnterField.onCancel.AddListener(OnCancel);
 	}
 
 	void OnEndEdit(string address)

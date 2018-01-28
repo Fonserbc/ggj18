@@ -1334,7 +1334,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.6838235, g: 0.08044982, b: 0.08044982, a: 1}
+  m_Color: {r: 0.2, g: 0.2, b: 0.2, a: 1}
   m_RaycastTarget: 0
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -1372,7 +1372,7 @@ MonoBehaviour:
   m_Script: {fileID: 1573420865, guid: f70555f144d8491a825f0804e09c671c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_EffectColor: {r: 0, g: 0, b: 0, a: 0.5}
+  m_EffectColor: {r: 1, g: 1, b: 1, a: 1}
   m_EffectDistance: {x: 3, y: -3}
   m_UseGraphicAlpha: 1
 --- !u!1 &1498392808
@@ -2044,8 +2044,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1969051269}
   - component: {fileID: 1969051271}
-  - component: {fileID: 1969051270}
   - component: {fileID: 1969051272}
+  - component: {fileID: 1969051270}
   m_Layer: 5
   m_Name: InputField
   m_TagString: Untagged
@@ -2081,11 +2081,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 1969051268}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 575553740, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Script: {fileID: 11500000, guid: 23e66feb86d29624486e91348761cfb6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 0
+    m_Mode: 3
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
@@ -2136,6 +2136,11 @@ MonoBehaviour:
   m_CaretBlinkRate: 0.85
   m_CaretWidth: 1
   m_ReadOnly: 0
+  m_OnCancel:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: GamePadInputField+CancelEvent, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+      PublicKeyToken=null
 --- !u!222 &1969051271
 CanvasRenderer:
   m_ObjectHideFlags: 0
