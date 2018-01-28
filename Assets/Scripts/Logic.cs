@@ -83,7 +83,7 @@ public class Logic
             newState.antenas[i].refreshTime = 0;
         }
         newState.messages = new GameState.MessageInfo[c.numMessages];
-        Random.InitState(seed);
+        Random.InitState((int)seed);
         for (int i = 0; i < newState.messages.Length; ++i)
         {
             newState.messages[i] = new GameState.MessageInfo();
