@@ -68,6 +68,7 @@ public class Visuals : MonoBehaviour {
         {
             antenas[i].isConnected = myLogic.IsAntenaLinking(i);            
             antenas[i].SetColor(c.antennaColors[(int)state.antenas[i].state]);
+            antenas[i].SetCoolDown(state.antenas[i].refreshTime > 0, c.connectionColors[(int)state.antenas[i].state]);
         }
         //End Antenna Visuals
 
@@ -81,7 +82,7 @@ public class Visuals : MonoBehaviour {
             {
                 messages[i] = Instantiate(MessagePrefab, antenas[currentAnt].messageHolders[holderId-1].position, antenas[currentAnt].messageHolders[holderId - 1].rotation).GetComponent<MessageScript>();
                 messages[i].currentAntena = currentAnt;
-                messages[i].messageRend.material.color = c.connectionColors[holderId - 1];
+                messages[i].messageRend.material.color = c.connectionColors[holderId];
             } else if (state.messages[i].state == GameState.MessageInfo.MessageState.Out && messages[i] != null)
             {
                 Destroy(messages[i].gameObject);
@@ -112,7 +113,7 @@ public class Visuals : MonoBehaviour {
             {
                 bolts[indexBolt].StartObject = antenas[connections[indexBolt].x].spawnBolt.gameObject;
                 bolts[indexBolt].EndObject = antenas[connections[indexBolt].y].spawnBolt.gameObject;
-                bolts[indexBolt].GetComponent<LineRenderer>().material.SetColor("_EmissionColor", c.connectionColors[((int)state.antenas[connections[indexBolt].x].state)-1]);
+                bolts[indexBolt].GetComponent<LineRenderer>().material.SetColor("_EmissionColor", c.connectionColors[((int)state.antenas[connections[indexBolt].x].state)]);
               
                 ++indexBolt;
             }
@@ -140,25 +141,25 @@ public class Visuals : MonoBehaviour {
             if (input.up)
             {
                 players[id].waving = true;
-                players[id].waveRenderer.material.color = c.connectionColors[0];
+                players[id].waveRenderer.material.color = c.connectionColors[1];
                 players[id].waveRenderer.gameObject.SetActive(true);
             }
             else if (input.down)
             {
                 players[id].waving = true;
-                players[id].waveRenderer.material.color = c.connectionColors[1];
+                players[id].waveRenderer.material.color = c.connectionColors[2];
                 players[id].waveRenderer.gameObject.SetActive(true);
             }
             else if (input.left)
             {
                 players[id].waving = true;
-                players[id].waveRenderer.material.color = c.connectionColors[2];
+                players[id].waveRenderer.material.color = c.connectionColors[3];
                 players[id].waveRenderer.gameObject.SetActive(true);
             }
             else if (input.right)
             {
                 players[id].waving = true;
-                players[id].waveRenderer.material.color = c.connectionColors[3];
+                players[id].waveRenderer.material.color = c.connectionColors[4];
                 players[id].waveRenderer.gameObject.SetActive(true);
             }
             else
