@@ -339,8 +339,10 @@ public class GameLogic
 
 		points1 = frame.state.players[0].points;
 		points2 = frame.state.players[1].points;
+		winnerPlayer = frame.state.winnerPlayer;
 	}
 
 	public int points1;
 	public int points2;
+	public int winnerPlayer;
 }
