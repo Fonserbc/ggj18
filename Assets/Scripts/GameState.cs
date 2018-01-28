@@ -47,6 +47,7 @@ public struct GameState
     public AntenaInfo[] antenas;
     public MessageInfo[] messages;
     public int winnerPlayer;
+    public int seed;
 
     public GameState(GameState from) {
         players = null;
@@ -71,6 +72,7 @@ public struct GameState
         }
 
         winnerPlayer = from.winnerPlayer;
+        seed = from.seed;
     }
 
     public void CopyFrom(GameState from) {
@@ -96,5 +98,6 @@ public struct GameState
         }
 
         winnerPlayer = from.winnerPlayer;
+        seed = from.seed;
     }
 }

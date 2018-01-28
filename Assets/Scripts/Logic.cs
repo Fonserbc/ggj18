@@ -6,7 +6,6 @@ public class Logic
     public Constants c;
 
     GameState newState;
-    int currentFrame;
 
     Bounds[] staticWorld;
 
@@ -17,6 +16,8 @@ public class Logic
     RaycastHit[] raycastsHits;
 
     Visuals v;
+
+    System.Random rand;
 
     public GameState InitFirstState (Visuals visuals, uint seed = 0)
     {
@@ -63,6 +64,8 @@ public class Logic
 
 
         newState = new GameState();
+        newState.seed = (int)seed;
+        rand = new System.Random(newState.seed);
         newState.players = new GameState.PlayerInfo[c.numPlayers];
         for (int i = 0; i < newState.players.Length; ++i) {
             newState.players[i] = new GameState.PlayerInfo();
@@ -83,13 +86,12 @@ public class Logic
             newState.antenas[i].refreshTime = 0;
         }
         newState.messages = new GameState.MessageInfo[c.numMessages];
-        Random.InitState((int)seed);
         for (int i = 0; i < newState.messages.Length; ++i)
         {
             newState.messages[i] = new GameState.MessageInfo();
             newState.messages[i].state = GameState.MessageInfo.MessageState.Out;
             newState.messages[i].transmissionTime = i * c.timeBetweenMessages;
-            newState.messages[i].color = (GameState.ColorState)Random.Range(1, 5);
+            newState.messages[i].color = (GameState.ColorState)rand.Next(1, 5);
             newState.messages[i].currentAntena = -1;
             newState.messages[i].lastAntena = -1;
             newState.messages[i].nextAntena = -1;
@@ -105,8 +107,8 @@ public class Logic
     public void UpdateState(ref GameFrame frame)
     {
         newState = frame.state;
-        currentFrame = (int)frame.frame_id;
-
+        newState.seed = 1103515245 * newState.seed + 12345;
+        rand = new System.Random(newState.seed);
 
         UpdateAntennaTimings();
 
@@ -214,7 +216,7 @@ public class Logic
                 }
                 if (possibleNextAntenas.Count > 0)
                 {
-                    currentMessage.nextAntena = possibleNextAntenas[currentFrame % possibleNextAntenas.Count];
+                    currentMessage.nextAntena = possibleNextAntenas[rand.Next(0, possibleNextAntenas.Count)];
                 }
             }
 
@@ -438,7 +440,7 @@ public class Logic
     }
 
     void InstantiateMessage(int id) {
-        int receiver = receiverAntenaId[currentFrame % receiverAntenaId.Length]; //FindFreeReceiver();
+        int receiver = receiverAntenaId[rand.Next(0, receiverAntenaId.Length)]; //FindFreeReceiver();
 
         if (receiver >= 0) {
             newState.messages[id].currentAntena = receiver;
@@ -466,7 +468,7 @@ public class Logic
         if (freeReceivers.Count == 0)
             return -1;
         else {
-            return freeReceivers[currentFrame % freeReceivers.Count];
+            return freeReceivers[rand.Next(0, freeReceivers.Count)];
         }
     }
 
