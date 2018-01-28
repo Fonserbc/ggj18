@@ -45,6 +45,7 @@ public struct GameState
     public PlayerInfo[] players;
     public AntenaInfo[] antenas;
     public MessageInfo[] messages;
+    public int winnerPlayer = -1;
 
     public GameState(GameState from) {
         players = null;
