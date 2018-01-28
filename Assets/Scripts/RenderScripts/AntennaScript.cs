@@ -27,10 +27,17 @@ public class AntennaScript : MonoBehaviour {
     public bool isConnected = false;
     public Constants c;
 
+    public Renderer coolDownBall;
+    public DigitalRuby.LightningBolt.LightningBoltScript coolDownBolt;
+    LineRenderer coolDownLine;
+
 
     float counter = 0;
 
-
+    private void Start()
+    {
+        coolDownLine = coolDownBolt.GetComponent<LineRenderer>();
+    }
 
     // Update is called once per frame
     void Update () {
@@ -69,5 +76,12 @@ public class AntennaScript : MonoBehaviour {
     public void SetColor(Color c)
     {
         antennaRend.material.color = c;
+        coolDownBall.material.color = c;
+    }
+
+    public void SetCoolDown(bool enabled)
+    {
+        coolDownBolt.enabled = enabled;
+        coolDownLine.material.SetColor("_EmissionColor", coolDownBall.material.color);
     }
 }
