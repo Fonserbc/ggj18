@@ -38,6 +38,7 @@ GameObject:
   - component: {fileID: 224553104126938000}
   - component: {fileID: 114559770949340464}
   - component: {fileID: 114911929962784544}
+  - component: {fileID: 114075905232512888}
   m_Layer: 5
   m_Name: Option
   m_TagString: Untagged
@@ -45,6 +46,31 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &114075905232512888
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1767081109092238}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 69adec38404cf1841b14bb042edddf0a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Unselected: {r: 0.2, g: 0.2, b: 0.2, a: 1}
+  Selected: {r: 0.8, g: 0.20392157, b: 0.20392157, a: 1}
+  TargetGraphic: {fileID: 114313047648190780}
+  GroupLayout: {fileID: 114559770949340464}
+  SelectedOffset:
+    m_Left: 50
+    m_Right: 0
+    m_Top: 0
+    m_Bottom: 0
+  m_OnCancel:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: CancelEventHandler+CancelEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
 --- !u!114 &114313047648190780
 MonoBehaviour:
   m_ObjectHideFlags: 1

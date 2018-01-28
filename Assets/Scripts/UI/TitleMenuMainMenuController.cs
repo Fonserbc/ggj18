@@ -15,30 +15,20 @@ public class TitleMenuMainMenuController : MonoBehaviour
 	private Button buttonCredits;
 	private Button buttonExit;
 
-	Button AddOption(string text, UnityAction action)
+	private Button AddOption(string name, UnityAction onClick)
 	{
-		GameObject option = Instantiate(OptionPrefab);
-		option.name = text.Replace(" ", "");
-		option.transform.SetParent(OptionContainer.transform, false);
-		Button optionButton = option.GetComponent<Button>();
-		Text optionText = option.transform.Find("Text").GetComponent<Text>();
-		optionButton.onClick.AddListener(action);
-		CancelEventHandler optionCancel = optionButton.gameObject.AddComponent<CancelEventHandler>();
-		optionCancel.onCancel.AddListener(OnCancel);
-		optionCancel.TargetGraphic = optionText;
-		optionCancel.Selected = new Color(0.8f, 0.3f, 0.3f, 1.0f);
-		optionCancel.Unselected = optionText.color;
-		optionText.text = text;
-
-		return optionButton;
+		return TitleMenuHelper.AddOption(name, onClick, OnCancel, OptionContainer, Instantiate(OptionPrefab));
 	}
 
 	void Awake ()
 	{
-		buttonPlay = AddOption("Play", OnPlaySelected);
-		buttonHowToPlay = AddOption("How to play", OnHowToPlaySelected);
-		buttonCredits = AddOption("Credits", OnCreditsSelected);
-		buttonExit = AddOption("Exit", OnExitSelected);
+		Button[] listButton = new Button[4];
+		listButton[0] = buttonPlay = AddOption("Play", OnPlaySelected);
+		listButton[1] = buttonHowToPlay = AddOption("How to play", OnHowToPlaySelected);
+		listButton[2] = buttonCredits = AddOption("Credits", OnCreditsSelected);
+		listButton[3] = buttonExit = AddOption("Exit", OnExitSelected);
+
+		TitleMenuHelper.BuildNavigation(listButton);
 	}
 
 	public void OnEnable()
