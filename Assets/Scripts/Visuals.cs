@@ -49,8 +49,9 @@ public class Visuals : MonoBehaviour {
 
             Vector3 newPos = new Vector3(state.players[i].position.x, players[i].transform.position.y, state.players[i].position.y);
             players[i].moving = players[i].transform.position != newPos;
-            players[i].transform.position = Vector3.Lerp(players[i].transform.position, newPos, 0.5f);
-            players[i].transform.rotation = Quaternion.Lerp(players[i].transform.rotation, Quaternion.AngleAxis(state.players[i].rotation, Vector3.down), 0.5f);
+            float smoothFactor = 0.2f;
+            players[i].transform.position = Vector3.Lerp(players[i].transform.position, newPos, smoothFactor);
+            players[i].transform.rotation = Quaternion.Lerp(players[i].transform.rotation, Quaternion.AngleAxis(state.players[i].rotation, Vector3.down), smoothFactor);
 
             SetPlayerWave(i, (i==0) ? frame.input_player1 : frame.input_player2);
             
@@ -93,10 +94,15 @@ public class Visuals : MonoBehaviour {
             {
                 if (messages[i].currentAntena != currentAnt) messages[i].playTravelAudio();
                 messages[i].currentAntena = currentAnt;
+                int nextAnt = state.messages[i].nextAntena;
 
                 if(state.messages[i].state == GameState.MessageInfo.MessageState.End) messages[i].playSendAudio();
 
-                messages[i].transform.position = Vector3.Lerp(messages[i].transform.position, antenas[currentAnt].messageHolders[holderId - 1].position, .1f);
+                Vector3 wantedPos = antenas[currentAnt].messageHolders[holderId - 1].position;
+                if (nextAnt >= 0) {
+                    wantedPos = Vector3.Lerp(wantedPos, antenas[nextAnt].messageHolders[holderId - 1].position, 1f - Mathf.Clamp01(state.messages[i].transmissionTime));
+                }
+                messages[i].transform.position = Vector3.Lerp(messages[i].transform.position, wantedPos, .1f);
                 messages[i].transform.rotation = Quaternion.Lerp(messages[i].transform.rotation, antenas[currentAnt].messageHolders[holderId - 1].rotation, .1f);
             }
 
