@@ -100,7 +100,7 @@ public class Logic
         {
             newState.messages[i] = new GameState.MessageInfo();
             newState.messages[i].state = GameState.MessageInfo.MessageState.Out;
-            newState.messages[i].transmissionTime = i * c.timeBetweenMessages;
+            newState.messages[i].transmissionTime = (i + 1) * c.timeBetweenMessages;
             newState.messages[i].color = (GameState.ColorState)rand.Next(1, 5);
             newState.messages[i].currentAntena = -1;
             newState.messages[i].lastAntena = -1;
@@ -452,7 +452,7 @@ public class Logic
         bool won = true;
 
         for (int i = 0; won && i < newState.messages.Length; ++i) {
-            won &= newState.messages[i].state == GameState.MessageInfo.MessageState.End;
+            won &= newState.messages[i].state == GameState.MessageInfo.MessageState.Out && newState.messages[i].transmissionTime <= 0;
         }
 
         if (won) {
@@ -465,12 +465,12 @@ public class Logic
             }
 
             newState.winnerPlayer = winner;
+            newState.winTime = c.winShowTime;
         }
     }
 
     void InstantiateMessage(int id) {
         int receiver = receiverAntenaId[rand.Next(0, receiverAntenaId.Length)]; //FindFreeReceiver();
-
         if (receiver >= 0) {
             newState.messages[id].currentAntena = receiver;
             newState.messages[id].state = GameState.MessageInfo.MessageState.Playing;
