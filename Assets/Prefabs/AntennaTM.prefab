@@ -254,8 +254,8 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1117947797865174}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 14.76, y: 0, z: 12.44}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 11.7, y: 0, z: 18.73}
+  m_LocalScale: {x: 2, y: 2, z: 2}
   m_Children:
   - {fileID: 4273242017302752}
   - {fileID: 4016351500420540}
@@ -399,7 +399,7 @@ MonoBehaviour:
   rotationSpeed: 90
   spawnBolt: {fileID: 4612197090761960}
   minPosition: 1
-  maxPosition: 2.7
+  maxPosition: 3.7
   collisionRadius: 0.5
   activationRadius: 2
   linkMaxRadius: 10
