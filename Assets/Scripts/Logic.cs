@@ -19,7 +19,7 @@ public class Logic
 
     System.Random rand;
 
-    public GameState InitFirstState (Visuals visuals, uint seed = 0)
+    public GameState InitFirstState (Visuals visuals, uint seed = 37)
     {
         raycastsHits = new RaycastHit[1];
         v = visuals;
