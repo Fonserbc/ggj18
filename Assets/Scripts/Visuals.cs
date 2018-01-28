@@ -13,6 +13,7 @@ public class Visuals : MonoBehaviour {
     public AntennaScript[] baseAntenas;
     public PlayerScript[] players;
     MessageScript[] messages;
+
     Animator[] playerAnimators;
 	List<DigitalRuby.LightningBolt.LightningBoltScript> bolts = new List<DigitalRuby.LightningBolt.LightningBoltScript>();
     public Transform levelTransform;
@@ -33,7 +34,7 @@ public class Visuals : MonoBehaviour {
 
         messages = new MessageScript[c.numMessages];
         for (int i = 0; i < messages.Length; ++i) messages[i] = null;
-	}
+    }
 	
     public void UpdateFrom (GameFrame frame)
     {
@@ -54,6 +55,8 @@ public class Visuals : MonoBehaviour {
             SetPlayerWave(i, (i==0) ? frame.input_player1 : frame.input_player2);
             
             playerAnimators[i].SetBool("Moving", state.players[i].moving);
+            bool stunned = playerAnimators[i].GetBool("Stunned");
+            if (!stunned && state.players[i].stunnedTime > 0) players[i].playStunAudio();
             playerAnimators[i].SetBool("Stunned", state.players[i].stunnedTime > 0);
             playerAnimators[i].SetBool("Invincible", state.players[i].invincibleTime > 0);
             
@@ -77,14 +80,21 @@ public class Visuals : MonoBehaviour {
             if (state.messages[i].state == GameState.MessageInfo.MessageState.Playing && messages[i] == null)
             {
                 messages[i] = Instantiate(MessagePrefab, antenas[currentAnt].messageHolders[holderId-1].position, antenas[currentAnt].messageHolders[holderId - 1].rotation).GetComponent<MessageScript>();
+                messages[i].currentAntena = currentAnt;
                 messages[i].messageRend.material.color = c.connectionColors[holderId - 1];
             } else if (state.messages[i].state == GameState.MessageInfo.MessageState.Out && messages[i] != null)
             {
                 Destroy(messages[i].gameObject);
             }
 
-            if(messages[i] != null)
+
+            if (messages[i] != null)
             {
+                if (messages[i].currentAntena != currentAnt) messages[i].playTravelAudio();
+                messages[i].currentAntena = currentAnt;
+
+                if(state.messages[i].state == GameState.MessageInfo.MessageState.End) messages[i].playSendAudio();
+
                 messages[i].transform.position = Vector3.Lerp(messages[i].transform.position, antenas[currentAnt].messageHolders[holderId - 1].position, .1f);
                 messages[i].transform.rotation = Quaternion.Lerp(messages[i].transform.rotation, antenas[currentAnt].messageHolders[holderId - 1].rotation, .1f);
             }
