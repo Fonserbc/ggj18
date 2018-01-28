@@ -4460,6 +4460,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   BoltPrefab: {fileID: 1383432733508410, guid: 1643ffe2b48e18943832aa90d5481d3f, type: 2}
+  MessagePrefab: {fileID: 1517946813036518, guid: ed11e3bac64e1c34da007981a820cac3,
+    type: 2}
   antenas:
   - {fileID: 744682996}
   - {fileID: 264549138}

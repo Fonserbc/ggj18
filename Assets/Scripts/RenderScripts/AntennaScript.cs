@@ -6,6 +6,7 @@ public class AntennaScript : MonoBehaviour {
 
     public Transform antenna;
     public Renderer antennaRend;
+    public Transform messageHolder;
     public bool canRotate = true;
     public bool randomRotation = true;
     public float rotTime = .2f;
@@ -21,6 +22,7 @@ public class AntennaScript : MonoBehaviour {
     public float collisionRadius = 0.5f;
     public float activationRadius = 2f;
     public float linkMaxRadius = 10f;
+    public Transform[] messageHolders;
 
     public bool isConnected = false;
     public Constants c;
@@ -29,8 +31,13 @@ public class AntennaScript : MonoBehaviour {
     float counter = 0;
 
 
+
     // Update is called once per frame
     void Update () {
+
+         messageHolder.Rotate(Vector3.up * rotationSpeed*.5f * Time.deltaTime);
+        
+
         if (!isConnected) return;
 
         if(canRotate && !randomRotation) antenna.Rotate(rotationDir * rotationSpeed * Time.deltaTime);
