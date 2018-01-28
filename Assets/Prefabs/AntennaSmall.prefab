@@ -253,7 +253,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1758613440055918}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 53.5, y: 0, z: 15.8}
+  m_LocalPosition: {x: 43.7, y: 0, z: 7}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4863454323525992}
@@ -574,10 +574,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   antenna: {fileID: 4820247331886636}
-  antennaRend:
-  - {fileID: 23111997374992552}
-  - {fileID: 23062822489357798}
-  - {fileID: 23241057077626898}
+  antennaRend: {fileID: 23111997374992552}
   messageHolder: {fileID: 4388859989400896}
   canRotate: 1
   randomRotation: 1
@@ -599,6 +596,9 @@ MonoBehaviour:
   - {fileID: 4403317556924444}
   isConnected: 0
   c: {fileID: 11400000, guid: 71cd57026ba824f3cb5fc5d345985b38, type: 2}
+  cooldownRend:
+  - {fileID: 23062822489357798}
+  - {fileID: 23241057077626898}
   coolDownBolt: {fileID: 114262230587549798}
 --- !u!114 &114262230587549798
 MonoBehaviour:

@@ -592,10 +592,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   antenna: {fileID: 4016351500420540}
-  antennaRend:
-  - {fileID: 23126498709054938}
-  - {fileID: 23365834925032768}
-  - {fileID: 23333336091679590}
+  antennaRend: {fileID: 23126498709054938}
   messageHolder: {fileID: 4645988312985716}
   canRotate: 0
   randomRotation: 1
@@ -617,6 +614,9 @@ MonoBehaviour:
   - {fileID: 4973510194096284}
   isConnected: 0
   c: {fileID: 11400000, guid: 71cd57026ba824f3cb5fc5d345985b38, type: 2}
+  cooldownRend:
+  - {fileID: 23365834925032768}
+  - {fileID: 23333336091679590}
   coolDownBolt: {fileID: 114595791735440906}
 --- !u!114 &114595791735440906
 MonoBehaviour:
