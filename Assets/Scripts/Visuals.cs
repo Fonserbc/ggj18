@@ -140,25 +140,25 @@ public class Visuals : MonoBehaviour {
             if (input.up)
             {
                 players[id].waving = true;
-                players[id].waveRenderer.material.SetColor("_EmissionColor", c.connectionColors[0]);
+                players[id].waveRenderer.material.color = c.connectionColors[0];
                 players[id].waveRenderer.gameObject.SetActive(true);
             }
             else if (input.down)
             {
                 players[id].waving = true;
-                players[id].waveRenderer.material.SetColor("_EmissionColor", c.connectionColors[1]);
+                players[id].waveRenderer.material.color = c.connectionColors[1];
                 players[id].waveRenderer.gameObject.SetActive(true);
             }
             else if (input.left)
             {
                 players[id].waving = true;
-                players[id].waveRenderer.material.SetColor("_EmissionColor", c.connectionColors[2]);
+                players[id].waveRenderer.material.color = c.connectionColors[2];
                 players[id].waveRenderer.gameObject.SetActive(true);
             }
             else if (input.right)
             {
                 players[id].waving = true;
-                players[id].waveRenderer.material.SetColor("_EmissionColor", c.connectionColors[3]);
+                players[id].waveRenderer.material.color = c.connectionColors[3];
                 players[id].waveRenderer.gameObject.SetActive(true);
             }
             else
