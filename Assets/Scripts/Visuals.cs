@@ -74,11 +74,11 @@ public class Visuals : MonoBehaviour {
             int holderId = (int)state.messages[i].color;
             int currentAnt = state.messages[i].currentAntena;
 
-            if (state.messages[i].onScene && messages[i] == null)
+            if (state.messages[i].state == GameState.MessageInfo.MessageState.Playing && messages[i] == null)
             {
                 messages[i] = Instantiate(MessagePrefab, antenas[currentAnt].messageHolders[holderId-1].position, antenas[currentAnt].messageHolders[holderId - 1].rotation).GetComponent<MessageScript>();
                 messages[i].messageRend.material.color = c.connectionColors[holderId - 1];
-            } else if (!state.messages[i].onScene && messages[i] != null)
+            } else if (state.messages[i].state == GameState.MessageInfo.MessageState.Out && messages[i] != null)
             {
                 Destroy(messages[i].gameObject);
             }
