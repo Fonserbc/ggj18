@@ -44,12 +44,12 @@ public class TitleMenuMainMenuController : MonoBehaviour
 
 	void OnHowToPlaySelected()
 	{
-		Debug.Log("OnConnectSelected");
+		MenuController.GoToHowToPlay();
 	}
 
 	void OnCreditsSelected()
 	{
-		Debug.Log("OnHostSelected");
+		MenuController.GoToCredits();
 	}
 
 	void OnExitSelected()
