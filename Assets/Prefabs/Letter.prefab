@@ -36,6 +36,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4208119748730554}
+  - component: {fileID: 114176588172613784}
   m_Layer: 0
   m_Name: Letter
   m_TagString: Untagged
@@ -50,7 +51,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1517946813036518}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 9.32847, y: 3.9, z: 10.197807}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4581480077260062}
@@ -111,3 +112,15 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1230523550967578}
   m_Mesh: {fileID: 4300000, guid: 3b8f03b5f5907bd4fba5d16ccd16948d, type: 3}
+--- !u!114 &114176588172613784
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1517946813036518}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ad66268528f61e949a95cf5b787c9a87, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  messageRend: {fileID: 23395221077770108}
