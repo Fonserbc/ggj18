@@ -5025,6 +5025,8 @@ MonoBehaviour:
   antenasParent: {fileID: 1422239014}
   MessagePrefab: {fileID: 1517946813036518, guid: ed11e3bac64e1c34da007981a820cac3,
     type: 2}
+  AudioPrefab: {fileID: 1962424587069410, guid: 5ce023bf654f9a8449f7d5b67e505c2a,
+    type: 2}
   recieverAntenas:
   - {fileID: 755605884}
   - {fileID: 283658085}
