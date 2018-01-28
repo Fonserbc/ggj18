@@ -9,6 +9,9 @@ public class TitleMenuController : MonoBehaviour
 	public TitleMenuPlayController PlayController;
 	public TitleMenuEnterIP EnterIP;
 	public TitleMenuConnecting Connecting;
+	public TitleMenuGenericBack HowToPlay;
+	public TitleMenuGenericBack Credits;
+
 	private GameObject currentlyFocus;
 
 	private List<GameObject> screens = new List<GameObject>();
@@ -20,12 +23,16 @@ public class TitleMenuController : MonoBehaviour
 		screens.Add(PlayController.gameObject);
 		screens.Add(EnterIP.gameObject);
 		screens.Add(Connecting.gameObject);
+		screens.Add(HowToPlay.gameObject);
+		screens.Add(Credits.gameObject);
 
 		Engagement.MenuController = this;
 		MainMenuController.MenuController = this;
 		PlayController.MenuController = this;
 		EnterIP.MenuController = this;
 		Connecting.MenuController = this;
+		HowToPlay.MenuController = this;
+		Credits.MenuController = this;
 
 		GoToEngagement();
 	}
@@ -78,5 +85,21 @@ public class TitleMenuController : MonoBehaviour
 
 		Connecting.gameObject.SetActive(true);
 		Connecting.Connect(address);
+	}
+
+	public void GoToHowToPlay()
+	{
+		foreach (GameObject screen in screens)
+			screen.SetActive(false);
+
+		HowToPlay.gameObject.SetActive(true);
+	}
+
+	public void GoToCredits()
+	{
+		foreach (GameObject screen in screens)
+			screen.SetActive(false);
+
+		Credits.gameObject.SetActive(true);
 	}
 }
