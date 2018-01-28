@@ -45,7 +45,6 @@ public class PlayerScript : MonoBehaviour {
     }
 
     public void playStunAudio() {
-        isMoving = false;
         stunAudio.Stop();
         stunAudio.clip = stunSounds[Random.Range(0, stunSounds.Length)];
         stunAudio.Play();
