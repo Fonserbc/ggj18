@@ -14,9 +14,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Game Redesign.unity
     guid: 2797f47f2c4084573b5006db77f3f372
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Game.unity
     guid: ba61aea08a03640dca623cc6114c6ee1
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Game_Old.unity
     guid: 1767e2af6b0bc27419cdd6793cf56211
