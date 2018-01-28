@@ -32,16 +32,16 @@ public class MenuPause : MonoBehaviour
 
 	void OnContinue()
 	{
-
+		gameObject.SetActive(false);
 	}
 
 	void OnTitleMenu()
 	{
-
+		NetworkManager.Instance.Deinit();
 	}
 
 	void OnCancel()
 	{
-		
+		OnContinue();
 	}
 }

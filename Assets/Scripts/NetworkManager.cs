@@ -116,6 +116,9 @@ public class NetworkManager : MonoBehaviour
 	{
 		if (connectionConfig != null)
 		{
+			if(connection != null)
+				connection.Disconnect();
+
 			NetworkTransport.Shutdown();
 			connectionConfig = null;
 			topology = null;
@@ -124,9 +127,9 @@ public class NetworkManager : MonoBehaviour
 			channelId = 0;
 			hostId = 0;
 			connectionId = 0;
-
-			status = NetworkStatus.Created;
 		}
+
+		status = NetworkStatus.Created;
 	}
 
 	public void Init(NetworkInitParameters initParams)
@@ -224,11 +227,12 @@ public class NetworkManager : MonoBehaviour
 		bool skip_next_frame = false;
 		switch (status)
 		{
+			case NetworkStatus.Created:
+				gameLogic.Deinit();
+				break;
 			case NetworkStatus.WaitingPeer:
-				Debug.Log("WaitingPeer");
 				break;
 			case NetworkStatus.HostWarming:
-				Debug.Log("HostWarming");
 				SendQuality(CustomPacketId.ID_QUALITY_REPORT);
 
 				int diff = (int) localAdvantage * (int) remoteAdvantage;
@@ -249,12 +253,10 @@ public class NetworkManager : MonoBehaviour
 				ClientWarmingHandle(ref skip_next_frame);
 				break;
 			case NetworkStatus.ClientWarming:
-				Debug.Log("ClientWarming");
 				ClientWarmingHandle(ref skip_next_frame);
 				break;
 			case NetworkStatus.HostRunning:
 			case NetworkStatus.ClientRunning:
-				Debug.Log("HostRunning + ClientRunning");
 				if (localAdvantage > remoteAdvantage)
 				{
 					counter++;
@@ -333,21 +335,32 @@ public class NetworkManager : MonoBehaviour
 				break;
 			case NetworkStatus.LocalRunning:
 				{
-					PlayerInput input;
-					PlayerInput input2;
-					gameLogic.GetNewInput(out input);
-					gameLogic.GetNewInput2(out input2);
-					gameLogic.TryAddNewFrame();
-					uint updateId = gameLogic.NewestFrameId();
-					gameLogic.SetInputPlayer1(input, updateId);
-					gameLogic.SetInputPlayer2(input2, updateId);
-					gameLogic.Update(true);
+					if (PauseMenu != null && PauseMenu.activeSelf)
+					{
+					}
+					else
+					{
+						PlayerInput input;
+						PlayerInput input2;
+
+						gameLogic.GetNewInput(out input);
+						gameLogic.GetNewInput2(out input2);
+
+						gameLogic.TryAddNewFrame();
+						uint updateId = gameLogic.NewestFrameId();
+						gameLogic.SetInputPlayer1(input, updateId);
+						gameLogic.SetInputPlayer2(input2, updateId);
+						gameLogic.Update(true);
+					}
+					
 					break;
 				}
 		}
 
 		if (connection != null)
+		{
 			connection.FlushChannels();
+		}
 
 		// -- UI ---------------------------- //
 
@@ -364,6 +377,12 @@ public class NetworkManager : MonoBehaviour
 
 		if (status == NetworkStatus.HostRunning || status == NetworkStatus.ClientRunning || status == NetworkStatus.LocalRunning)
 		{
+			if (PauseMenu != null)
+			{
+				if (Input.GetButton("Start1") && !ScoreBoards.activeSelf)
+					PauseMenu.SetActive(true);
+			}
+
 			if (ScoreBoards != null)
 			{
 				if(!ScoreBoards.activeSelf)
@@ -384,6 +403,9 @@ public class NetworkManager : MonoBehaviour
 		{
 			if (ScoreBoards != null && ScoreBoards.activeSelf)
 				ScoreBoards.SetActive(false);
+
+			if (PauseMenu != null && PauseMenu.activeSelf)
+				PauseMenu.SetActive(false);
 		}
 	}
 
