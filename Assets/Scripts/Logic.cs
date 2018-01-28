@@ -345,9 +345,14 @@ public class Logic
         }
         antenaLinks.Clear();
 
-        for (int i = 0; i < newState.antenas.Length; ++i) {
+        for (int i = 0; i < newState.antenas.Length; ++i)
+        {
+            if (newState.antenas[i].refreshTime > 0)
+                continue;
             for (int j = i + 1; j < newState.antenas.Length; ++j)
             {
+                if (newState.antenas[j].refreshTime > 0)
+                    continue;
                 float d = Vector2.Distance(newState.antenas[i].position, newState.antenas[j].position);
                 if (d <= v.antenas[j].linkMaxRadius
                     && newState.antenas[i].state == newState.antenas[j].state && newState.antenas[i].state != GameState.ColorState.Off) {
