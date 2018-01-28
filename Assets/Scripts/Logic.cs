@@ -14,11 +14,13 @@ public class Logic
     List<Vector2i> antenaLinks;
     int[] receiverAntenaId;
     int[] baseAntenaId;
+    RaycastHit[] raycastsHits;
 
     Visuals v;
 
     public GameState InitFirstState (Visuals visuals)
     {
+        raycastsHits = new RaycastHit[1];
         v = visuals;
 
         v.antenas = v.antenasParent.GetComponentsInChildren<AntennaScript>();
@@ -83,7 +85,7 @@ public class Logic
         for (int i = 0; i < newState.messages.Length; ++i)
         {
             newState.messages[i] = new GameState.MessageInfo();
-            newState.messages[i].onScene = false;
+            newState.messages[i].state = GameState.MessageInfo.MessageState.Out;
             newState.messages[i].transmissionTime = i * c.timeBetweenMessages;
             newState.messages[i].color = (GameState.ColorState)Random.Range(1, 5);
             newState.messages[i].currentAntena = -1;
@@ -174,7 +176,7 @@ public class Logic
         for (int i = 0; i < newState.messages.Length; ++i)
         {
             GameState.MessageInfo currentMessage = newState.messages[i];
-            if (!currentMessage.onScene)
+            if (currentMessage.state != GameState.MessageInfo.MessageState.Playing)
                 continue;
 
             // Remove last antena if broken
@@ -218,8 +220,8 @@ public class Logic
                     for (int j = 0; j < baseAntenaId.Length; ++j) {
                         if (currentMessage.currentAntena == baseAntenaId[j]) {
                             newState.players[j].points++;
-                            currentMessage.onScene = false;
-                            currentMessage.transmissionTime = 0f;
+                            currentMessage.state = GameState.MessageInfo.MessageState.End;
+                            currentMessage.transmissionTime = 1f;
                             break;
                         }
                     }
@@ -330,11 +332,18 @@ public class Logic
         for (int i = 0; i < newState.antenas.Length; ++i) {
             for (int j = i + 1; j < newState.antenas.Length; ++j)
             {
-                if (Vector2.Distance(newState.antenas[i].position, newState.antenas[j].position) <= v.antenas[j].linkMaxRadius
+                float d = Vector2.Distance(newState.antenas[i].position, newState.antenas[j].position);
+                if (d <= v.antenas[j].linkMaxRadius
                     && newState.antenas[i].state == newState.antenas[j].state && newState.antenas[i].state != GameState.ColorState.Off) {
-                    antenaConnections[i].Add(j);
-                    antenaConnections[j].Add(i);
-                    antenaLinks.Add(new Vector2i(i, j));
+
+                    Vector3 from = new Vector3(newState.antenas[i].position.x, 0.5f, newState.antenas[i].position.y);
+                    Vector3 dir = new Vector3(newState.antenas[j].position.x, 0.5f, newState.antenas[j].position.y) - from;
+                    if (Physics.RaycastNonAlloc(from, dir, raycastsHits, d) == 0)
+                    {
+                        antenaConnections[i].Add(j);
+                        antenaConnections[j].Add(i);
+                        antenaLinks.Add(new Vector2i(i, j));
+                    }
                 }
             }
         }
@@ -352,13 +361,22 @@ public class Logic
     void UpdateNewMessages() {
         for (int i = 0; i < newState.messages.Length; ++i)
         {
-            if (!newState.messages[i].onScene && newState.messages[i].transmissionTime > 0)
+            if (newState.messages[i].state == GameState.MessageInfo.MessageState.Out && newState.messages[i].transmissionTime > 0)
             {
                 newState.messages[i].transmissionTime -= c.fixedDeltaTime;
 
                 if (newState.messages[i].transmissionTime <= 0)
                 {
                     InstantiateMessage(i);
+                }
+            }
+            else if (newState.messages[i].state == GameState.MessageInfo.MessageState.End && newState.messages[i].transmissionTime > 0)
+            {
+                newState.messages[i].transmissionTime -= c.fixedDeltaTime;
+
+                if (newState.messages[i].transmissionTime <= 0)
+                {
+                    newState.messages[i].state = GameState.MessageInfo.MessageState.Out;
                 }
             }
         }
@@ -369,7 +387,7 @@ public class Logic
 
         if (receiver >= 0) {
             newState.messages[id].currentAntena = receiver;
-            newState.messages[id].onScene = true;
+            newState.messages[id].state = GameState.MessageInfo.MessageState.Playing;
             newState.messages[id].transmissionTime = c.messageTransmissionTime;
         }
     }

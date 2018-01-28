@@ -28,12 +28,17 @@ public struct GameState
     }
     public struct MessageInfo
     {
+        public enum MessageState {
+            Out,
+            Playing,
+            End
+        }
         public ColorState color;
         public int currentAntena;
         public int nextAntena;
         public int lastAntena;
         public float transmissionTime;
-        public bool onScene;
+        public MessageState state;
     }
 
     //

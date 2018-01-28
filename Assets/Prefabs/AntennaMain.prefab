@@ -95,7 +95,6 @@ GameObject:
   m_Component:
   - component: {fileID: 4899575903477166}
   - component: {fileID: 114381066895412504}
-  - component: {fileID: 135877407286401154}
   m_Layer: 0
   m_Name: AntennaMain
   m_TagString: Untagged
@@ -430,6 +429,9 @@ MonoBehaviour:
   spawnBolt: {fileID: 4708896686821482}
   minPosition: 0.5
   maxPosition: 3.5
+  collisionRadius: 0.5
+  activationRadius: 2
+  linkMaxRadius: 10
   messageHolders:
   - {fileID: 4620002666170614}
   - {fileID: 4840876994374900}
@@ -437,15 +439,3 @@ MonoBehaviour:
   - {fileID: 4969868397415356}
   isConnected: 0
   c: {fileID: 11400000, guid: 71cd57026ba824f3cb5fc5d345985b38, type: 2}
---- !u!135 &135877407286401154
-SphereCollider:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1647677720772072}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.5
-  m_Center: {x: 0, y: 0, z: 0}
