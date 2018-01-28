@@ -45,6 +45,7 @@ public struct GameState
     public PlayerInfo[] players;
     public AntenaInfo[] antenas;
     public MessageInfo[] messages;
+    public int winnerPlayer;
 
     public GameState(GameState from) {
         players = null;
@@ -67,6 +68,8 @@ public struct GameState
             messages = new MessageInfo[from.messages.Length];
             from.messages.CopyTo(messages, 0);
         }
+
+        winnerPlayer = from.winnerPlayer;
     }
 
     public void CopyFrom(GameState from) {
@@ -90,5 +93,7 @@ public struct GameState
             messages = new MessageInfo[from.messages.Length];
             from.messages.CopyTo(messages, 0);
         }
+
+        winnerPlayer = from.winnerPlayer;
     }
 }

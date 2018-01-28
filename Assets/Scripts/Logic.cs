@@ -93,6 +93,8 @@ public class Logic
             newState.messages[i].nextAntena = -1;
         }
 
+        newState.winnerPlayer = -1;
+
         v.Init(this);
 
         return newState;
@@ -118,7 +120,7 @@ public class Logic
 
         UpdateAntennaConnections();
 
-        UpdateNewMessages();
+        UpdateNewAndOldMessages();
 
         // Physics Collisions
         bool[] playerWasCorrected = new bool[c.numPlayers];
@@ -192,8 +194,12 @@ public class Logic
                 currentMessage.nextAntena = -1;
                 currentMessage.lastAntena = -1;
             }
-            else if (currentMessage.nextAntena == -1)
-            {   // Find possible next antena
+            else if (currentMessage.nextAntena == -1 || newState.antenas[currentMessage.nextAntena].state != currentMessage.color)
+            {
+                currentMessage.nextAntena = -1;
+                currentMessage.transmissionTime = c.messageTransmissionTime;
+
+                // Find possible next antena
                 List<int> possibleNextAntenas = new List<int>(antenaConnections[currentMessage.currentAntena].Count);
                 for (int j = 0; j < antenaConnections[currentMessage.currentAntena].Count; ++j) {
                     if (currentMessage.lastAntena != antenaConnections[currentMessage.currentAntena][j]
@@ -211,14 +217,17 @@ public class Logic
             {
                 currentMessage.transmissionTime -= c.fixedDeltaTime;
 
-                if (currentMessage.transmissionTime <= 0) {
+                if (currentMessage.transmissionTime <= 0)
+                {
                     currentMessage.lastAntena = currentMessage.currentAntena;
                     currentMessage.currentAntena = currentMessage.nextAntena;
                     currentMessage.nextAntena = -1;
                     currentMessage.transmissionTime = c.messageTransmissionTime;
 
-                    for (int j = 0; j < baseAntenaId.Length; ++j) {
-                        if (currentMessage.currentAntena == baseAntenaId[j]) {
+                    for (int j = 0; j < baseAntenaId.Length; ++j)
+                    {
+                        if (currentMessage.currentAntena == baseAntenaId[j])
+                        {
                             newState.players[j].points++;
                             currentMessage.state = GameState.MessageInfo.MessageState.End;
                             currentMessage.transmissionTime = 1f;
@@ -358,7 +367,7 @@ public class Logic
         return -1;
     }
 
-    void UpdateNewMessages() {
+    void UpdateNewAndOldMessages() {
         for (int i = 0; i < newState.messages.Length; ++i)
         {
             if (newState.messages[i].state == GameState.MessageInfo.MessageState.Out && newState.messages[i].transmissionTime > 0)
@@ -377,8 +386,30 @@ public class Logic
                 if (newState.messages[i].transmissionTime <= 0)
                 {
                     newState.messages[i].state = GameState.MessageInfo.MessageState.Out;
+
+                    CheckWon();
                 }
             }
+        }
+    }
+
+    void CheckWon() {
+        bool won = true;
+
+        for (int i = 0; won && i < newState.messages.Length; ++i) {
+            won &= newState.messages[i].state == GameState.MessageInfo.MessageState.End;
+        }
+
+        if (won) {
+            int winner = 0;
+
+            for (int i = 1; i < newState.players.Length; ++i) {
+                if (newState.players[i].points > newState.players[winner].points) {
+                    winner = i;
+                }
+            }
+
+            newState.winnerPlayer = winner;
         }
     }
 
