@@ -381,7 +381,6 @@ GameObject:
   - component: {fileID: 369064115}
   - component: {fileID: 369064118}
   - component: {fileID: 369064117}
-  - component: {fileID: 369064116}
   m_Layer: 0
   m_Name: Results
   m_TagString: Untagged
@@ -409,20 +408,6 @@ RectTransform:
   m_AnchoredPosition: {x: -0.000030517578, y: 0.000030517578}
   m_SizeDelta: {x: 1600, y: 800}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &369064116
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 369064114}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 920f79d463596a04da6f232675618674, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  OptionContainer: {fileID: 0}
-  OptionPrefab: {fileID: 1767081109092238, guid: 94a897751a4b88e478415b61df978118,
-    type: 2}
 --- !u!114 &369064117
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1630,7 +1615,7 @@ AudioSource:
       tangentMode: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
-    m_RotationOrder: 4
+    m_RotationOrder: 0
   reverbZoneMixCustomCurve:
     serializedVersion: 2
     m_Curve:
