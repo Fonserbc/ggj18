@@ -254,8 +254,8 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1117947797865174}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 11.7, y: 0, z: 18.73}
-  m_LocalScale: {x: 2, y: 2, z: 2}
+  m_LocalPosition: {x: 10, y: 0, z: 50}
+  m_LocalScale: {x: 1.5, y: 1.5, z: 1.5}
   m_Children:
   - {fileID: 4273242017302752}
   - {fileID: 4016351500420540}
@@ -325,7 +325,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: 5c342efa3d7a94d409ff8e5b77f354dd, type: 2}
+  - {fileID: 2100000, guid: b06e559dca9442442adebfe2e096961b, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -399,7 +399,7 @@ MonoBehaviour:
   rotationSpeed: 90
   spawnBolt: {fileID: 4612197090761960}
   minPosition: 1
-  maxPosition: 3.7
+  maxPosition: 2.775
   collisionRadius: 0.5
   activationRadius: 2
   linkMaxRadius: 10
