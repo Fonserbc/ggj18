@@ -107,7 +107,7 @@ public class Logic
     public void UpdateState(ref GameFrame frame)
     {
         newState = frame.state;
-        newState.seed = 1103515245 * newState.seed + 12345;
+        newState.seed = (int) (1103515245 * (uint)newState.seed + 12345);
         rand = new System.Random(newState.seed);
 
         UpdateAntennaTimings();
@@ -262,6 +262,9 @@ public class Logic
                 }
             }
         }
+
+        frame.state.winnerPlayer = newState.winnerPlayer;
+        frame.state.seed = newState.seed;
     }
 
     bool UpdatePlayerPos(int id, PlayerInput input)
