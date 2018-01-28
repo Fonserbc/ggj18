@@ -70,7 +70,6 @@ public class Logic
             newState.players[i].rotation = v.players[i].transform.eulerAngles.y;
             newState.players[i].connected = true;
             newState.players[i].moving = false;
-            newState.players[i].antenaInRadius = -1;
             newState.players[i].points = 0;
         }
         newState.antenas = new GameState.AntenaInfo[antenaCount];
@@ -79,6 +78,7 @@ public class Logic
             newState.antenas[i] = new GameState.AntenaInfo();
             newState.antenas[i].position = new Vector2(v.antenas[i].transform.position.x, v.antenas[i].transform.position.z);
             newState.antenas[i].rotation = v.antenas[i].transform.rotation.eulerAngles.y;
+            newState.antenas[i].refreshTime = 0;
         }
         newState.messages = new GameState.MessageInfo[c.numMessages];
         Random.InitState(0);
@@ -105,6 +105,9 @@ public class Logic
         newState = frame.state;
         currentFrame = (int)frame.frame_id;
 
+
+        UpdateAntennaTimings();
+
         // PlayerInput
         newState.players[0].moving = UpdatePlayerPos(0, frame.input_player1);
         UpdatePlayerActions(0, frame.input_player1);
@@ -120,7 +123,7 @@ public class Logic
 
         UpdateAntennaConnections();
 
-        UpdateNewAndOldMessages();
+        UpdateMessageStates();
 
         // Physics Collisions
         bool[] playerWasCorrected = new bool[c.numPlayers];
@@ -298,28 +301,32 @@ public class Logic
 
         if (nearestAntenna < 0)
         {
-            newState.players[id].antenaInRadius = -1;
             return;
         }
 
-        if (newInput.justUp || (newInput.up && newState.players[id].antenaInRadius != nearestAntenna))
+        if (newState.antenas[nearestAntenna].refreshTime > 0)
+            return;
+
+        if (newInput.up)
         {
             newState.antenas[nearestAntenna].state = (newState.antenas[nearestAntenna].state == GameState.ColorState.ColorUp) ? GameState.ColorState.Off : GameState.ColorState.ColorUp;
+            newState.antenas[nearestAntenna].refreshTime = c.antenaRefreshTime;
         }
-        else if (newInput.justDown || (newInput.down && newState.players[id].antenaInRadius != nearestAntenna))
+        else if (newInput.down)
         {
             newState.antenas[nearestAntenna].state = (newState.antenas[nearestAntenna].state == GameState.ColorState.ColorDown) ? GameState.ColorState.Off : GameState.ColorState.ColorDown;
+            newState.antenas[nearestAntenna].refreshTime = c.antenaRefreshTime;
         }
-        else if (newInput.justLeft || (newInput.left && newState.players[id].antenaInRadius != nearestAntenna))
+        else if (newInput.left)
         {
             newState.antenas[nearestAntenna].state = (newState.antenas[nearestAntenna].state == GameState.ColorState.ColorLeft) ? GameState.ColorState.Off : GameState.ColorState.ColorLeft;
+            newState.antenas[nearestAntenna].refreshTime = c.antenaRefreshTime;
         }
-        else if (newInput.justRight || (newInput.right && newState.players[id].antenaInRadius != nearestAntenna))
+        else if (newInput.right)
         {
             newState.antenas[nearestAntenna].state = (newState.antenas[nearestAntenna].state == GameState.ColorState.ColorRight) ? GameState.ColorState.Off : GameState.ColorState.ColorRight;
+            newState.antenas[nearestAntenna].refreshTime = c.antenaRefreshTime;
         }
-
-        newState.players[id].antenaInRadius = nearestAntenna;
     }
 
     bool IsPlayerVulnerable(int p) {
@@ -358,6 +365,13 @@ public class Logic
         }
     }
 
+    void UpdateAntennaTimings () {
+        for (int i = 0; i < newState.antenas.Length; ++i)
+        {
+            if (newState.antenas[i].refreshTime > 0) newState.antenas[i].refreshTime -= c.fixedDeltaTime;
+        }
+    }
+
     int FindAntenaNearPlayer(Vector2 playerPos)
     {
         for (int i = 0; i < newState.antenas.Length; ++i)
@@ -367,7 +381,7 @@ public class Logic
         return -1;
     }
 
-    void UpdateNewAndOldMessages() {
+    void UpdateMessageStates() {
         for (int i = 0; i < newState.messages.Length; ++i)
         {
             if (newState.messages[i].state == GameState.MessageInfo.MessageState.Out && newState.messages[i].transmissionTime > 0)
