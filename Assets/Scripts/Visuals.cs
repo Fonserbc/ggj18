@@ -68,7 +68,7 @@ public class Visuals : MonoBehaviour {
         for (int i = 0; i < antenas.Length; ++i)
         {
             antenas[i].isConnected = myLogic.IsAntenaLinking(i);            
-            if(state.antenas[i].refreshTime <= 0) antenas[i].SetColor(c.antennaColors[(int)state.antenas[i].state]);
+            antenas[i].SetColor(c.antennaColors[(int)state.antenas[i].lastState]);
             antenas[i].SetCoolDown(state.antenas[i].refreshTime > 0, c.antennaColors[(int)state.antenas[i].state], c.connectionColors[(int)state.antenas[i].state]);
         }
         //End Antenna Visuals
@@ -119,7 +119,7 @@ public class Visuals : MonoBehaviour {
             {
                 bolts[indexBolt].StartObject = antenas[connections[indexBolt].x].spawnBolt.gameObject;
                 bolts[indexBolt].EndObject = antenas[connections[indexBolt].y].spawnBolt.gameObject;
-                bolts[indexBolt].GetComponent<LineRenderer>().material.SetColor("_EmissionColor", c.connectionColors[((int)state.antenas[connections[indexBolt].x].state)]);
+                bolts[indexBolt].GetComponent<LineRenderer>().material.SetColor("_EmissionColor", c.connectionColors[((int)state.antenas[connections[indexBolt].x].lastState)]);
               
                 ++indexBolt;
             }

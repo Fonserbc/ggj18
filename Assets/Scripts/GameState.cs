@@ -22,6 +22,7 @@ public struct GameState
     public struct AntenaInfo
     {
         public ColorState state;
+        public ColorState lastState;
         public Vector2 position;
         public float rotation;
         public float refreshTime;

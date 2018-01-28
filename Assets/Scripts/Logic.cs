@@ -18,7 +18,7 @@ public class Logic
 
     Visuals v;
 
-    public GameState InitFirstState (Visuals visuals)
+    public GameState InitFirstState (Visuals visuals, uint seed)
     {
         raycastsHits = new RaycastHit[1];
         v = visuals;
@@ -76,12 +76,14 @@ public class Logic
         for (int i = 0; i < antenaCount; ++i)
         {
             newState.antenas[i] = new GameState.AntenaInfo();
+            newState.antenas[i].state = GameState.ColorState.Off;
+            newState.antenas[i].lastState = GameState.ColorState.Off;
             newState.antenas[i].position = new Vector2(v.antenas[i].transform.position.x, v.antenas[i].transform.position.z);
             newState.antenas[i].rotation = v.antenas[i].transform.rotation.eulerAngles.y;
             newState.antenas[i].refreshTime = 0;
         }
         newState.messages = new GameState.MessageInfo[c.numMessages];
-        Random.InitState(0);
+        Random.InitState(seed);
         for (int i = 0; i < newState.messages.Length; ++i)
         {
             newState.messages[i] = new GameState.MessageInfo();
@@ -185,19 +187,19 @@ public class Logic
                 continue;
 
             // Remove last antena if broken
-            if (currentMessage.lastAntena != -1 && newState.antenas[currentMessage.lastAntena].state != currentMessage.color)
+            if (currentMessage.lastAntena != -1 && newState.antenas[currentMessage.lastAntena].lastState != currentMessage.color)
             {
                 currentMessage.lastAntena = -1;
             }
 
             // Reset timer if own antena changed color
-            if (newState.antenas[currentMessage.currentAntena].state != currentMessage.color)
+            if (newState.antenas[currentMessage.currentAntena].lastState != currentMessage.color)
             {
                 currentMessage.transmissionTime = c.messageTransmissionTime;
                 currentMessage.nextAntena = -1;
                 currentMessage.lastAntena = -1;
             }
-            else if (currentMessage.nextAntena == -1 || newState.antenas[currentMessage.nextAntena].state != currentMessage.color)
+            else if (currentMessage.nextAntena == -1 || newState.antenas[currentMessage.nextAntena].lastState != currentMessage.color)
             {
                 currentMessage.nextAntena = -1;
                 currentMessage.transmissionTime = c.messageTransmissionTime;
@@ -216,7 +218,7 @@ public class Logic
                 }
             }
 
-            if (currentMessage.nextAntena != -1 && newState.antenas[currentMessage.currentAntena].state == currentMessage.color && newState.antenas[currentMessage.nextAntena].state == currentMessage.color)
+            if (currentMessage.nextAntena != -1 && newState.antenas[currentMessage.currentAntena].lastState == currentMessage.color && newState.antenas[currentMessage.nextAntena].lastState == currentMessage.color)
             {
                 currentMessage.transmissionTime -= c.fixedDeltaTime;
 
@@ -347,15 +349,11 @@ public class Logic
 
         for (int i = 0; i < newState.antenas.Length; ++i)
         {
-            if (newState.antenas[i].refreshTime > 0)
-                continue;
             for (int j = i + 1; j < newState.antenas.Length; ++j)
             {
-                if (newState.antenas[j].refreshTime > 0)
-                    continue;
                 float d = Vector2.Distance(newState.antenas[i].position, newState.antenas[j].position);
-                if (d <= v.antenas[j].linkMaxRadius
-                    && newState.antenas[i].state == newState.antenas[j].state && newState.antenas[i].state != GameState.ColorState.Off) {
+                if (d <= v.antenas[j].linkMaxRadius && d <= v.antenas[i].linkMaxRadius
+                    && newState.antenas[i].lastState == newState.antenas[j].lastState && newState.antenas[i].lastState != GameState.ColorState.Off) {
 
                     Vector3 from = new Vector3(newState.antenas[i].position.x, 0.5f, newState.antenas[i].position.y);
                     Vector3 dir = new Vector3(newState.antenas[j].position.x, 0.5f, newState.antenas[j].position.y) - from;
@@ -373,7 +371,14 @@ public class Logic
     void UpdateAntennaTimings () {
         for (int i = 0; i < newState.antenas.Length; ++i)
         {
-            if (newState.antenas[i].refreshTime > 0) newState.antenas[i].refreshTime -= c.fixedDeltaTime;
+            if (newState.antenas[i].refreshTime > 0)
+            {
+                newState.antenas[i].refreshTime -= c.fixedDeltaTime;
+
+                if (newState.antenas[i].refreshTime <= 0) {
+                    newState.antenas[i].lastState = newState.antenas[i].state;
+                }
+            }
         }
     }
 
