@@ -83,8 +83,8 @@ public class Visuals : MonoBehaviour {
 
             if(messages[i] != null)
             {
-                messages[i].transform.position = Vector3.Lerp(messages[i].transform.position, antenas[currentAnt].messageHolders[holderId - 1].position, .9f);
-                messages[i].transform.rotation = Quaternion.Lerp(messages[i].transform.rotation, antenas[currentAnt].messageHolders[holderId - 1].rotation, .9f);
+                messages[i].transform.position = Vector3.Lerp(messages[i].transform.position, antenas[currentAnt].messageHolders[holderId - 1].position, .4f);
+                messages[i].transform.rotation = Quaternion.Lerp(messages[i].transform.rotation, antenas[currentAnt].messageHolders[holderId - 1].rotation, .4f);
             }
 
 
