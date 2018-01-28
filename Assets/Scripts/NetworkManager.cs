@@ -32,6 +32,8 @@ public class NetworkManager : MonoBehaviour
 	public UnityEngine.UI.Text ScorePlayer2;
 	public GameObject PauseMenu;
 	public GameObject WarmingScreen;
+	public GameObject ResultsScreen;
+	public UnityEngine.UI.Text ResultsText;
 
 	Type networkConnectionClass = typeof(NetworkConnection);
 	GameLogic gameLogic = new GameLogic();
@@ -385,6 +387,30 @@ public class NetworkManager : MonoBehaviour
 
 		if (status == NetworkStatus.HostRunning || status == NetworkStatus.ClientRunning || status == NetworkStatus.LocalRunning)
 		{
+			if (gameLogic.winnerPlayer != -1)
+			{
+				if (ResultsScreen != null && !ResultsScreen.activeSelf)
+					ResultsScreen.SetActive(true);
+
+				if (ResultsText != null)
+				{
+					if (status == NetworkStatus.LocalRunning)
+					{
+						ResultsText.text = string.Format("Player {0} wins", gameLogic.winnerPlayer + 1);
+					}
+					else
+					{
+						bool youWin = (status == NetworkStatus.HostRunning && gameLogic.winnerPlayer == 0) || (status == NetworkStatus.ClientRunning && gameLogic.winnerPlayer == 1);
+						ResultsText.text = youWin ? "You win" : "You lose";
+					}
+				}
+			}
+			else
+			{
+				if (ResultsScreen != null && ResultsScreen.activeSelf)
+					ResultsScreen.SetActive(false);
+			}
+
 			if (PauseMenu != null)
 			{
 #if UNITY_STANDALONE_OSX || UNITY_EDITOR_OSX
