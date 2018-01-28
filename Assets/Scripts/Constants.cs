@@ -12,6 +12,7 @@ public class Constants : ScriptableObject {
     public float timeBetweenMessages = 10f;
     public int numMessages = 16;
     public float antenaRefreshTime = 1f;
+    public float winShowTime = 7f;
     public Color[] antennaColors = {
         Color.white, Color.yellow, Color.green, Color.blue, Color.red
     };

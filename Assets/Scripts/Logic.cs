@@ -19,6 +19,8 @@ public class Logic
 
     System.Random rand;
 
+    Vector2[] startPos;
+
     public GameState InitFirstState (Visuals visuals, uint seed = 37)
     {
         raycastsHits = new RaycastHit[1];
@@ -67,9 +69,17 @@ public class Logic
         newState.seed = (int)seed;
         rand = new System.Random(newState.seed);
         newState.players = new GameState.PlayerInfo[c.numPlayers];
+        bool firstInit = false;
+        if (startPos == null) {
+            startPos = new Vector2[c.numPlayers];
+            firstInit = true;
+        }
         for (int i = 0; i < newState.players.Length; ++i) {
             newState.players[i] = new GameState.PlayerInfo();
-            newState.players[i].position = new Vector2(v.players[i].transform.position.x, v.players[i].transform.position.z);
+            if (firstInit) {
+                startPos[i] = new Vector2(v.players[i].transform.position.x, v.players[i].transform.position.z);
+            }
+            newState.players[i].position = startPos[i];
             newState.players[i].rotation = v.players[i].transform.eulerAngles.y;
             newState.players[i].connected = true;
             newState.players[i].moving = false;
@@ -98,6 +108,7 @@ public class Logic
         }
 
         newState.winnerPlayer = -1;
+        newState.winTime = 0;
 
         v.Init(this);
 
@@ -112,18 +123,32 @@ public class Logic
 
         UpdateAntennaTimings();
 
-        // PlayerInput
-        newState.players[0].moving = UpdatePlayerPos(0, frame.input_player1);
-        UpdatePlayerActions(0, frame.input_player1);
-        newState.players[1].moving = UpdatePlayerPos(1, frame.input_player2);
-        UpdatePlayerActions(1, frame.input_player2);
+        if (newState.winnerPlayer != -1)
+        { // Winner
+            newState.winTime -= c.fixedDeltaTime;
 
-        //for (int i = 0; i < c.numPlayers; ++i)
-        //{
-        //    UpdatePlayerPos(i, newInput.playerInputs[i]);
+            if (newState.winTime <= 0)
+            {
+                newState = InitFirstState(v, (uint)newState.seed);
+                frame.state.CopyFrom(newState);
+                return;
+            }
+        }
+        else
+        {
+            // PlayerInput
+            newState.players[0].moving = UpdatePlayerPos(0, frame.input_player1);
+            UpdatePlayerActions(0, frame.input_player1);
+            newState.players[1].moving = UpdatePlayerPos(1, frame.input_player2);
+            UpdatePlayerActions(1, frame.input_player2);
 
-        //    UpdatePlayerActions(i, previousInput.playerInputs[i], newInput.playerInputs[i]);
-        //}
+            //for (int i = 0; i < c.numPlayers; ++i)
+            //{
+            //    UpdatePlayerPos(i, newInput.playerInputs[i]);
+
+            //    UpdatePlayerActions(i, previousInput.playerInputs[i], newInput.playerInputs[i]);
+            //}
+        }
 
         UpdateAntennaConnections();
 
@@ -265,6 +290,7 @@ public class Logic
 
         frame.state.winnerPlayer = newState.winnerPlayer;
         frame.state.seed = newState.seed;
+        frame.state.winTime = newState.winTime;
     }
 
     bool UpdatePlayerPos(int id, PlayerInput input)
