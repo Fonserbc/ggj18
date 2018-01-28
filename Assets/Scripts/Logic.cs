@@ -93,6 +93,8 @@ public class Logic
             newState.messages[i].nextAntena = -1;
         }
 
+        newState.winnerPlayer = -1;
+
         v.Init(this);
 
         return newState;
