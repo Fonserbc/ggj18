@@ -33,6 +33,13 @@ public struct PlayerInput
 
 	public bool justUp, justDown, justLeft, justRight;
 	public bool up, down, left, right;
+
+	public void Reset()
+	{
+		legit = true;
+		xAxis = yAxis = 0.0f;
+		justUp = justDown = justLeft = justRight = up = down = left = right = false;
+	}
 }
 
 public class GameFrame
@@ -58,13 +65,27 @@ public class GameLogic
 	{
 		NONE,
 		LOADING,
-		LOADED
+		LOADED,
 	}
 
 	InitState initState = InitState.NONE;
 
 	const int GAEMFRAME_BUFFSIZE = 128;
 	GameFrame[] MemoryFrame = new GameFrame[GAEMFRAME_BUFFSIZE];
+
+	public void Deinit()
+	{
+		switch (initState)
+		{
+			case InitState.NONE:
+				break;
+			case InitState.LOADING:
+			case InitState.LOADED:
+				SceneManager.LoadScene(1, LoadSceneMode.Single);
+				initState = InitState.NONE;
+				break;
+		}
+	}
 
 	public void Init()
 	{
