@@ -1,6 +1,31 @@
 ﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 
+static public class GamePadUtils
+{
+	public const float deadZoneLow = 0.3f;
+	public const float deadZoneHigh = 1.0f;
+
+	static public void ApplyRadialDeadZone(out float pOutX, out float pOutY, float x, float y)
+	{
+		float mag = Mathf.Sqrt(x * x + y * y);
+
+		if (mag > deadZoneLow)
+		{
+			float legalRange = 1.0f - (deadZoneHigh - deadZoneLow);
+			float normalizedMag = Mathf.Min(1.0f, (mag - deadZoneLow) / legalRange);
+			float scale = normalizedMag / mag;
+			pOutX = x * scale;
+			pOutY = y * scale;
+		}
+		else
+		{
+			pOutX = 0.0f;
+			pOutY = 0.0f;
+		}
+	}
+}
+
 public struct PlayerInput
 {
 	public bool legit;
@@ -87,8 +112,10 @@ public class GameLogic
 	{
 		input.legit = true;
 
-		input.xAxis = Input.GetAxisRaw("Horizontal1");
-		input.yAxis = Input.GetAxisRaw("Vertical1");
+		float xAxis = Input.GetAxisRaw("Horizontal1");
+		float yAxis = Input.GetAxisRaw("Vertical1");
+
+		GamePadUtils.ApplyRadialDeadZone(out input.xAxis, out input.yAxis, xAxis, yAxis);
 
 #if UNITY_STANDALONE_OSX || UNITY_EDITOR_OSX
         input.justUp = Input.GetButtonDown("YM1");
@@ -101,7 +128,7 @@ public class GameLogic
 		input.left = Input.GetButton("XM1");
 		input.right = Input.GetButton("BM1");
 #else
-        input.justUp = Input.GetButtonDown("Y1");
+		input.justUp = Input.GetButtonDown("Y1");
 		input.justDown = Input.GetButtonDown("A1");
 		input.justLeft = Input.GetButtonDown("X1");
 		input.justRight = Input.GetButtonDown("B1");
@@ -117,8 +144,10 @@ public class GameLogic
 	{
 		input.legit = true;
 
-		input.xAxis = Input.GetAxisRaw("Horizontal2");
-		input.yAxis = Input.GetAxisRaw("Vertical2");
+		float xAxis = Input.GetAxis("Horizontal2");
+		float yAxis = Input.GetAxis("Vertical2");
+
+		GamePadUtils.ApplyRadialDeadZone(out input.xAxis, out input.yAxis, xAxis, yAxis);
 
 #if UNITY_STANDALONE_OSX || UNITY_EDITOR_OSX
 		input.justUp = Input.GetButtonDown("YM2");
@@ -131,7 +160,7 @@ public class GameLogic
 		input.left = Input.GetButton("XM2");
 		input.right = Input.GetButton("BM2");
 #else
-        input.justUp = Input.GetButtonDown("Y2");
+		input.justUp = Input.GetButtonDown("Y2");
         input.justDown = Input.GetButtonDown("A2");
         input.justLeft = Input.GetButtonDown("X2");
         input.justRight = Input.GetButtonDown("B2");
