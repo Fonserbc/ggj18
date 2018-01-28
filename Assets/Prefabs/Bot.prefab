@@ -102,7 +102,6 @@ GameObject:
   - component: {fileID: 4631704257760516}
   - component: {fileID: 95999405870644740}
   - component: {fileID: 114512222815351500}
-  - component: {fileID: 135228411883295686}
   m_Layer: 0
   m_Name: Bot
   m_TagString: Untagged
@@ -692,18 +691,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   waveRenderer: {fileID: 23230943585988106}
   wheelRenderer: {fileID: 23124105171184688}
+  antenaActivationRadius: 1.5
+  antenaCollisionRadius: 0.5
   waving: 0
   moving: 0
   speed: 5
---- !u!135 &135228411883295686
-SphereCollider:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1402480976209410}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.75
-  m_Center: {x: 0, y: 0.6, z: 0}

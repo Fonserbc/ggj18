@@ -14,11 +14,13 @@ public class Logic
     List<Vector2i> antenaLinks;
     int[] receiverAntenaId;
     int[] baseAntenaId;
+    RaycastHit[] raycastsHits;
 
     Visuals v;
 
     public GameState InitFirstState (Visuals visuals)
     {
+        raycastsHits = new RaycastHit[1];
         v = visuals;
 
         v.antenas = v.antenasParent.GetComponentsInChildren<AntennaScript>();
@@ -330,11 +332,18 @@ public class Logic
         for (int i = 0; i < newState.antenas.Length; ++i) {
             for (int j = i + 1; j < newState.antenas.Length; ++j)
             {
-                if (Vector2.Distance(newState.antenas[i].position, newState.antenas[j].position) <= v.antenas[j].linkMaxRadius
+                float d = Vector2.Distance(newState.antenas[i].position, newState.antenas[j].position);
+                if (d <= v.antenas[j].linkMaxRadius
                     && newState.antenas[i].state == newState.antenas[j].state && newState.antenas[i].state != GameState.ColorState.Off) {
-                    antenaConnections[i].Add(j);
-                    antenaConnections[j].Add(i);
-                    antenaLinks.Add(new Vector2i(i, j));
+
+                    Vector3 from = new Vector3(newState.antenas[i].position.x, 0.5f, newState.antenas[i].position.y);
+                    Vector3 dir = new Vector3(newState.antenas[j].position.x, 0.5f, newState.antenas[j].position.y) - from;
+                    if (Physics.RaycastNonAlloc(from, dir, raycastsHits, d) == 0)
+                    {
+                        antenaConnections[i].Add(j);
+                        antenaConnections[j].Add(i);
+                        antenaLinks.Add(new Vector2i(i, j));
+                    }
                 }
             }
         }
