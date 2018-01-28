@@ -18,7 +18,7 @@ public class Logic
 
     Visuals v;
 
-    public GameState InitFirstState (Visuals visuals, uint seed)
+    public GameState InitFirstState (Visuals visuals, uint seed = 0)
     {
         raycastsHits = new RaycastHit[1];
         v = visuals;
