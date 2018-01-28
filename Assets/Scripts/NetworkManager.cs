@@ -27,6 +27,12 @@ public class NetworkManager : MonoBehaviour
 
 	public Constants constants;
 
+	public GameObject ScoreBoards;
+	public UnityEngine.UI.Text ScorePlayer1;
+	public UnityEngine.UI.Text ScorePlayer2;
+	public GameObject PauseMenu;
+	public GameObject WarmingScreen;
+
 	Type networkConnectionClass = typeof(NetworkConnection);
 	GameLogic gameLogic = new GameLogic();
 
@@ -335,13 +341,50 @@ public class NetworkManager : MonoBehaviour
 					uint updateId = gameLogic.NewestFrameId();
 					gameLogic.SetInputPlayer1(input, updateId);
 					gameLogic.SetInputPlayer2(input2, updateId);
-                    gameLogic.Update(true);
+					gameLogic.Update(true);
 					break;
 				}
 		}
 
 		if (connection != null)
 			connection.FlushChannels();
+
+		// -- UI ---------------------------- //
+
+		if (status == NetworkStatus.ClientWarming || status == NetworkStatus.HostWarming)
+		{
+			if (WarmingScreen != null && !WarmingScreen.activeSelf)
+				WarmingScreen.SetActive(true);
+		}
+		else
+		{
+			if (WarmingScreen != null && WarmingScreen.activeSelf)
+				WarmingScreen.SetActive(false);
+		}
+
+		if (status == NetworkStatus.HostRunning || status == NetworkStatus.ClientRunning || status == NetworkStatus.LocalRunning)
+		{
+			if (ScoreBoards != null)
+			{
+				if(!ScoreBoards.activeSelf)
+					ScoreBoards.SetActive(true);
+
+				if (ScorePlayer1 != null)
+				{
+					ScorePlayer1.text = string.Format("{0}", gameLogic.points1);
+				}
+
+				if (ScorePlayer2 != null)
+				{
+					ScorePlayer2.text = string.Format("{0}", gameLogic.points2);
+				}
+			}
+		}
+		else
+		{
+			if (ScoreBoards != null && ScoreBoards.activeSelf)
+				ScoreBoards.SetActive(false);
+		}
 	}
 
 	private void ClientWarmingHandle(ref bool skip_next_frame)
@@ -381,7 +424,6 @@ public class NetworkManager : MonoBehaviour
 	private void SetRunning()
 	{
 		status = (status == NetworkStatus.HostWarming) ? NetworkStatus.HostRunning : NetworkStatus.ClientRunning;
-		gameLogic.Init();
 	}
 
 	private void Parse(byte[] recBuffer, int dataSize)

@@ -314,6 +314,12 @@ public class GameLogic
 		}
 
 		visuals.UpdateFrom(frame);
-        visuals.ownPlayer = isHost ? 0 : 1;
+		visuals.ownPlayer = isHost ? 0 : 1;
+
+		points1 = frame.state.players[0].points;
+		points2 = frame.state.players[1].points;
 	}
+
+	public int points1;
+	public int points2;
 }
