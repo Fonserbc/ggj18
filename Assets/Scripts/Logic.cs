@@ -20,9 +20,11 @@ public class Logic
     System.Random rand;
 
     Vector2[] startPos;
+    int numPlayers;
 
-    public GameState InitFirstState (Visuals visuals, uint seed = 37)
+    public GameState InitFirstState (int playerCount, Visuals visuals, uint seed = 37)
     {
+        numPlayers = playerCount;
         raycastsHits = new RaycastHit[1];
         v = visuals;
 
@@ -42,7 +44,7 @@ public class Logic
         antenaLinks = new List<Vector2i>(antenaCount * (antenaCount - 1));
         receiverAntenaId = new int[v.recieverAntenas.Length];
         Utilities.InitializeArray(ref receiverAntenaId, -1);
-        baseAntenaId = new int[c.numPlayers];
+        baseAntenaId = new int[numPlayers];
         Utilities.InitializeArray(ref baseAntenaId, -1);
 
         for (int i = 0; i < antenaConnections.Length; ++i)
@@ -68,10 +70,10 @@ public class Logic
         newState = new GameState();
         newState.seed = (int)seed;
         rand = new System.Random(newState.seed);
-        newState.players = new GameState.PlayerInfo[c.numPlayers];
+        newState.players = new GameState.PlayerInfo[numPlayers];
         bool firstInit = false;
         if (startPos == null) {
-            startPos = new Vector2[c.numPlayers];
+            startPos = new Vector2[numPlayers];
             firstInit = true;
         }
         for (int i = 0; i < newState.players.Length; ++i) {
@@ -129,7 +131,7 @@ public class Logic
 
             if (newState.winTime <= 0)
             {
-                newState = InitFirstState(v, (uint)newState.seed);
+                newState = InitFirstState(numPlayers, v, (uint)newState.seed);
                 frame.state.CopyFrom(newState);
                 return;
             }
@@ -137,10 +139,10 @@ public class Logic
         else
         {
             // PlayerInput
-            newState.players[0].moving = UpdatePlayerPos(0, frame.input_player1);
-            UpdatePlayerActions(0, frame.input_player1);
-            newState.players[1].moving = UpdatePlayerPos(1, frame.input_player2);
-            UpdatePlayerActions(1, frame.input_player2);
+            newState.players[0].moving = UpdatePlayerPos(0, frame.input_player0);
+            UpdatePlayerActions(0, frame.input_player0);
+            newState.players[1].moving = UpdatePlayerPos(1, frame.input_player1);
+            UpdatePlayerActions(1, frame.input_player1);
 
             //for (int i = 0; i < c.numPlayers; ++i)
             //{
@@ -155,10 +157,10 @@ public class Logic
         UpdateMessageStates();
 
         // Physics Collisions
-        bool[] playerWasCorrected = new bool[c.numPlayers];
+        bool[] playerWasCorrected = new bool[numPlayers];
         Utilities.InitializeArray(ref playerWasCorrected, false);
 
-        for (int i = 0; i < c.numPlayers; ++i)
+        for (int i = 0; i < numPlayers; ++i)
         {
             // Against static world
             for (int j = 0; j < staticWorld.Length; ++j)
@@ -273,7 +275,7 @@ public class Logic
         }
 
         // Physics Triggers
-        for (int i = 0; i < c.numPlayers; ++i)
+        for (int i = 0; i < numPlayers; ++i)
         {
             if (!IsPlayerVulnerable(i)) continue;
             for (int j = 0; j < antenaLinks.Count; ++j) {

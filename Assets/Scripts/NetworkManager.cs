@@ -294,17 +294,17 @@ public class NetworkManager : MonoBehaviour
 					uint currentFrameID = (localUpdateId - startUpdateId);
 					if (status == NetworkStatus.HostRunning)
 					{
-						if (gameLogic.IsInputPlayer1Legit(currentFrameID))
+                        if (gameLogic.IsPlayerInputLegit(0, currentFrameID))
 							Debug.LogWarning("gameLogic.IsInputPlayer1Legit(currentFrameID");
 
-						gameLogic.SetInputPlayer1(input, currentFrameID);
+						gameLogic.SetInputPlayer(0, input, currentFrameID);
 					}
 					else
 					{
-						if(gameLogic.IsInputPlayer2Legit(currentFrameID))
+                        if(gameLogic.IsPlayerInputLegit(1, currentFrameID))
 							Debug.LogWarning("gameLogic.IsInputPlayer2Legit(currentFrameID)");
 
-						gameLogic.SetInputPlayer2(input, currentFrameID);
+						gameLogic.SetInputPlayer(1, input, currentFrameID);
 					}
 				}
 
@@ -316,11 +316,11 @@ public class NetworkManager : MonoBehaviour
 					{
 						if (status == NetworkStatus.HostRunning)
 						{
-							gameLogic.SetInputPlayer2(storeInputs[i].input, remoteFrameID);
+							gameLogic.SetInputPlayer(1, storeInputs[i].input, remoteFrameID);
 						}
 						else
 						{
-							gameLogic.SetInputPlayer1(storeInputs[i].input, remoteFrameID);
+							gameLogic.SetInputPlayer(0, storeInputs[i].input, remoteFrameID);
 						}
 
 						storeInputs[i].updateId = 0;
@@ -350,16 +350,16 @@ public class NetworkManager : MonoBehaviour
 					}
 					else
 					{
-						PlayerInput input;
-						PlayerInput input2;
+                        PlayerInput input0;
+                        PlayerInput input1;
 
-						gameLogic.GetNewInput(out input);
-						gameLogic.GetNewInput2(out input2);
+						gameLogic.GetNewInput(out input0, 0);
+						gameLogic.GetNewInput(out input1, 1);
 
 						gameLogic.TryAddNewFrame();
 						uint updateId = gameLogic.NewestFrameId();
-						gameLogic.SetInputPlayer1(input, updateId);
-						gameLogic.SetInputPlayer2(input2, updateId);
+						gameLogic.SetInputPlayer(0, input0, updateId);
+						gameLogic.SetInputPlayer(1, input1, updateId);
 						gameLogic.Update(true);
 					}
 					

@@ -54,7 +54,7 @@ public class Visuals : MonoBehaviour {
             players[i].transform.position = Vector3.Lerp(players[i].transform.position, newPos, smoothFactor);
             players[i].transform.rotation = Quaternion.Lerp(players[i].transform.rotation, Quaternion.AngleAxis(state.players[i].rotation, Vector3.down), smoothFactor);
 
-            SetPlayerWave(i, (i==0) ? frame.input_player1 : frame.input_player2);
+            SetPlayerWave(i, (i==0) ? frame.input_player0 : frame.input_player1);
             
             playerAnimators[i].SetBool("Moving", state.players[i].moving);
             bool stunned = playerAnimators[i].GetBool("Stunned");

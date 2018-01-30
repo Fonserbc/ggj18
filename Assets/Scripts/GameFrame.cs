@@ -45,9 +45,11 @@ public struct PlayerInput
 public class GameFrame
 {
 	public bool valid = false;
-	public uint frame_id;
+    public uint frame_id;
+    public PlayerInput input_player0 = new PlayerInput();
 	public PlayerInput input_player1 = new PlayerInput();
-	public PlayerInput input_player2 = new PlayerInput();
+    public PlayerInput input_player2 = new PlayerInput();
+    public PlayerInput input_player3 = new PlayerInput();
 	public GameState state = new GameState();
 }
 
@@ -131,7 +133,7 @@ public class GameLogic
 		GameFrame frame = MemoryFrame[index];
 
 		Debug.Log("Running game with seed " + seed);
-		frame.state = logic.InitFirstState(visuals, seed);
+		frame.state = logic.InitFirstState(2, visuals, seed);
 	}
 
 	public bool IsInit()
@@ -139,67 +141,36 @@ public class GameLogic
 		return initState == InitState.LOADED;
 	}
 
-	public void GetNewInput(out PlayerInput input)
+	public void GetNewInput(out PlayerInput input, int player = 0)
 	{
+        string playerString = (player + 1).ToString();
 		input.legit = true;
 
-		float xAxis = Input.GetAxisRaw("Horizontal1");
-		float yAxis = Input.GetAxisRaw("Vertical1");
+        float xAxis = Input.GetAxisRaw("Horizontal" + playerString);
+        float yAxis = Input.GetAxisRaw("Vertical" + playerString);
 
 		GamePadUtils.ApplyRadialDeadZone(out input.xAxis, out input.yAxis, xAxis, yAxis);
 
 #if UNITY_STANDALONE_OSX || UNITY_EDITOR_OSX
-        input.justUp = Input.GetButtonDown("YM1");
-		input.justDown = Input.GetButtonDown("AM1");
-		input.justLeft = Input.GetButtonDown("XM1");
-		input.justRight = Input.GetButtonDown("BM1");
+        input.justUp = Input.GetButtonDown("YM"+ playerString);
+        input.justDown = Input.GetButtonDown("AM"+ playerString);
+        input.justLeft = Input.GetButtonDown("XM"+ playerString);
+        input.justRight = Input.GetButtonDown("BM"+ playerString);
 
-		input.up = Input.GetButton("YM1");
-		input.down = Input.GetButton("AM1");
-		input.left = Input.GetButton("XM1");
-		input.right = Input.GetButton("BM1");
+        input.up = Input.GetButton("YM"+ playerString);
+        input.down = Input.GetButton("AM"+ playerString);
+        input.left = Input.GetButton("XM"+ playerString);
+        input.right = Input.GetButton("BM"+ playerString);
 #else
-		input.justUp = Input.GetButtonDown("Y1");
-		input.justDown = Input.GetButtonDown("A1");
-		input.justLeft = Input.GetButtonDown("X1");
-		input.justRight = Input.GetButtonDown("B1");
+        input.justUp = Input.GetButtonDown("Y" + playerString);
+        input.justDown = Input.GetButtonDown("A" + playerString);
+        input.justLeft = Input.GetButtonDown("X" + playerString);
+        input.justRight = Input.GetButtonDown("B" + playerString);
 
-		input.up = Input.GetButton("Y1");
-		input.down = Input.GetButton("A1");
-		input.left = Input.GetButton("X1");
-		input.right = Input.GetButton("B1");
-#endif
-    }
-
-	public void GetNewInput2(out PlayerInput input)
-	{
-		input.legit = true;
-
-		float xAxis = Input.GetAxis("Horizontal2");
-		float yAxis = Input.GetAxis("Vertical2");
-
-		GamePadUtils.ApplyRadialDeadZone(out input.xAxis, out input.yAxis, xAxis, yAxis);
-
-#if UNITY_STANDALONE_OSX || UNITY_EDITOR_OSX
-		input.justUp = Input.GetButtonDown("YM2");
-		input.justDown = Input.GetButtonDown("AM2");
-		input.justLeft = Input.GetButtonDown("XM2");
-		input.justRight = Input.GetButtonDown("BM2");
-
-		input.up = Input.GetButton("YM2");
-		input.down = Input.GetButton("AM2");
-		input.left = Input.GetButton("XM2");
-		input.right = Input.GetButton("BM2");
-#else
-		input.justUp = Input.GetButtonDown("Y2");
-        input.justDown = Input.GetButtonDown("A2");
-        input.justLeft = Input.GetButtonDown("X2");
-        input.justRight = Input.GetButtonDown("B2");
-
-        input.up = Input.GetButton("Y2");
-        input.down = Input.GetButton("A2");
-        input.left = Input.GetButton("X2");
-        input.right = Input.GetButton("B2");
+        input.up = Input.GetButton("Y" + playerString);
+        input.down = Input.GetButton("A" + playerString);
+        input.left = Input.GetButton("X" + playerString);
+        input.right = Input.GetButton("B" + playerString);
 #endif
     }
 
@@ -212,15 +183,15 @@ public class GameLogic
 		uint NextIndex = (Index + 1) & (GAEMFRAME_BUFFSIZE - 1);
 		GameFrame NextFrame = MemoryFrame[NextIndex];
 
-		if (!NextFrame.valid || ((NextFrame.input_player1.legit) && (NextFrame.input_player2.legit)))
+		if (!NextFrame.valid || ((NextFrame.input_player0.legit) && (NextFrame.input_player1.legit)))
 		{
 			GaemFrame_index = Index;
 			newest_frame++;
 			CurrentFrame.frame_id = newest_frame;
 
 			//Last frame of the ring has not legit input
+			CurrentFrame.input_player0.legit = false;
 			CurrentFrame.input_player1.legit = false;
-			CurrentFrame.input_player2.legit = false;
 			CurrentFrame.valid = true;
 
 			if (MemoryFrame[0].frame_id < GAEMFRAME_BUFFSIZE)
@@ -255,33 +226,42 @@ public class GameLogic
 		return ((int)(GaemFrame_index + (frame_id - newest_frame))) & (GAEMFRAME_BUFFSIZE - 1);
 	}
 
-	public bool IsInputPlayer1Legit(uint frame_id)
-	{
-		int index = GetIndexFromFrameId(frame_id);
-		GameFrame frame = MemoryFrame[index];
-		return frame.input_player1.legit;
-	}
+    public bool IsPlayerInputLegit(int player, uint frame_id)
+    {
+        int index = GetIndexFromFrameId(frame_id);
+        GameFrame frame = MemoryFrame[index];
+        switch (player) {
+            case 0:
+                return frame.input_player0.legit;
+            case 1:
+                return frame.input_player1.legit;
+            case 2:
+                return frame.input_player2.legit;
+            case 3:
+                return frame.input_player3.legit;
+        }
+        return false;
+    }
 
-	public bool IsInputPlayer2Legit(uint frame_id)
-	{
-		int index = GetIndexFromFrameId(frame_id);
-		GameFrame frame = MemoryFrame[index];
-		return frame.input_player2.legit;
-	}
-
-	public void SetInputPlayer1(PlayerInput input, uint frame_id)
-	{
-		int index = GetIndexFromFrameId(frame_id);
-		GameFrame frame = MemoryFrame[index];
-		SetInput(ref frame.input_player1, input, frame_id);
-	}
-
-	public void SetInputPlayer2(PlayerInput input, uint frame_id)
-	{
-		int index = GetIndexFromFrameId(frame_id);
-		GameFrame frame = MemoryFrame[index];
-		SetInput(ref frame.input_player2, input, frame_id);
-	}
+    public void SetInputPlayer(int player, PlayerInput input, uint frame_id)
+    {
+        int index = GetIndexFromFrameId(frame_id);
+        GameFrame frame = MemoryFrame[index];
+        switch (player) {
+            case 0:
+                SetInput(ref frame.input_player0, input, frame_id);   
+                break;
+            case 1:
+                SetInput(ref frame.input_player1, input, frame_id);
+                break;
+            case 2:
+                SetInput(ref frame.input_player2, input, frame_id);
+                break;
+            case 3:
+                SetInput(ref frame.input_player3, input, frame_id);
+                break;
+        }
+    }
 
 	private void SetInput(ref PlayerInput dest, PlayerInput input, uint frame_id)
 	{
@@ -325,16 +305,16 @@ public class GameLogic
 
 			next_frame.state.CopyFrom(frame.state);
 
+			if (!next_frame.input_player0.legit)
+			{
+				next_frame.input_player0 = frame.input_player0;
+				next_frame.input_player0.legit = false;
+			}
+
 			if (!next_frame.input_player1.legit)
 			{
 				next_frame.input_player1 = frame.input_player1;
 				next_frame.input_player1.legit = false;
-			}
-
-			if (!next_frame.input_player2.legit)
-			{
-				next_frame.input_player2 = frame.input_player2;
-				next_frame.input_player2.legit = false;
 			}
 
 			index = next_index;
