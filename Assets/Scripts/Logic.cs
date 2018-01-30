@@ -79,10 +79,10 @@ public class Logic
         for (int i = 0; i < newState.players.Length; ++i) {
             newState.players[i] = new GameState.PlayerInfo();
             if (firstInit) {
-                startPos[i] = new Vector2(v.players[i].transform.position.x, v.players[i].transform.position.z);
+                startPos[i] = new Vector2(v.spawnPlaces[i].position.x, v.spawnPlaces[i].position.z);
             }
             newState.players[i].position = startPos[i];
-            newState.players[i].rotation = v.players[i].transform.eulerAngles.y;
+            newState.players[i].rotation = v.spawnPlaces[i].eulerAngles.y;
             newState.players[i].connected = true;
             newState.players[i].moving = false;
             newState.players[i].points = 0;
@@ -112,7 +112,7 @@ public class Logic
         newState.winnerPlayer = -1;
         newState.winTime = 0;
 
-        v.Init(this);
+        v.Init(numPlayers, this);
 
         return newState;
     }

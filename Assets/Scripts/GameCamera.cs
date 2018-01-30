@@ -9,7 +9,7 @@ public class GameCamera : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         if (visuals.ownPlayer != -1) {
-            Transform player = visuals.players[visuals.ownPlayer].transform;
+            Transform player = visuals.GetPlayer(visuals.ownPlayer).transform;
 
             transform.position = player.position;
         }

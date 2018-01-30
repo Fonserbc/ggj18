@@ -12,7 +12,10 @@ public class Visuals : MonoBehaviour {
     public AntennaScript[] antenas;
     public AntennaScript[] recieverAntenas;
     public AntennaScript[] baseAntenas;
-    public PlayerScript[] players;
+    PlayerScript[] players;
+    public Transform[] spawnPlaces;
+    public PlayerScript playerPrefab;
+
     MessageScript[] messages;
 
     Animator[] playerAnimators;
@@ -24,9 +27,31 @@ public class Visuals : MonoBehaviour {
 
     public int ownPlayer = -1;
 
-	public void Init (Logic l)
+	public void Init (int numPlayers, Logic l)
     {
         myLogic = l;
+
+        if (players == null || numPlayers != players.Length)
+        {
+            if (players != null) {
+                for (int i = 0; i < numPlayers; ++i)
+                {
+                    Destroy(players[i].gameObject);
+                }
+            }
+
+            players = new PlayerScript[numPlayers];
+            for (int i = 0; i < numPlayers; ++i)
+            {
+                players[i] = Instantiate(playerPrefab).GetComponent<PlayerScript>();
+            }
+        }
+        for (int i = 0; i < numPlayers; ++i)
+        {
+            players[i].transform.position = spawnPlaces[i].position;
+            players[i].transform.rotation = spawnPlaces[i].rotation;
+        }
+
         playerAnimators = new Animator[players.Length];
         for(int i = 0; i < playerAnimators.Length; ++i)
         {
@@ -177,13 +202,7 @@ public class Visuals : MonoBehaviour {
             }
     }
 
-    private void OnDrawGizmosSelected()
-    {
-        foreach(PlayerScript pl in players)
-        {
-            Gizmos.color = Color.green;
-            Gizmos.DrawWireSphere(pl.transform.position, c.playerCollisionRadius);
-
-        }
+    public PlayerScript GetPlayer(int id) {
+        return players[id];
     }
 }
